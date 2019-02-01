@@ -8,6 +8,8 @@ This uses two filters, one based on allowable breeding codes, and the other base
 
 ## 2. chron Breeding Chronology Plot
 
+![chronexample](https://github.com/ngwalton/wbba_tools/blob/master/chronexample.PNG)
+
 This maps out each breeding code across the season so you can visualize when each bird species is in each phase of its breeding cycle. Points overlay box plots to help you screen for data that may be an outlier.
 
 ## 3. wbbaspmap Species Map
@@ -17,3 +19,4 @@ This takes the raw eBird data and summarizes it into a single status for each bl
 ## 4. wbbaspchange Change Map
 
 This produces a block map indicating for each species whether it was found in the block during the first atlas only, second atlas only, or both atlases.
+ 
