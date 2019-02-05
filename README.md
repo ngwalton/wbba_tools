@@ -4,6 +4,8 @@ Here you'll find a variety of scripts used to proof, visualize, and display eBir
 
 ## 1. dv_date Data Validation tool
 
+![datascreening](https://github.com/ngwalton/wbba_tools/blob/master/datascreening.png)
+
 This uses two filters, one based on allowable breeding codes, and the other based on allowable data values. The filters flag records as early or late, or using a rare code, and extract only those records into a separate spreadsheet for review.
 
 ## 2. chron Breeding Chronology Plot
