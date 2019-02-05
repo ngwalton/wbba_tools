@@ -14,9 +14,13 @@ This maps out each breeding code across the season so you can visualize when eac
 
 ## 3. wbbaspmap Species Map
 
-This takes the raw eBird data and summarizes it into a single status for each block (Observed, Possible, Probable, Confirmed) making it easy to produce standard atlas block maps much like the live version available in Atlas eBird.
+![tuti](https://github.com/ngwalton/wbba_tools/blob/master/tuti.png)
+
+This takes the raw eBird data and summarizes it into a single status for each block (Observed, Possible, Probable, Confirmed) making it easy to produce standard atlas block maps much like the live version available in Atlas eBird. Note that this particular example image was produced in ArcMap after the file was output from wbbaspmap.
 
 ## 4. wbbaspchange Change Map
 
-This produces a block map indicating for each species whether it was found in the block during the first atlas only, second atlas only, or both atlases.
+![changemapexample](https://github.com/ngwalton/wbba_tools/blob/master/changemapexample.png)
+
+This produces a block map indicating for each species whether it was found in the block during the first atlas only, second atlas only, or both atlases. Note that this particular example image was produced in ArcMap after the file was output from wbbaspchange.
  
