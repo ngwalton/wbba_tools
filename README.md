@@ -39,11 +39,11 @@ codes_file <- "species_usable_codes.csv"
 
 This maps out each breeding code across the season so you can visualize when each bird species is in each phase of its breeding cycle. Points overlay box plots to help you screen for data that may be an outlier.
 
-## 3. wbbaspmap Species Map
+## 3. block_evidence Species Map
 
 ![tuti](https://github.com/ngwalton/wbba_tools/blob/master/tuti.png)
 
-This takes the raw eBird data and summarizes it into a single status for each block (Observed, Possible, Probable, Confirmed) making it easy to produce standard atlas block maps much like the live version available in Atlas eBird. Note that this particular example image was produced in ArcMap after the file was output from wbbaspmap.
+This takes the raw eBird data and summarizes it into a single status for each block (Observed, Possible, Probable, Confirmed) making it easy to produce standard atlas block maps much like the live version available in Atlas eBird. Note that this particular example image was produced in ArcMap after the file was output from block_evidence.
 
 ## 4. wbbaspchange Change Map
 
