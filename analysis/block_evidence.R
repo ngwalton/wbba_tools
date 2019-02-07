@@ -10,7 +10,7 @@ library(here)
 
 setwd(here::here("data"))
 
-# name of output shapefile without extention
+# name of output shapefile without extension
 out_shp <- "evidence_by_block"
 
 # birdpop alpha codes;
