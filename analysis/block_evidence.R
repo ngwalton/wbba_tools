@@ -5,13 +5,22 @@
 library(rgdal)
 library(reshape2)
 library(foreign)
+library(tmap) # only needed for map making
 library(here)
-
 
 setwd(here::here("data"))
 
+
+# set to FALSE to suppress printing pdf of each species -- printing maps can be
+# time consuming
+print_map <- TRUE
+
+
 # name of output shapefile without extension
 out_shp <- "evidence_by_block"
+
+# name of output pdf file if printing maps
+out_pdf <- "evidence_maps.pdf"
 
 # birdpop alpha codes;
 # common names are in "COMMONNAME", and 4-letter alpha codes are in "SPEC"
@@ -22,6 +31,9 @@ alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 # with a shapefile, the first argument is the directory containing the shp,
 # and the second argument is the name of the shapefile without the extension
 block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
+
+# optional county layer --  only used for map printing
+cnty <- readOGR("county", "County_Boundaries_24K")
 
 # sample WBBA data from ebrid
 sp_in <- read.csv("wbba2018.csv", as.is = TRUE)
@@ -95,5 +107,54 @@ sp_cast <- dcast(sp, BLOCK_ID ~ SPEC, fun.aggregate = code_name,
 # merge species with original blocks
 block_out <- merge(block_in, sp_cast, by = "BLOCK_ID")
 
+
+# print maps
+# print an evidence map for each species to a single pdf
+
+if (print_map) {
+  block_map <- block_out
+  no_rep <- "No data"
+  not_rep <- "Not reported"
+  block_map@data[is.na(block_map@data)] <- no_rep
+  block_map@data[block_map@data == ""] <- not_rep
+
+  # make evidence a factor and choose factor order -- used to order map legend
+  taxa <- names(sp_cast)[-1]
+  ord <- c(rev(vapply(breeding_codes, "[[", NA_character_, 2)), not_rep, no_rep)
+  block_map@data[, taxa] <- lapply(taxa, function(x)
+    factor(block_map@data[[x]], levels = ord))
+
+  line_gray <- "#4e4e4e"
+  pal <- c("black", "#820BBB", "#BF5FFF", "#e6cef1", "white", "#e5e5e5")
+
+  n <- length(taxa)
+
+  # open pdf device
+  pdf(out_pdf)
+
+  # note that this can be time consuming
+  for (i in seq_along(taxa)) {
+    if (i == 1) message(paste("Printing", n, "maps"))
+
+    species <- taxa[i]
+
+    out <- tm_shape(block_map) +
+      tm_polygons(species, title = "Evidence", border.col = NULL, palette = pal) +
+      tm_shape(cnty) +
+      tm_polygons(border.col = line_gray, alpha = 0, border.alpha = 0.4,
+                  legend.show = FALSE) +
+      tm_legend(title = species, position = c("left", "bottom"), bg.alpha = 0,
+                main.title.fontface = 2, title.fontface = 2)
+
+    print(out)
+
+    message(paste("Finished map", i, "of", n))
+  }
+
+  # close pdf device
+  dev.off()
+}
+
 # write to disc as a shapefile
+
 writeOGR(block_out, ".", "out_shp", driver = "ESRI Shapefile")
