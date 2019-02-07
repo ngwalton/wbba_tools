@@ -55,8 +55,18 @@ sp_in <- sp_in[sp_in$CATEGORY %in% taxa, ]
 sp_in <- merge(sp_in, alpha[, c("COMMONNAME", "SPEC")], by.x = "COMMON.NAME",
                  by.y = "COMMONNAME", all.x = TRUE, all.y = FALSE)
 
-# check that all common names in sp_in were matched in alpha
-any(is.na(sp_in$SPEC))  # should return false
+# if any species were unmatched in alpha, this will print there names; this will
+# require aditional attention if any are not matched
+if (any(is.na(sp_in$SPEC))) {
+  unique(sp_in$COMMON.NAME[is.na(sp_in$SPEC)])
+}
+
+# this will need modification depending on what species were not matched; in
+# this case we provide a custom alpha code domestic Guineafowl and Mallard, and
+# remove Domestic goose sp.
+sp_in$SPEC[sp_in$COMMON.NAME == "Helmeted Guineafowl (Domestic type)"] <- "HEGU"
+sp_in$SPEC[sp_in$COMMON.NAME == "Mallard (Domestic type)"] <- "MALL_DOM"
+sp_in <- sp_in[sp_in$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
 
 # create a SpatialPointsDataFrame from "sp_in"
 wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
@@ -146,7 +156,10 @@ if (print_map) {
   pdf(out_pdf)
 
   for (i in seq_along(taxa)) {
-    if (i == 1) message(paste("Printing", n, "maps"))
+    if (i == 1) {
+      message(paste("Printing", n, "maps"))
+      t0 <- Sys.time()
+    }
 
     species <- taxa[i]
 
@@ -161,6 +174,13 @@ if (print_map) {
     print(out)
 
     message(paste("Finished map", i, "of", n))
+
+    if (i == 1) {
+      t1 <- Sys.time()
+      t_el <- t1 - t0
+      t_el <- round(t_el * n / 60, 1)
+      message(paste("Estmimated time to print:", t_el, "minutes"))
+    }
   }
 
   # close pdf device
