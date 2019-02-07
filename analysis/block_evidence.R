@@ -1,33 +1,36 @@
-# Script to add breeding evidence to WBBA blocks.
-#
-# Author: Nicholas Walton
-# Created: 9 Sept 2015
-# Last updated: 11 Sept 2015
+# Script to add max breeding evidence to WBBA blocks. Results are exported to
+# shapefile.
 
 
-library("rgdal")    # also loads package 'sp'
-library("reshape2") # for dcast function
-library("foreign")  # for read.dbf (alpha codes come as dbf)
+library(rgdal)    # also loads package 'sp'
+library(reshape2) # for dcast function
+library(foreign)  # for read.dbf (alpha codes come as dbf)
+library(here)
 
-# my working directory contains the folders "AlphaCodes", "Bird", and "Blocks"
-setwd("C:/git_repositories/WbbaDistMaps/Data")
+
+setwd(here::here("data"))
+
+# name of output shapefile without extention
+out_shp <- "evidence_by_block"
 
 # birdpop alpha codes;
 # common names are in "COMMONNAME", and 4-letter alpha codes are in "SPEC"
-alpha <- read.dbf("./AlphaCodes/LIST15.DBF")
+# source: http://www.birdpop.org/pages/birdSpeciesCodes.php
+alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 
 # arguments for readOGR are input format dependent;
 # with a shapefile, the first argument is the directory containing the shp,
 # and the second argument is the name of the shapefile without the extension
-block_in <- readOGR("./Blocks", "WbbaBlocks2015_v0_2")
+block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 
-sp_in <- read.csv("./Bird/JantoMay2015AtlasData.csv", stringsAsFactors = FALSE)
+sp_in <- read.csv("wbba2018.csv", as.is = TRUE)
 
 # remove hybrid, spuh, and slash taxonomic categories
 taxa <- c("species", "issf", "domestic", "form")
 sp_in <- sp_in[sp_in$CATEGORY %in% taxa, ]
 
-# add alpha codes needed later to name species columns with < 10 chars
+# add alpha codes needed later to name species columns with < 10 chars required
+# for shapefile
 sp_in <- merge(sp_in, alpha[, c("COMMONNAME", "SPEC")], by.x = "COMMON.NAME",
                  by.y = "COMMONNAME", all.x = TRUE, all.y = FALSE)
 
@@ -52,18 +55,6 @@ names(block_over)[13] <- "CO_eBird"  # COUNTY is in both data frames
 # ...and join them to the bird data frame
 sp <- cbind(sp_nad@data, block_over)
 
-
-# Up to this point, one could have loaded the eBird records into ArcGIS as
-# points, selected taxonomic categories (CATEGORY), done a spatial join with
-# the blocks layer, and finally exported the table from the points.  Once eBird
-# adds BLOCK_ID or similar to the downloadable data, the preceding steps will
-# be unnecessary.
-#
-# There might be a way to do the following in ArcGIS Desktop, but I don't
-# know how off the top of my head.  It could definitely be scripted in arcpy,
-# but manipulating tabular data is generally much easier/more intuitive in R.
-
-
 # add column for breeding evidence code
 sp$conf <- 0
 
@@ -76,12 +67,11 @@ breeding_codes <- list(
   list(3, "Probable",  c("S7", "M", "P", "T", "C", "N", "A", "B")),
   list(4, "Confirmed", c("PE", "CN", "NB", "DD", "UN", "ON", "FL", "CF",
                          "FY", "FS", "NE", "NY"))
-  )
+)
 
 # some of the BREEDING.BIRD.ATLAS.CODE codes have a space at the end
 # and some don't - this removes the space
-sp$BREEDING.BIRD.ATLAS.CODE <- gsub(" ", "", sp$BREEDING.BIRD.ATLAS.CODE,
-                                    fixed = TRUE)
+sp$BREEDING.BIRD.ATLAS.CODE <- trimws(sp$BREEDING.BIRD.ATLAS.CODE)
 
 # assign numeric breeding code (1 = lowest, 4 = highest)
 for (code in breeding_codes) {
@@ -106,14 +96,8 @@ code_name <- function(x){
 sp_cast <- dcast(sp, BLOCK_ID ~ SPEC, fun.aggregate = code_name,
                  fill = "", value.var = "conf")
 
-
-# At this point, one could also just export sp_cast to csv or dbf and join it
-# with the blocks in ArcGIS.  But it's easy to do in R.
-
-
 # merge species with original blocks
 block_out <- merge(block_in, sp_cast, by = "BLOCK_ID")
 
 # write to disc as a shapefile
-writeOGR(block_out, "./out", "JantoMay2015AtlasData20150919",
-         driver = "ESRI Shapefile")
+writeOGR(block_out, ".", "out_shp", driver = "ESRI Shapefile")
