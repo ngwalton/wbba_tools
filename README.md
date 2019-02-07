@@ -43,7 +43,7 @@ This maps out each breeding code across the season so you can visualize when eac
 
 ![tuti](https://github.com/ngwalton/wbba_tools/blob/master/tuti.png)
 
-This takes the raw eBird data and summarizes it into a single status for each block (Observed, Possible, Probable, Confirmed) making it easy to produce standard atlas block maps much like the live version available in Atlas eBird. Note that this particular example image was produced in ArcMap after the shapefile was output from block_evidence, but the script provide an option to print to pdf (or any other format).
+This takes the raw eBird data and summarizes it into a single status for each block (Observed, Possible, Probable, Confirmed) making it easy to produce standard atlas block maps much like the live version available in Atlas eBird. Note that this particular example image was produced in ArcMap after the shapefile was output from block_evidence, but the script provides an option to print to pdf (or any other format).
 
 ## 4. wbbaspchange Change Map
 
