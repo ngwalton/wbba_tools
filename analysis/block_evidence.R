@@ -1,10 +1,10 @@
-# Script to add max breeding evidence to WBBA blocks. Results are exported to
+# Script to add highest breeding evidence level to WBBA blocks. Results are exported to
 # shapefile.
 
 
-library(rgdal)    # also loads package 'sp'
-library(reshape2) # for dcast function
-library(foreign)  # for read.dbf (alpha codes come as dbf)
+library(rgdal)
+library(reshape2)
+library(foreign)
 library(here)
 
 
@@ -23,6 +23,7 @@ alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 # and the second argument is the name of the shapefile without the extension
 block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 
+# sample WBBA data from ebrid
 sp_in <- read.csv("wbba2018.csv", as.is = TRUE)
 
 # remove hybrid, spuh, and slash taxonomic categories
@@ -77,11 +78,6 @@ sp$BREEDING.BIRD.ATLAS.CODE <- trimws(sp$BREEDING.BIRD.ATLAS.CODE)
 for (code in breeding_codes) {
   sp$conf[sp$BREEDING.BIRD.ATLAS.CODE %in% code[[3]]] <- code[[1]]
 }
-
-# The following function/dcast could be replaced with nested for loops
-# (one iterating over blocks, and a 2nd over each species in a given block)
-# followed by dcast if more than one value needed to be caluclated (e.g., if you
-# wanted confirmation code and behavior or something).
 
 # function to assign breeding code name;
 # for a given alpha code/block combo, all values of "conf" are passed to this
