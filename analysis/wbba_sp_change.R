@@ -9,15 +9,20 @@
 # 3: Recorded during both WBBAs
 
 
-library("rgdal")    # also loads package 'sp'
-library("reshape2") # for dcast function
-library("foreign")  # for read.dbf (alpha codes come as dbf)
-
+library(rgdal)    # also loads package 'sp'
+library(reshape2) # for dcast function
+library(foreign)  # for read.dbf (alpha codes come as dbf)
+library(here)
 
 setwd(here::here("data"))
 
 
+# output files ----
+
 out_file <- "wbba_change"  # root name for output file (csv and/or shp)
+
+
+# load data ----
 
 # birdpop alpha codes;
 # common names are in "COMMONNAME", and 4-letter alpha codes are in "SPEC"
@@ -31,6 +36,9 @@ block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 sp <- list()
 sp$ii <- read.csv("WBBA2revi.csv", as.is = TRUE)
 sp$i <- read.csv("WBBA1revi.csv", as.is = TRUE)
+
+
+# data prep ----
 
 # how do we want to treat domestic MALL?  currently setting to normal MALL.
 dom_mall <- sp$ii$COMMON.NAME == "Mallard (Domestic type)"
@@ -145,12 +153,15 @@ identical(sp_cast$i$BLOCK_ID, sp_cast$ii$BLOCK_ID)
 out <- sp_cast$i
 out[, -1] <- sp_cast$i[, -1] + sp_cast$ii[, -1]
 
-# write to csv
-write.csv(out, file = paste0(out_file, ".csv"), row.names = FALSE)
-
-# optionally write to shp:
 # merge species with original blocks
 block_out <- merge(block_in[, c("BLOCK_ID", "BLOCK_STAT")], out,
                    by = "BLOCK_ID")
 
+
+# save output files ----
+
+# write to csv
+write.csv(out, file = paste0(out_file, ".csv"), row.names = FALSE)
+
+# optionally write to shp
 writeOGR(block_out, ".", out_file, driver = "ESRI Shapefile")
