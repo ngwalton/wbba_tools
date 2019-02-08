@@ -137,7 +137,7 @@ unique_to_ii <- setdiff(names(sp_cast$ii), names(sp_cast$i))
 sp_cast$i[, unique_to_ii] <- 0
 sp_cast$ii[, unique_to_i] <- 0
 
-# check that all species occure in both data frames
+# check that all species occur in both data frames
 setequal(names(sp_cast$ii), names(sp_cast$i))  # should be TRUE
 
 ord <- c("BLOCK_ID", sort(setdiff(names(sp_cast$ii), "BLOCK_ID")))
