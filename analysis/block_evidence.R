@@ -136,7 +136,7 @@ block_out <- merge(block_in, sp_cast, by = "BLOCK_ID")
 
 if (print_map) {
   block_map <- block_out
-  no_rep <- "No data"
+  no_rep <- "No checklists"
   not_rep <- "Not reported"
   block_map@data[is.na(block_map@data)] <- no_rep
   block_map@data[block_map@data == ""] <- not_rep
@@ -148,7 +148,7 @@ if (print_map) {
     factor(block_map@data[[x]], levels = ord))
 
   line_gray <- "#4e4e4e"
-  pal <- c("black", "#820BBB", "#BF5FFF", "#e6cef1", "white", "#e5e5e5")
+  pal <- c("black", "#820BBB", "#BF5FFF", "#e6cef1", "#e5e5e5", "white")
 
   n <- length(sp_vec)
 
