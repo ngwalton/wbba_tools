@@ -12,14 +12,23 @@
 library(rgdal)    # also loads package 'sp'
 library(reshape2) # for dcast function
 library(foreign)  # for read.dbf (alpha codes come as dbf)
+library(tmap)     # only needed for map making
 library(here)
 
 setwd(here::here("data"))
 
 
+# set to FALSE to suppress printing pdf of each species -- printing maps can be
+# time consuming
+print_map <- TRUE
+
+
 # output files ----
 
 out_file <- "wbba_change"  # root name for output file (csv and/or shp)
+
+# name of output pdf file if printing maps
+out_pdf <- "wbba_change_maps.pdf"
 
 
 # load data ----
@@ -36,6 +45,9 @@ block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 sp <- list()
 sp$ii <- read.csv("WBBA2revi.csv", as.is = TRUE)
 sp$i <- read.csv("WBBA1revi.csv", as.is = TRUE)
+
+# optional county layer --  only used for map printing
+cnty <- readOGR("county", "County_Boundaries_24K")
 
 
 # data prep ----
@@ -156,6 +168,62 @@ out[, -1] <- sp_cast$i[, -1] + sp_cast$ii[, -1]
 # merge species with original blocks
 block_out <- merge(block_in[, c("BLOCK_ID", "BLOCK_STAT")], out,
                    by = "BLOCK_ID")
+
+
+# print maps ----
+
+# print an evidence map for each species to a single pdf; note that this can be
+# time consuming
+
+if (print_map) {
+  block_map <- block_out
+
+  sp_vec <- names(block_map)[- c(1:2)]
+
+  # make evidence a factor and choose factor order -- used to order map legend
+  labels <- c("Unreported", "WBBA I only", "WBBA II only", "Both")
+  block_map@data[, sp_vec] <- lapply(sp_vec, function(x)
+    factor(block_map@data[[x]], levels = 0:3, labels = labels))
+
+  line_gray <- "#4e4e4e"
+  pal <- c("white", "red", "green", "blue")
+
+  n <- length(sp_vec)
+
+  # open pdf device
+  pdf(out_pdf)
+
+  for (i in seq_along(sp_vec)) {
+    if (i == 1) {
+      message(paste("Printing", n, "maps"))
+      t0 <- Sys.time()
+    }
+
+    species <- sp_vec[i]
+
+    out_map <- tm_shape(block_map) +
+      tm_polygons(species, title = "Legend", border.col = NULL, palette = pal) +
+      tm_shape(cnty) +
+      tm_polygons(border.col = line_gray, alpha = 0, border.alpha = 0.4,
+                  legend.show = FALSE) +
+      tm_legend(title = species, position = c("left", "bottom"), bg.alpha = 0,
+                main.title.fontface = 2, title.fontface = 2)
+
+    print(out_map)
+
+    message(paste("Finished map", i, "of", n))
+
+    if (i == 1) {
+      t1 <- Sys.time()
+      t_el <- t1 - t0
+      t_el <- round(t_el * n / 60, 1)
+      message(paste("Estmimated time to print:", t_el, "minutes"))
+    }
+  }
+
+  # close pdf device
+  dev.off()
+}
 
 
 # save output files ----
