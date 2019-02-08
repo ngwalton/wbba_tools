@@ -1,42 +1,36 @@
-# Script to summarize species detections from WBBA I to WBBA II.  The resulting
-# csv and/or shp contains species in columns and blocks in rows; cell values
-# indicate if a species was recorded as possible or better ("recorded" from here # on).
+# Script to summarize species detections from WBBA I compared to WBBA II.  The
+# resulting csv and/or shp contains species in columns and blocks in rows; cell
+# values indicate if a species was recorded as possible or better ("recorded"
+# from here on).
 # Key to output breeding evidence:
 # 0: Not recorded during either WBBA
 # 1: Recorded during WBBA I only
 # 2: Recorded during WBBA II only
 # 3: Recorded during both WBBAs
-#
-# Script based on "WbbaSpMaps914.R".
-#
-# Author: Nicholas Walton
-# Created: 4 March 2017
-# Last updated: 6 March 2017
 
 
 library("rgdal")    # also loads package 'sp'
 library("reshape2") # for dcast function
 library("foreign")  # for read.dbf (alpha codes come as dbf)
 
-# my working directory contains the folders "AlphaCodes", "Bird", "Blocks" and
-# "out/shp".
-setwd("C:/git_repos/wbba_yr_comp/Data")
+
+setwd(here::here("data"))
+
 
 out_file <- "wbba_change"  # root name for output file (csv and/or shp)
 
 # birdpop alpha codes;
 # common names are in "COMMONNAME", and 4-letter alpha codes are in "SPEC"
-alpha <- read.dbf("./AlphaCodes/LIST16.DBF", as.is = TRUE)
+alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 
 # arguments for readOGR are input format dependent;
 # with a shapefile, the first argument is the directory containing the shp,
 # and the second argument is the name of the shapefile without the extension
-block_in <- readOGR("./Blocks", "WbbaBlocks2015_v0_2")
+block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 
 sp <- list()
-sp$ii <- read.csv("./Bird/EBIRD_ATL_WI.csv", stringsAsFactors = FALSE)
-sp$i <- read.csv("./Bird/WBBA_1_dataexported_from_eBird_20150316.csv",
-                 stringsAsFactors = FALSE)
+sp$ii <- read.csv("WBBA2revi.csv", as.is = TRUE)
+sp$i <- read.csv("WBBA1revi.csv", as.is = TRUE)
 
 # how do we want to treat domestic MALL?  currently setting to normal MALL.
 dom_mall <- sp$ii$COMMON.NAME == "Mallard (Domestic type)"
@@ -54,6 +48,7 @@ update_sp <- function(x) {
   is_sp <- x$CATEGORY %in% taxa
   is_obs <- is.na(x$BREEDING.BIRD.ATLAS.CODE) |
     x$BREEDING.BIRD.ATLAS.CODE %in% c("F ", "")
+
   keep <- is_sp & ! is_obs
   x <- x[keep, ]
 
@@ -70,7 +65,7 @@ update_sp <- function(x) {
 sp <- lapply(sp, update_sp)
 
 # check that no common names in sp were unmatched in alpha
-any(vapply(sp, function(x) anyNA(x$SPEC), NA))  # should return false
+any(vapply(sp, function(x) anyNA(x$SPEC), NA))  # should return FALSE
 
 # create a SpatialPointsDataFrame from "sp".
 wgs84 <- CRS("+init=epsg:4326")      # use WGS84 as input CRS.
@@ -85,9 +80,6 @@ mk_spatial <- function(x) {
 
 sp <- lapply(sp, mk_spatial)
 
-# sp_wgs <- SpatialPointsDataFrame(sp[, c("LONGITUDE", "LATITUDE")], sp,
-#                                  coords.nrs = c(23, 22), proj4string = wgs84)
-
 # extract blocks that overlay points;
 # get_blks returns a data frame containing the same number rows as x;
 # each row is a record from a block that overlays the points in sp.
@@ -101,17 +93,9 @@ get_blks <- function(x) {
 
 sp <- lapply(sp, get_blks)
 
-vapply(sp, function(x) anyNA(x$BLOCK_ID), NA)  # should be FALSe - isn't in ii!
-sum(is.na(sp$ii$BLOCK_ID)) # 6
+vapply(sp, function(x) anyNA(x$BLOCK_ID), NA)  # should return FALSe
+sum(is.na(sp$ii$BLOCK_ID))                     # returns count of unmatched records if there were any
 # View(sp$ii[is.na(sp$ii$BLOCK_ID), ])
-# the following records fall outside of blocks!
-# dput(sp$ii[is.na(sp$ii$BLOCK_ID), "GLOBAL.UNIQUE.IDENTIFIER"])
-# c("URN:CornellLabOfOrnithology:EBIRD:OBS406758226",
-#   "URN:CornellLabOfOrnithology:EBIRD:OBS406757661",
-#   "URN:CornellLabOfOrnithology:EBIRD:OBS406773046",
-#   "URN:CornellLabOfOrnithology:EBIRD:OBS406772639",
-#   "URN:CornellLabOfOrnithology:EBIRD:OBS406773047",
-#   "URN:CornellLabOfOrnithology:EBIRD:OBS406757660")
 
 # Remove records outside of blocks. Hopefully there will be another solution to
 # this issue that allows us to keep these records.
@@ -162,11 +146,11 @@ out <- sp_cast$i
 out[, -1] <- sp_cast$i[, -1] + sp_cast$ii[, -1]
 
 # write to csv
-write.csv(out, file = paste0("./out/", out_file, ".csv"), row.names = FALSE)
+write.csv(out, file = paste0(out_file, ".csv"), row.names = FALSE)
 
 # optionally write to shp:
 # merge species with original blocks
 block_out <- merge(block_in[, c("BLOCK_ID", "BLOCK_STAT")], out,
                    by = "BLOCK_ID")
 
-writeOGR(block_out, "./out/shp", out_file, driver = "ESRI Shapefile")
+writeOGR(block_out, ".", out_file, driver = "ESRI Shapefile")
