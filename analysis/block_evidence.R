@@ -142,26 +142,26 @@ if (print_map) {
   block_map@data[block_map@data == ""] <- not_rep
 
   # make evidence a factor and choose factor order -- used to order map legend
-  taxa <- names(sp_cast)[-1]
+  sp_vec <- names(sp_cast)[-1]
   ord <- c(rev(vapply(breeding_codes, "[[", NA_character_, 2)), not_rep, no_rep)
-  block_map@data[, taxa] <- lapply(taxa, function(x)
+  block_map@data[, sp_vec] <- lapply(sp_vec, function(x)
     factor(block_map@data[[x]], levels = ord))
 
   line_gray <- "#4e4e4e"
   pal <- c("black", "#820BBB", "#BF5FFF", "#e6cef1", "white", "#e5e5e5")
 
-  n <- length(taxa)
+  n <- length(sp_vec)
 
   # open pdf device
   pdf(out_pdf)
 
-  for (i in seq_along(taxa)) {
+  for (i in seq_along(sp_vec)) {
     if (i == 1) {
       message(paste("Printing", n, "maps"))
       t0 <- Sys.time()
     }
 
-    species <- taxa[i]
+    species <- sp_vec[i]
 
     out <- tm_shape(block_map) +
       tm_polygons(species, title = "Evidence", border.col = NULL, palette = pal) +
