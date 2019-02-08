@@ -2,7 +2,7 @@
 
 Here you'll find a variety of scripts used to proof, visualize, and display eBird data. These were designed for the Wisconsin Breeding Bird Atlas and should work well for other atlases using the Atlas eBird platform.
 
-## 1. dv_date Data Validation tool
+## 1. data_validation Data Validation tool
 
 ![datascreening](https://github.com/ngwalton/wbba_tools/blob/master/datascreening.png)
 
@@ -21,7 +21,7 @@ The flagged spreadsheet is then manually screened, but this saves a lot of time 
 
 This will not catch all suspect records, we still recommend other methods of checking for suspicious records including viewing the eBird maps, and checking at county and block level for unusual species. 
 
-The primary places you’ll need to edit the ebird_dv_date_code.R code to customize it for your use are all near the front of the code:
+The primary places you’ll need to edit the data_validation.R code to customize it for your use are all near the front of the code:
 
 ````
 # Output file -- rename file appropriately as needed
