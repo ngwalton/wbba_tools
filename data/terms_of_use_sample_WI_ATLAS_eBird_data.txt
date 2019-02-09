@@ -1,12 +1,9 @@
-﻿This is a sample eBird dataset - (5 species from Wisconsin Breeding Bird Atlas in 2018). It serves as example data for the wbba_tools repository at: https://github.com/ngwalton/wbba_tools (with permission of Ian Davies).
+﻿These are sample eBird datasets - (5 species from Wisconsin Breeding Bird Atlas in 2018 and in 1995). They serve as example data for the wbba_tools repository at: https://github.com/ngwalton/wbba_tools (with permission of Ian Davies).
 
 For official, up to date eBird data, go to: https://ebird.org/data/download
-
-
 
 eBird Data Access 
 Terms of Use
-
 
 Building and managing the systems that enable the collection and careful management of data in eBird requires ongoing time, effort, and expense for the Cornell Lab of Ornithology.  Thousands of participants freely provide the data to eBird, and in this same spirit we make these data freely available for non-commercial use. 
 
