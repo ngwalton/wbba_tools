@@ -1,12 +1,29 @@
-## Function to plot WBBA chronology
+# Function to plot WBBA chronology.
 
-# Authors: N Anich and N Walton
-# Created: 16 Sept 2015
-# Last updated: 21 Oct 2015
 
 library(here)
 
 setwd(here::here("data"))
+
+
+# output pdf file -- rename as needed
+out_pdf <- "chonology_plot.pdf"
+
+# load data ----
+
+# ebird data
+ebird <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
+
+# remove hybrid, spuh, and slash taxonomic categories (optional)
+taxa <- c("species", "issf", "domestic", "form")
+ebird <- ebird[ebird$CATEGORY %in% taxa, ]
+
+# order by TAXONOMIC.ORDER
+ebird <- ebird[order(ebird$TAXONOMIC.ORDER), ]
+
+
+
+# chon plot function ----
 
 chronplot <- function(comname, ebird) {
   # comname is the species to plot, ebird is the WBBA data downloaded from ebird
@@ -61,40 +78,21 @@ chronplot <- function(comname, ebird) {
 }
 
 
-## examples of using the function:
+# plot species ----
 
-# read in data
-# my impression is that setting code a factor doesn't work as expected if
-# stringsAsFactors is true (defult)
-ebird <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
 
-# plot a couple species
-chronplot("Red-eyed Vireo", ebird)
+# can plot individual species like so
+# chronplot("Red-eyed Vireo", ebird)
 
-# or all species in ebird to pdf
-# remove hybrid, spuh, and slash taxonomic categories (optional)
-taxa <- c("species", "issf", "domestic", "form")
-ebird <- ebird[ebird$CATEGORY %in% taxa, ]
+# print an chonology plots for each species to a single pdf; note that this can
+# be time consuming if plotting many species
 
-# order by TAXONOMIC.ORDER
-ebird <- ebird[order(ebird$TAXONOMIC.ORDER), ]
+sp <- unique(ebird$COMMON.NAME)
 
-# uncomment this and skip the next three lines if you really want all species to
-# be printed to a single pdf - might take some time;
-# this should be in taxonmic order after ordering ebird on TAXONOMIC.ORDER
-# sp <- unique(ebird$COMMON.NAME) # or just a subset of species
-                                # e.g., 'c("Cerulean Warbler", "American Robin")'
+pdf(out_pdf)
 
-# all species will probably take a while, so subsetting to just those species
-# with more than 100 records for example;
-# table reports in alphabetical order which is why sp needs soring in with this
-# method.
-totrec <- table(ebird$COMMON.NAME)
-sp <- names(totrec[totrec > 2000])
-sp <- with(ebird, unique(COMMON.NAME[COMMON.NAME %in% sp]))  # ugly but works
-
-pdf("example.pdf")
 for (i in sp) {
   chronplot(i, ebird)
 }
-dev.off()  # close the pdf file
+
+dev.off()
