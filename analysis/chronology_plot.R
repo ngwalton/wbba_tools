@@ -24,7 +24,7 @@ ebird <- ebird[order(ebird$TAXONOMIC.ORDER), ]
 
 
 
-# chon plot function ----
+# chron plot function ----
 
 chronplot <- function(comname, ebird) {
   # comname is the common name of the species to plot, ebird is the WBBA data
@@ -94,7 +94,7 @@ chronplot <- function(comname, ebird) {
 # can plot individual species like so
 # chronplot("Red-eyed Vireo", ebird)
 
-# print a chonology plot for each species to a single pdf; note that this can
+# print a chronology plot for each species to a single pdf; note that this can
 # be time consuming if plotting many species
 sp <- unique(ebird$COMMON.NAME)
 
