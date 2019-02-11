@@ -52,17 +52,23 @@ chronplot <- function(comname, ebird) {
                   "DD", "ON", "NE", "FS", "CF", "NY", "FY", "FL", "PE", "UN",
                   "F", "")
 
+  if (! all(ebird$code %in% codelevels)) {
+    warn <- paste("Not all eBird codes (BREEDING.BIRD.ATLAS.CODE) for",
+                  comname, "are in codelevels")
+    warning(warn)
+  }
+
   # associate colors with codelevels
-  codecolors <- rainbow(24)
+  codecolors <- rainbow(length(codelevels))
   names(codecolors) <- codelevels
 
-  # used droplevels so that codes that where not observed are not plotted remove
-  # droplevels if you'd like unobserved codes to be included on the plot
+  # used droplevels so that codes that where not observed are not plotted;
+  # remove droplevels if you'd like unobserved codes to be included on the plot
   ebird$code <- droplevels(factor(ebird$code, levels = codelevels,
                                       ordered = TRUE))
 
-  boxplot (obsdate ~ code, horizontal = TRUE, cex.axis = 0.5, xaxt = "n",
-           data = ebird)
+  boxplot(obsdate ~ code, horizontal = TRUE, cex.axis = 0.5, xaxt = "n",
+          data = ebird)
 
   # set length.out to the number of date labels desired
   labels <- with(ebird, seq(min(obsdate), max(obsdate), length.out = 5))
