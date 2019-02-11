@@ -4,6 +4,9 @@
 # Created: 16 Sept 2015
 # Last updated: 21 Oct 2015
 
+library(here)
+
+setwd(here::here("data"))
 
 chronplot <- function(comname, ebird) {
   # comname is the species to plot, ebird is the WBBA data downloaded from ebird
@@ -63,11 +66,10 @@ chronplot <- function(comname, ebird) {
 # read in data
 # my impression is that setting code a factor doesn't work as expected if
 # stringsAsFactors is true (defult)
-ebird <- read.csv(file="JantoMay2015AtlasData.csv", stringsAsFactors = FALSE)
+ebird <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
 
 # plot a couple species
-chronplot("Cerulean Warbler", ebird)
-chronplot("American Robin", ebird)
+chronplot("Red-eyed Vireo", ebird)
 
 # or all species in ebird to pdf
 # remove hybrid, spuh, and slash taxonomic categories (optional)
