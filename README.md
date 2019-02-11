@@ -33,7 +33,7 @@ dates_file <- "acceptable_dates.csv"
 codes_file <- "species_usable_codes.csv"
 ````
 
-## 2. chron Breeding Chronology Plot
+## 2. chronology_plot Breeding Chronology Plot
 
 ![chronexample](https://github.com/ngwalton/wbba_tools/blob/master/chronexample.PNG)
 
