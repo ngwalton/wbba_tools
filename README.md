@@ -28,7 +28,7 @@ The primary places you’ll need to edit the data_validation.R code to customize
 out_file <- "out.csv"
 
 # Modify each of these file names as needed
-ebird_file <- "wbba2018.csv"
+ebird_file <- "eBirdDataSampleWIAtlasII.txt"
 dates_file <- "acceptable_dates.csv"
 codes_file <- "species_usable_codes.csv"
 ````
