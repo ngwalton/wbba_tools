@@ -1,4 +1,4 @@
-# Function to plot WBBA chronology.
+# Function to save chronology plot for each species an eBrid dataset.
 
 
 library(here)
