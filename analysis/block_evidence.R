@@ -41,7 +41,7 @@ block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 cnty <- readOGR("county", "County_Boundaries_24K")
 
 # sample WBBA data from ebrid
-sp_in <- read.csv("wbba2018.csv", as.is = TRUE)
+sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
 
 
 # data prep ----
@@ -187,6 +187,6 @@ if (print_map) {
   dev.off()
 }
 
-# write to disc as a shapefile ---
+# write to disc as a shapefile ----
 
-writeOGR(block_out, ".", "out_shp", driver = "ESRI Shapefile")
+writeOGR(block_out, ".", out_shp, driver = "ESRI Shapefile")
