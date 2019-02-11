@@ -67,8 +67,9 @@ chronplot <- function(comname, ebird) {
   ebird$code <- droplevels(factor(ebird$code, levels = codelevels,
                                       ordered = TRUE))
 
+  # plot "empty" box plot
   boxplot(obsdate ~ code, horizontal = TRUE, cex.axis = 0.5, xaxt = "n",
-          data = ebird)
+          data = ebird, border = "white")
 
   # set length.out to the number of date labels desired
   labels <- with(ebird, seq(min(obsdate), max(obsdate), length.out = 5))
@@ -83,6 +84,9 @@ chronplot <- function(comname, ebird) {
 
   stripchart (obsdate ~ code, data = ebird, vertical = FALSE, method = "jitter",
               pch = 16, col = col, add = TRUE)
+
+  boxplot(obsdate ~ code, horizontal = TRUE, cex.axis = 0.5, xaxt = "n",
+          data = ebird, add = TRUE)
 
   title(comname, xlab = "Date (Month/Day)", ylab = "Breeding Codes")
 }
