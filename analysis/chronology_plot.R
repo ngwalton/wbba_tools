@@ -9,6 +9,7 @@ setwd(here::here("data"))
 # output pdf file -- rename as needed
 out_pdf <- "chonology_plot.pdf"
 
+
 # load data ----
 
 # ebird data
@@ -46,8 +47,9 @@ chronplot <- function(comname, ebird) {
   # set order that box plots will be plotted
   # http://stackoverflow.com/questions/19681586/ordering-bars-in-barplot
   # this will be the order that codes are plotted in
-  codelevels <- c("H","S","S7","M","T","P","C","B","CN","NB","A", "N","DD",
-                  "ON","NE","FS","CF","NY","FY","FL","PE","UN","F","")
+  codelevels <- c("H", "S", "S7", "M", "T", "P", "C", "B", "CN", "NB", "A", "N",
+                  "DD", "ON", "NE", "FS", "CF", "NY", "FY", "FL", "PE", "UN",
+                  "F", "")
 
   # associate colors with codelevels
   codecolors <- rainbow(24)
@@ -58,23 +60,23 @@ chronplot <- function(comname, ebird) {
   ebird$code <- droplevels(factor(ebird$code, levels = codelevels,
                                       ordered = TRUE))
 
-  boxplot (obsdate~code, horizontal=TRUE, cex.axis=0.5, xaxt="n",data=ebird)
+  boxplot (obsdate~code, horizontal=TRUE, cex.axis = 0.5, xaxt = "n",data = ebird)
 
   # set length.out to the number of labels desired
   labels <- with(ebird, seq(min(obsdate), max(obsdate), length.out = 5))
 
   # or if you like labels like "Aug 23", use format "%b %d"
-  axis(1, labels, format(labels, "%m/%d"), col.axis="red")
+  axis(1, labels, format(labels, "%m/%d"), col.axis = "red")
 
   # select colors for stripchart
   # should be able to use "codecolors[levels(ebird$code)]",  but
   # that's giving an issue matching the empty string...
   col <- codecolors[names(codecolors) %in% levels(ebird$code)]
 
-  stripchart (obsdate~code, data=ebird, vertical=FALSE, method="jitter",
+  stripchart (obsdate ~ code, data = ebird, vertical = FALSE, method = "jitter",
               pch = 16, col = col, add = TRUE)
 
-  title(comname, xlab="Date (Month/Day)", ylab="Breeding Codes")
+  title(comname, xlab = "Date (Month/Day)", ylab = "Breeding Codes")
 }
 
 
@@ -84,9 +86,8 @@ chronplot <- function(comname, ebird) {
 # can plot individual species like so
 # chronplot("Red-eyed Vireo", ebird)
 
-# print an chonology plots for each species to a single pdf; note that this can
+# print a chonology plot for each species to a single pdf; note that this can
 # be time consuming if plotting many species
-
 sp <- unique(ebird$COMMON.NAME)
 
 pdf(out_pdf)
