@@ -18,12 +18,12 @@ setwd(here::here("data"))
 out_file <- "out.csv"
 
 # Modify each of these file names as needed
-ebird_file <- "wbba2018.csv"
+ebird_file <- "eBirdDataSampleWIAtlasII.txt"
 dates_file <- "acceptable_dates.csv"
 codes_file <- "species_usable_codes.csv"
 
 # Input data
-ebird <- read.csv(ebird_file, as.is = TRUE)
+ebird <- read.delim(ebird_file, as.is = TRUE)
 dates <- read.csv(dates_file, row.names = 1, as.is = TRUE)
 codes <- read.csv(codes_file, row.names = 1, as.is = TRUE)
 

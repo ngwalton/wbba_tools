@@ -43,8 +43,8 @@ alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 
 sp <- list()
-sp$ii <- read.csv("WBBA2revi.csv", as.is = TRUE)
-sp$i <- read.csv("WBBA1revi.csv", as.is = TRUE)
+sp$ii <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
+sp$i <- read.delim("eBirdDataSampleWIAtlasI.txt", as.is = TRUE)
 
 # optional county layer --  only used for map printing
 cnty <- readOGR("county", "County_Boundaries_24K")
