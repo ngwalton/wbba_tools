@@ -27,19 +27,20 @@ ebird <- ebird[order(ebird$TAXONOMIC.ORDER), ]
 # chon plot function ----
 
 chronplot <- function(comname, ebird) {
-  # comname is the species to plot, ebird is the WBBA data downloaded from ebird
-  # function assumes that column names have not been changed from ebird download
+  # comname is the common name of the species to plot, ebird is the WBBA data
+  # downloaded from ebird function assumes that column names have not been
+  # changed from ebird download
 
-  # select records for the desired species
-  # consider moving this outside the function if more complex subsetting is needed
+  # select records for the desired species; consider moving this outside the
+  # function if more complex subsetting is needed
   cols <- c("COMMON.NAME", "BREEDING.BIRD.ATLAS.CODE", "OBSERVATION.DATE")
   newnames <- c("name", "code", "obsdate")  # just because ebirds names are long
   ebird <- ebird[ebird$COMMON.NAME == comname, cols]
   names(ebird) <- newnames
 
-  # some of the codes have a space at the end
-  # and some don't - this removes the space
-  ebird$code <- gsub(" ", "", ebird$code, fixed = TRUE)
+  # some of the codes have a space at the end and some don't - this removes the
+  # space
+  ebird$code <- trimws(ebird$code)
 
   # make obsdate a date object
   ebird$obsdate <- as.Date(ebird$obsdate, "%m/%d/%Y")
@@ -55,17 +56,18 @@ chronplot <- function(comname, ebird) {
   codecolors <- rainbow(24)
   names(codecolors) <- codelevels
 
-  # used droplevels so that codes that where not observed are not plotted
-  # remove droplevels if you'd like unobserved codes to be included on the plot
+  # used droplevels so that codes that where not observed are not plotted remove
+  # droplevels if you'd like unobserved codes to be included on the plot
   ebird$code <- droplevels(factor(ebird$code, levels = codelevels,
                                       ordered = TRUE))
 
-  boxplot (obsdate~code, horizontal=TRUE, cex.axis = 0.5, xaxt = "n",data = ebird)
+  boxplot (obsdate ~ code, horizontal = TRUE, cex.axis = 0.5, xaxt = "n",
+           data = ebird)
 
-  # set length.out to the number of labels desired
+  # set length.out to the number of date labels desired
   labels <- with(ebird, seq(min(obsdate), max(obsdate), length.out = 5))
 
-  # or if you like labels like "Aug 23", use format "%b %d"
+  # if you'd like labels like "Aug 23", use format "%b %d"
   axis(1, labels, format(labels, "%m/%d"), col.axis = "red")
 
   # select colors for stripchart
