@@ -13,6 +13,7 @@ library(rgdal)    # also loads package 'sp'
 library(reshape2) # for dcast function
 library(foreign)  # for read.dbf (alpha codes come as dbf)
 library(tmap)     # only needed for map making
+library(USAboundaries) # only needed for map making
 library(here)
 
 setwd(here::here("data"))
@@ -47,7 +48,7 @@ sp$ii <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
 sp$i <- read.delim("eBirdDataSampleWIAtlasI.txt", as.is = TRUE)
 
 # optional county layer --  only used for map printing
-cnty <- readOGR("county", "County_Boundaries_24K")
+cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
 
 # data prep ----

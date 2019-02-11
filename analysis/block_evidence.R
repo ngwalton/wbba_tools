@@ -6,6 +6,7 @@ library(rgdal)
 library(reshape2)
 library(foreign)
 library(tmap) # only needed for map making
+library(USAboundaries) # only needed for map making
 library(here)
 
 setwd(here::here("data"))
@@ -38,7 +39,7 @@ alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 
 # optional county layer --  only used for map printing
-cnty <- readOGR("county", "County_Boundaries_24K")
+cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
 # sample WBBA data from ebrid
 sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
