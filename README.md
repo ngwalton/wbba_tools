@@ -1,6 +1,6 @@
 # Welcome to Wisconsin Breeding Bird Atlas Tools!
 
-Here you'll find a variety of scripts used to proof, visualize, and display eBird data. These were designed for the Wisconsin Breeding Bird Atlas and should be adaptable for other atlases using the Atlas eBird platform.
+Here you'll find a variety of scripts used to proof, visualize, and display eBird data. These were designed for the Wisconsin Breeding Bird Atlas and should work well for other atlases using the Atlas eBird platform.
 
 If you download the whole zip file, it comes with sample WI data, so you should be able to run these right out of the box to check if things are working, and then you can customize them with data and other files for your region.
 
@@ -42,6 +42,18 @@ codes_file <- "species_usable_codes.csv"
 ![chronology_plot_example.PNG](https://github.com/ngwalton/wbba_tools/blob/master/chronology_plot_example.PNG)
 
 This maps out each breeding code across the season so you can visualize when each bird species is in each phase of its breeding cycle. Points overlay box plots to help you screen for data that may be an outlier.
+
+The main thing you'll have to do is edit this line to point to your eBird data download:
+````
+# ebird data
+ebird <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
+````
+If you need to edit the breeding codes used, or you'd like to change the order in which they appear, edit this line:
+````
+codelevels <- c("H", "S", "S7", "M", "T", "P", "C", "B", "CN", "NB", "A", "N",
+                  "DD", "ON", "NE", "FS", "CF", "NY", "FY", "FL", "PE", "UN",
+                  "F", "")
+````
 
 ## 3. block_evidence (Species Block Map)
 
