@@ -41,7 +41,7 @@ block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 # optional county layer --  only used for map printing
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
-# sample WBBA data from ebrid
+# sample WBBA data from ebird
 sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
 
 
