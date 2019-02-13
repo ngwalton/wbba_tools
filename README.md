@@ -1,6 +1,6 @@
 # Welcome to Wisconsin Breeding Bird Atlas Tools!
 
-Here you'll find a variety of scripts used to proof, visualize, and display eBird data. These were designed for the Wisconsin Breeding Bird Atlas and should work well for other atlases using the Atlas eBird platform.
+Here you'll find a variety of scripts used to proof, visualize, and display eBird data. These were designed for the Wisconsin Breeding Bird Atlas and should be adaptable for other atlases using the Atlas eBird platform.
 
 If you download the whole zip file, it comes with sample WI data, so you should be able to run these right out of the box to check if things are working, and then you can customize them with data and other files for your region.
 
