@@ -2,7 +2,11 @@
 
 Here you'll find a variety of scripts used to proof, visualize, and display eBird data. These were designed for the Wisconsin Breeding Bird Atlas and should work well for other atlases using the Atlas eBird platform.
 
-## 1. data_validation Data Validation Tool
+If you download the whole zip file, it comes with sample WI data, so you should be able to run these right out of the box to check if things are working, and then you can customize them with data and other files for your region.
+
+There are currently 4 different scripts.
+
+## 1. data_validation (Data Validation Tool)
 
 ![datascreening](https://github.com/ngwalton/wbba_tools/blob/master/datascreening.png)
 
@@ -33,13 +37,13 @@ dates_file <- "acceptable_dates.csv"
 codes_file <- "species_usable_codes.csv"
 ````
 
-## 2. chronology_plot Breeding Chronology Plot
+## 2. chronology_plot (Breeding Chronology Plot)
 
 ![chronexample](https://github.com/ngwalton/wbba_tools/blob/master/chronexample.PNG)
 
 This maps out each breeding code across the season so you can visualize when each bird species is in each phase of its breeding cycle. Points overlay box plots to help you screen for data that may be an outlier.
 
-## 3. block_evidence Species Map
+## 3. block_evidence (Species Block Map)
 
 ![evidence_map_example.png](https://github.com/ngwalton/wbba_tools/blob/master/evidence_map_example.png)
 
@@ -73,14 +77,7 @@ And the 4th file is your eBird data download.
 # sample WBBA data from ebird
 sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
 ````
-
-
-
-
-
-
-
-## 4. wbba_sp_change Change Map
+## 4. wbba_sp_change (Change Map)
 
 ![change_map_example.png](https://github.com/ngwalton/wbba_tools/blob/master/change_map_example.png)
 
