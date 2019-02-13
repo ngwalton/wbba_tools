@@ -43,7 +43,42 @@ This maps out each breeding code across the season so you can visualize when eac
 
 ![evidence_map_example.png](https://github.com/ngwalton/wbba_tools/blob/master/evidence_map_example.png)
 
-This takes the raw eBird data and summarizes it into a single status for each block (Observed, Possible, Probable, Confirmed) making it easy to produce standard atlas block maps much like the live version available in Atlas eBird. Note that this particular example image was produced in ArcMap after the shapefile was output from block_evidence, but the script provides an option to print to pdf (or any other format).
+This takes the raw eBird data and summarizes it into a single status for each block (Observed, Possible, Probable, Confirmed) making it easy to produce standard atlas block maps much like the live version available in Atlas eBird. This script outputs a pdf file with maps like the image above, and also a shapefile with the highest breeding category shown for each species for each block.
+
+The main areas you'll need to edit to customize it to your region are all at the top of the code. 
+
+The first file is the list of 4-letter codes (which is current as of 2018, but may need updating in the future). 
+````
+# load data ----
+
+# birdpop alpha codes;
+# common names are in "COMMONNAME", and 4-letter alpha codes are in "SPEC"
+# source: http://www.birdpop.org/pages/birdSpeciesCodes.php
+alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
+````
+The second file is a block shapefile for your region. 
+````
+# block shapefile; arguments for readOGR are input format dependent -- with a
+# shapefile, the first argument is the directory containing the shp, and the
+# second argument is the name of the shapefile without the extension
+block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
+````
+The third file is the state ouline with counties, drawing from the USAboundaries package. If you are within the US, you probably will only have to fill in your state abbreviation here. 
+````
+# optional county layer --  only used for map printing
+cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
+````
+And the 4th file is your eBird data download. 
+````
+# sample WBBA data from ebird
+sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
+````
+
+
+
+
+
+
 
 ## 4. wbba_sp_change Change Map
 
