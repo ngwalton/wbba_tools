@@ -2,7 +2,7 @@
 
 Here you'll find a variety of scripts used to proof, visualize, and display eBird data. These were designed for the Wisconsin Breeding Bird Atlas and should work well for other atlases using the Atlas eBird platform.
 
-## 1. data_validation Data Validation tool
+## 1. data_validation Data Validation Tool
 
 ![datascreening](https://github.com/ngwalton/wbba_tools/blob/master/datascreening.png)
 
