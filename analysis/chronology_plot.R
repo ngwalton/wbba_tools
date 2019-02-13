@@ -1,4 +1,4 @@
-# Function to save chronology plot for each species an eBrid dataset.
+# Function to save chronology plot for each species an eBird dataset.
 
 
 library(here)
