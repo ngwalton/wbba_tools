@@ -2,15 +2,15 @@
 
 Here you'll find a variety of scripts used to proof, visualize, and display eBird data. These were designed for the Wisconsin Breeding Bird Atlas and should be adaptable for other atlases using the Atlas eBird platform.
 
-If you download the whole zip file, it comes with sample WI data, so you should be able to run these right out of the box to check if things are working, and then you can customize them with data and other files for your region.
-
+If you download the whole zip file, it comes with sample WI data, so you should be able to run these right out of the box to check if things are working, and then you can customize them with data and other files for your region. These are designed to run using eBird data downloads from the EBD, available at: https://ebird.org/data/download
+ 
 There are currently 4 different scripts.
 
 ## 1. data_validation (Data Validation Tool)
 
 ![datascreening](https://github.com/ngwalton/wbba_tools/blob/master/datascreening.png)
 
-This uses two filters, one based on allowable breeding codes, and the other based on allowable data values. The filters flag records as early or late, or using a rare code, and extract only those records into a separate spreadsheet for review.
+This script screens your data for suspect records. It uses two filters, one based on allowable breeding codes, and the other based on allowable data values. The filters flag records as early or late, or using a rare code, and extract only those records into a separate spreadsheet for review.
 
 You’ll need 3 files:
 1.	The download of the data from eBird.org.
@@ -59,7 +59,7 @@ codelevels <- c("H", "S", "S7", "M", "T", "P", "C", "B", "CN", "NB", "A", "N",
 
 ![evidence_map_example.png](https://github.com/ngwalton/wbba_tools/blob/master/evidence_map_example.png)
 
-This takes the raw eBird data and summarizes it into a single status for each block (Observed, Possible, Probable, Confirmed) making it easy to produce standard atlas block maps much like the live version available in Atlas eBird. This script outputs a pdf file with maps like the image above, and also a shapefile with the highest breeding category shown for each species for each block.
+This takes the raw eBird data and summarizes it into a single status for each block (Observed, Possible, Probable, Confirmed) making it easy to produce standard atlas block maps (much like the live version available in Atlas eBird). This script outputs a pdf file with maps like the image above, and also a shapefile with the highest breeding category shown for each species for each block.
 
 The main areas you'll need to edit to customize it to your region are all at the top of the code. 
 
@@ -93,5 +93,11 @@ sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
 
 ![change_map_example.png](https://github.com/ngwalton/wbba_tools/blob/master/change_map_example.png)
 
-This produces a block map indicating for each species whether it was found in the block during the first atlas only, second atlas only, or both atlases. Note that this particular example image was produced in ArcMap after the file was output from wbba_sp_change.
- 
+This produces a block map indicating for each species whether it was found in the block during the first atlas only, second atlas only, or both atlases. 
+
+Settings you need to know about are similar to the Species Block Map above, except you will need to input two eBird data files, one with the first atlas data, and one with the second atlas data. 
+````
+sp <- list()
+sp$ii <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
+sp$i <- read.delim("eBirdDataSampleWIAtlasI.txt", as.is = TRUE)
+```` 
