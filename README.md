@@ -41,13 +41,13 @@ This maps out each breeding code across the season so you can visualize when eac
 
 ## 3. block_evidence Species Map
 
-![tuti](https://github.com/ngwalton/wbba_tools/blob/master/tuti.png)
+![evidence_map_example.png](https://github.com/ngwalton/wbba_tools/blob/master/evidence_map_example.png)
 
 This takes the raw eBird data and summarizes it into a single status for each block (Observed, Possible, Probable, Confirmed) making it easy to produce standard atlas block maps much like the live version available in Atlas eBird. Note that this particular example image was produced in ArcMap after the shapefile was output from block_evidence, but the script provides an option to print to pdf (or any other format).
 
 ## 4. wbba_sp_change Change Map
 
-![changemapexample](https://github.com/ngwalton/wbba_tools/blob/master/changemapexample.png)
+![change_map_example.png](https://github.com/ngwalton/wbba_tools/blob/master/change_map_example.png)
 
 This produces a block map indicating for each species whether it was found in the block during the first atlas only, second atlas only, or both atlases. Note that this particular example image was produced in ArcMap after the file was output from wbba_sp_change.
  
