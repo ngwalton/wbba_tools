@@ -25,6 +25,7 @@ library(foreign)
 library(tmap) # only needed for map making
 library(USAboundaries) # only needed for map making
 library(lubridate)
+library(rvest)  # to find most up to data eBird taxonomy
 
 setwd(here::here("data"))
 
@@ -62,6 +63,21 @@ cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
 # sp_in <- read.delim("wiatlas2samplespecies3.txt", as.is = TRUE, quote = "")
 
+# get most resent eBird taxonomy -- link me need to be updated
+url <- "https://www.birds.cornell.edu/clementschecklist/download/"
+pg <- read_html(url)
+pg_urls <- html_attr(html_nodes(pg, "a"), "href")
+tax_url <- grep("eBird_Taxonomy.+\\.csv$", pg_urls, value = TRUE)
+
+if (! length(tax_url) == 1) {
+  message(paste("There is an issue with tax_link: tax_link has length", length(tax_url)))
+} else {
+  ebird_taxa <- read.csv(tax_url, as.is = TRUE)
+}
+
+if ("ï..TAXON_ORDER" %in% names(ebird_taxa)) {
+  names(ebird_taxa)[names(ebird_taxa) == "ï..TAXON_ORDER"] <- "TAXON_ORDER"
+}
 
 # data prep ----
 
@@ -86,6 +102,14 @@ if (any(is.na(sp_in$SPEC))) {
 sp_in$SPEC[sp_in$COMMON.NAME == "Helmeted Guineafowl (Domestic type)"] <- "HEGU"
 sp_in$SPEC[sp_in$COMMON.NAME == "Mallard (Domestic type)"] <- "MALL_DOM"
 sp_in <- sp_in[sp_in$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
+
+# add family from eBird taxonomy
+cols <- c("PRIMARY_COM_NAME", "FAMILY")
+sp_in <- merge(sp_in, ebird_taxa[, cols], by.x = "COMMON.NAME",
+               by.y = "PRIMARY_COM_NAME", all.x = TRUE)
+
+# order taxonomically
+sp_in <- sp_in[order(sp_in$TAXONOMIC.ORDER), ]
 
 # create a SpatialPointsDataFrame from "sp_in"
 wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
@@ -132,6 +156,11 @@ mo_quartile <- function(d) {
 sp$quartile <- vapply(seq_along(sp$DDDD), function(i) mo_quartile(sp$DDDD[i]), NA_real_)
 sp$quartile <- factor(sp$quartile, levels = 1:4, labels = paste0("q", 1:4))
 
+# sp$BREEDING.BIRD.ATLAS.CODE <- factor(sp$BREEDING.BIRD.ATLAS.CODE,
+#                                       levels = unique(sp$BREEDING.BIRD.ATLAS.CODE))
+sp$BREEDING.BIRD.ATLAS.CATEGORY[sp$BREEDING.BIRD.ATLAS.CATEGORY == ""] <- "C1"
+sp$BREEDING.BIRD.ATLAS.CATEGORY <- factor(sp$BREEDING.BIRD.ATLAS.CATEGORY,
+                                          levels = sort(unique(sp$BREEDING.BIRD.ATLAS.CATEGORY)))
 
 # print maps ----
 
@@ -154,7 +183,9 @@ if (print_map) {
   line_gray <- "#4e4e4e"
   # pal <- c("black", "#820BBB", "#BF5FFF", "#e6cef1", "#e5e5e5", "white")
   # pal <- c("#2d03ff","#d5ff03", "#03ff2d", "#ff03d5")
-  pal <- c("yellow", "green", "blue")
+  # pal <- c("#E53F00", "#00CB38", "#0089BF", "brown")
+  pal <- c("#E53F00", "#98583F", "#00CB38", "#0089BF")
+  shapes <- c(3, 4, 2, 1)
   n <- length(sp_vec)
 
   # open pdf device
@@ -190,18 +221,27 @@ if (print_map) {
 
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
+    jit <- 0.08
 
     out <-  tm_shape(cnty) +
       tm_polygons(border.col = line_gray, alpha = 0, border.alpha = 0.4,
                   legend.show = FALSE) +
       tm_shape(current) +
-      tm_dots("quartile", size = 0.1, title = "Day quartile", pal = pal,
-              jitter = 0.08) +
-      # legend.is.portrait = T) + #, legend.hist = T) +
-      tm_facets(by = "month", free.coords = FALSE, drop.empty.facets = FALSE,
+      ### shape only
+      # tm_symbols(size = 0.1, shape = "BREEDING.BIRD.ATLAS.CATEGORY",
+      #            shapes = shapes, title.shape = "Code", alpha = 0.6,
+      #            jitter = jit) +
+      ### color only
+      # tm_dots("quartile", size = 0.1, title = "Day quartile", pal = pal,
+      #         jitter = jit, alpha = 0.6, shape = 1) +
+      ### both
+      tm_symbols(size = 0.1, col = "quartile", shape = "BREEDING.BIRD.ATLAS.CATEGORY",
+                 shapes = shapes, pal = pal, title.col = "Day quartile", title.shape = "Code",
+                 jitter = jit, alpha = 0.6) +
+      tm_facets(by = "month", free.coords = FALSE, drop.empty.facets = TRUE,
                 free.scales = TRUE, nrow = 1) +
       tm_shape(fltr) +
-      tm_polygons(border.col = "#800000", alpha = 0, # border.alpha = 0.4,
+      tm_polygons(border.col = "#9CD800", alpha = 0, # border.alpha = 0.4,
                   legend.show = FALSE) +
       tm_layout(title = m_title, title.size = 1) +
       tm_legend(bg.alpha = 0, outside.position = c("left", "top"))
