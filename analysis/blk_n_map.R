@@ -123,7 +123,16 @@ sp <- sp[sp$BLOCK_STAT == "Priority Block", ]
 block_in <- block_in[block_in$BLOCK_STAT == "Priority Block", ]
 
 sp <- setDT(sp@data)
+sp <- sp[BREEDING.BIRD.ATLAS.CATEGORY %in% c("C2", "C3", "C4"), ]
 sp <- sp[, .N, by = .(COMMON.NAME, SPEC, BLOCK_ID, month)]
+
+code <- c("1", "2", "3", "4-10", ">10")
+sp$N1 <- "0"
+sp[N < 4, "N1"] <- code[sp[N < 4, N]]
+sp[N %in% 4:10, "N1"] <- code[4]
+sp[N > 10, "N1"] <- code[5]
+sp$N <- factor(sp$N1, levels = code)
+sp$N1 <- NULL
 
 # blk <- merge(block_in, sp, by = "BLOCK_ID")
 
@@ -148,7 +157,7 @@ if (print_map) {
   line_gray <- "#4e4e4e"
   # pal <- c("black", "#820BBB", "#BF5FFF", "#e6cef1", "#e5e5e5", "white")
   # pal <- c("#2d03ff","#d5ff03", "#03ff2d", "#ff03d5")
-  pal <- c("#E53F00", "#9CD800", "#00CB38", "#0089BF")
+  pal <- c("#cceeff", "#66ccff", "#0099e6", "#006699", "#002233")
   n <- length(sp_vec)
 
   # open pdf device
@@ -187,26 +196,17 @@ if (print_map) {
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
 
-    # shapes <- 1:length(levels(sp$BREEDING.BIRD.ATLAS.CODE))
-
     out <-  tm_shape(cnty) +
       tm_polygons(border.col = line_gray, alpha = 0, border.alpha = 0.4,
                   legend.show = FALSE) +
       tm_shape(current) +
-      # legend.is.portrait = T) + #, legend.hist = T) +
-      tm_polygons("N", title = "n records/month") +
+      tm_polygons("N", title = "n records/month", palette = pal) +
       tm_facets(by = "month", free.coords = FALSE,
-                free.scales = TRUE, nrow = 1, drop.NA.facets = TRUE) +
+                free.scales = TRUE, nrow = 1) +
       tm_shape(fltr) +
-      tm_polygons(border.col = "#800000", alpha = 0, # border.alpha = 0.4,
-                  legend.show = FALSE) +
+      tm_polygons(border.col = "#800000", alpha = 0, legend.show = FALSE) +
       tm_layout(title = m_title, title.size = 1) +
       tm_legend(bg.alpha = 0, outside.position = c("left", "top"))
-    # tm_legend(bg.alpha = 0,
-    #           main.title.fontface = 2, #title.fontface = 2,
-    #           main.title = m_title, main.title.size = 1,
-    #           outside = TRUE,
-    #           outside.position = "bottom")
 
     print(out)
 
