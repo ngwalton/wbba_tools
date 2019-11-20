@@ -20,12 +20,12 @@
 
 
 library(rgdal)
-library(reshape2)
 library(foreign)
-library(tmap) # only needed for map making
-library(USAboundaries) # only needed for map making
+library(tmap)
+library(USAboundaries)
 library(lubridate)
 library(rvest)  # to find most up to data eBird taxonomy
+library(RColorBrewer)
 
 setwd(here::here("data"))
 
@@ -184,7 +184,9 @@ if (print_map) {
   # pal <- c("black", "#820BBB", "#BF5FFF", "#e6cef1", "#e5e5e5", "white")
   # pal <- c("#2d03ff","#d5ff03", "#03ff2d", "#ff03d5")
   # pal <- c("#E53F00", "#00CB38", "#0089BF", "brown")
-  pal <- c("#E53F00", "#98583F", "#00CB38", "#0089BF")
+  # pal <- c("#E53F00", "#98583F", "#00CB38", "#0089BF")
+  # pal <- brewer.pal(4, "RdGy")
+  pal <- brewer.pal(4, "PuOr")
   shapes <- c(3, 4, 2, 1)
   n <- length(sp_vec)
 
@@ -232,12 +234,12 @@ if (print_map) {
       #            shapes = shapes, title.shape = "Code", alpha = 0.6,
       #            jitter = jit) +
       ### color only
-      # tm_dots("quartile", size = 0.1, title = "Day quartile", pal = pal,
-      #         jitter = jit, alpha = 0.6, shape = 1) +
+      tm_dots("quartile", size = 0.1, title = "Day quartile", pal = pal,
+              jitter = jit) +
       ### both
-      tm_symbols(size = 0.1, col = "quartile", shape = "BREEDING.BIRD.ATLAS.CATEGORY",
-                 shapes = shapes, pal = pal, title.col = "Day quartile", title.shape = "Code",
-                 jitter = jit, alpha = 0.6) +
+      # tm_symbols(size = 0.1, col = "quartile", shape = "BREEDING.BIRD.ATLAS.CATEGORY",
+      #            shapes = shapes, pal = pal, title.col = "Day quartile", title.shape = "Code",
+      #            jitter = jit, alpha = 0.6) +
       tm_facets(by = "month", free.coords = FALSE, drop.empty.facets = TRUE,
                 free.scales = TRUE, nrow = 1) +
       tm_shape(fltr) +
