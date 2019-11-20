@@ -193,12 +193,10 @@ if (print_map) {
       tm_polygons(border.col = line_gray, alpha = 0, border.alpha = 0.4,
                   legend.show = FALSE) +
       tm_shape(current) +
-      # tm_dots("quartile", size = 0.1, title = "Day quartile", pal = pal,
-      #         jitter = 0.08) +
       # legend.is.portrait = T) + #, legend.hist = T) +
-      tm_polygons("N") +
+      tm_polygons("N", title = "n records/month") +
       tm_facets(by = "month", free.coords = FALSE,
-                free.scales = TRUE, nrow = 1) +
+                free.scales = TRUE, nrow = 1, drop.NA.facets = TRUE) +
       tm_shape(fltr) +
       tm_polygons(border.col = "#800000", alpha = 0, # border.alpha = 0.4,
                   legend.show = FALSE) +
