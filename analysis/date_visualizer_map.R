@@ -240,7 +240,7 @@ if (print_map) {
       # tm_symbols(size = 0.1, col = "quartile", shape = "BREEDING.BIRD.ATLAS.CATEGORY",
       #            shapes = shapes, pal = pal, title.col = "Day quartile", title.shape = "Code",
       #            jitter = jit, alpha = 0.6) +
-      tm_facets(by = "month", free.coords = FALSE, drop.empty.facets = TRUE,
+      tm_facets(by = "month", free.coords = FALSE, drop.empty.facets = FALSE,
                 free.scales = TRUE, nrow = 1) +
       tm_shape(fltr) +
       tm_polygons(border.col = "#9CD800", alpha = 0, # border.alpha = 0.4,
