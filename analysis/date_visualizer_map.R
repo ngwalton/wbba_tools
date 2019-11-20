@@ -60,8 +60,8 @@ fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
 # sample WBBA data from ebird
-sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
-# sp_in <- read.delim("wiatlas2samplespecies3.txt", as.is = TRUE, quote = "")
+#sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
+ sp_in <- read.delim("wiatlas2samplespecies3.txt", as.is = TRUE, quote = "")
 
 # get most resent eBird taxonomy -- link me need to be updated
 url <- "https://www.birds.cornell.edu/clementschecklist/download/"
@@ -136,8 +136,8 @@ sp <- sp_nad
 sp$BREEDING.BIRD.ATLAS.CODE <- trimws(sp$BREEDING.BIRD.ATLAS.CODE)
 
 # add date columns
-sp$DDDD <- as.Date(sp$OBSERVATION.DATE, format="%m/%d/%Y")
-# sp$DDDD <- date(sp$OBSERVATION.DATE)
+#vsp$DDDD <- as.Date(sp$OBSERVATION.DATE, format="%m/%d/%Y")
+ sp$DDDD <- date(sp$OBSERVATION.DATE)
 
 #format date as julian (requires lubridate) - not sure if Julian is the way to go
 sp$juliandate <- yday(sp$DDDD)
@@ -223,7 +223,7 @@ if (print_map) {
 
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
-    jit <- 0.08
+    jit <- 0.15
 
     out <-  tm_shape(cnty) +
       tm_polygons(border.col = line_gray, alpha = 0, border.alpha = 0.4,
@@ -234,7 +234,7 @@ if (print_map) {
       #            shapes = shapes, title.shape = "Code", alpha = 0.6,
       #            jitter = jit) +
       ### color only
-      tm_dots("quartile", size = 0.1, title = "Day quartile", pal = pal,
+      tm_dots("quartile", size = 0.3, title = "Day quartile", pal = pal,
               jitter = jit) +
       ### both
       # tm_symbols(size = 0.1, col = "quartile", shape = "BREEDING.BIRD.ATLAS.CATEGORY",
