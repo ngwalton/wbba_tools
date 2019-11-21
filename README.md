@@ -119,5 +119,9 @@ Also, it can be quite helpful for eBird filter editing to import a file showing 
 fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 ````
 
+## 6. blk_n_map (Coded Records Map) (IN PROGRESS)
+
+This map shows the total number of observations that have a breeding code (excluding F) in a block during the atlas period. It features one map with the records in June and July, one map with all records, and one map shows blocks that have no coded breeding record for that species.
+
 
 
