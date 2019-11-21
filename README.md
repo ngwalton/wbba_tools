@@ -104,6 +104,8 @@ sp$i <- read.delim("eBirdDataSampleWIAtlasI.txt", as.is = TRUE)
 
 ## 5. date_visualizer_map (Quarter Month Viewer)
 
+![quartilemap_example.png](https://github.com/ngwalton/wbba_tools/blob/master/quartilemap_example.png)
+
 This produces a map for each species by month, and is color-coded to show the part of the month in which each observation occurred (dark orange q1 = first quartile of the month). Dots are jittered to allow for better viewing of clustered observations.
 
 To customize it, load in your data file here:
@@ -117,5 +119,5 @@ Also, it can be quite helpful for eBird filter editing to import a file showing 
 fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 ````
 
-![quartilemap_example.png](https://github.com/ngwalton/wbba_tools/blob/master/quartilemap_example.png)
+
 
