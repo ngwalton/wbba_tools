@@ -1,23 +1,6 @@
-# Work in progress...
-
 # Script to produce maps of species by month with to visualize the progression
 # of observations. Observations within a given month are colored to indicate
 # which quartile they were observed in.
-
-# working notes:
-# group by week
-# Jitter
-# ALFL
-# Wide page with all 12
-# try both county and filer regions
-# no blocks
-#
-# also need:
-# sim block map
-# just jun/july
-# n obs
-# func
-
 
 library(rgdal)
 library(foreign)
@@ -28,7 +11,6 @@ library(rvest)  # to find most up to data eBird taxonomy
 library(RColorBrewer)
 
 setwd(here::here("data"))
-
 
 # set to FALSE to suppress printing pdf of each species -- printing maps can be
 # time consuming
@@ -60,8 +42,8 @@ fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
 # sample WBBA data from ebird
-#sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
- sp_in <- read.delim("wiatlas2samplespecies3.txt", as.is = TRUE, quote = "")
+# sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
+ sp_in <- read.delim("ebd_US-WI_yelrai_201410_201912_relSep-2019.txt", as.is = TRUE, quote = "")
 
 # get most resent eBird taxonomy -- link me need to be updated
 url <- "https://www.birds.cornell.edu/clementschecklist/download/"
@@ -136,8 +118,8 @@ sp <- sp_nad
 sp$BREEDING.BIRD.ATLAS.CODE <- trimws(sp$BREEDING.BIRD.ATLAS.CODE)
 
 # add date columns
-#vsp$DDDD <- as.Date(sp$OBSERVATION.DATE, format="%m/%d/%Y")
- sp$DDDD <- date(sp$OBSERVATION.DATE)
+#sp$DDDD <- as.Date(sp$OBSERVATION.DATE, format="%m/%d/%Y")
+sp$DDDD <- date(sp$OBSERVATION.DATE)
 
 #format date as julian (requires lubridate) - not sure if Julian is the way to go
 sp$juliandate <- yday(sp$DDDD)
@@ -173,37 +155,33 @@ if (print_map) {
   # not_rep <- "Not reported"
   # block_map@data[is.na(block_map@data)] <- no_rep
   # block_map@data[block_map@data == ""] <- not_rep
-
+  
   # make evidence a factor and choose factor order -- used to order map legend
   sp_vec <- unique(sp$SPEC)
   # ord <- c(rev(vapply(breeding_codes, "[[", NA_character_, 2)), not_rep, no_rep)
   # block_map@data[, sp_vec] <- lapply(sp_vec, function(x)
   #   factor(block_map@data[[x]], levels = ord))
-
+  
   line_gray <- "#4e4e4e"
-  # pal <- c("black", "#820BBB", "#BF5FFF", "#e6cef1", "#e5e5e5", "white")
-  # pal <- c("#2d03ff","#d5ff03", "#03ff2d", "#ff03d5")
-  # pal <- c("#E53F00", "#00CB38", "#0089BF", "brown")
-  # pal <- c("#E53F00", "#98583F", "#00CB38", "#0089BF")
   # pal <- brewer.pal(4, "RdGy")
   pal <- brewer.pal(4, "PuOr")
   shapes <- c(3, 4, 2, 1)
   n <- length(sp_vec)
-
+  
   # open pdf device
   n_plots <- 12
   width = 7 * n_plots
   height = 7
   pdf(out_pdf, width = width, height = height)
-
+  
   for (i in seq_along(sp_vec)) {
     # if (i == 1) {
     #   message(paste("Printing", n, "maps"))
     #   t0 <- Sys.time()
     # }
-
+    
     species <- sp_vec[i]
-
+    
     # current <- sp[sp$SPEC == species & month(sp$DDDD) == mo, ]
     # if (nrow(current) == 0) {
     #   next
@@ -217,16 +195,16 @@ if (print_map) {
     #               legend.show = FALSE) +
     #   tm_legend(title = species, position = c("left", "bottom"), bg.alpha = 0,
     #             main.title.fontface = 2, title.fontface = 2)
-
+    
     # out <- tm_shape(block_in) +
     #   tm_polygons(title = "Evidence", border.col = "black", legend.show = FALSE) +
-
+    
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
     jit <- 0.15
-
+    
     out <-  tm_shape(cnty) +
-      tm_polygons(border.col = line_gray, alpha = 0, border.alpha = 0.4,
+      tm_polygons(border.col = line_gray, alpha = 0, lwd = 0.5, border.alpha = 0.2,
                   legend.show = FALSE) +
       tm_shape(current) +
       ### shape only
@@ -234,7 +212,7 @@ if (print_map) {
       #            shapes = shapes, title.shape = "Code", alpha = 0.6,
       #            jitter = jit) +
       ### color only
-      tm_dots("quartile", size = 0.3, title = "Day quartile", pal = pal,
+      tm_dots("quartile", size = 0.1, title = "Quarter Month", pal = pal,
               jitter = jit) +
       ### both
       # tm_symbols(size = 0.1, col = "quartile", shape = "BREEDING.BIRD.ATLAS.CATEGORY",
@@ -243,7 +221,7 @@ if (print_map) {
       tm_facets(by = "month", free.coords = FALSE, drop.empty.facets = FALSE,
                 free.scales = TRUE, nrow = 1) +
       tm_shape(fltr) +
-      tm_polygons(border.col = "#9CD800", alpha = 0, # border.alpha = 0.4,
+      tm_polygons(border.col = "#00cc44", alpha = 0, lwd = 1.25,
                   legend.show = FALSE) +
       tm_layout(title = m_title, title.size = 1) +
       tm_legend(bg.alpha = 0, outside.position = c("left", "top"))
@@ -252,9 +230,9 @@ if (print_map) {
     #           main.title = m_title, main.title.size = 1,
     #           outside = TRUE,
     #           outside.position = "bottom")
-
+    
     print(out)
-
+    
     # message(paste("Finished map", i, "of", n))
     #
     # if (i == 1) {
@@ -264,7 +242,7 @@ if (print_map) {
     #   message(paste("Estmimated time to print:", t_el, "minutes"))
     # }
   }
-
+  
   # close pdf device
   dev.off()
 }
