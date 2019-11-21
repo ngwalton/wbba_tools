@@ -101,3 +101,21 @@ sp <- list()
 sp$ii <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
 sp$i <- read.delim("eBirdDataSampleWIAtlasI.txt", as.is = TRUE)
 ```` 
+
+## 5. date_visualizer_map (Quarter Month Viewer)
+
+This produces a map for each species by month, and is color-coded to show the part of the month in which each observation occurred (dark orange q1 = first quartile of the month). Dots are jittered to allow for better viewing of clustered observations.
+
+To customize it, load in your data file here:
+````
+# sample WBBA data from ebird
+sp_in <- read.delim("ebd_US-WI_yelrai_201410_201912_relSep-2019.txt", as.is = TRUE, quote = "")
+````
+Also, it can be quite helpful for eBird filter editing to import a file showing checklist filter boundaries for your region:
+````
+# eBird filter
+fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
+````
+
+![quartilemap_example.png](https://github.com/ngwalton/wbba_tools/blob/master/quartilemap_example.png)
+
