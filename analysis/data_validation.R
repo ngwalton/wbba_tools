@@ -23,7 +23,7 @@ dates_file <- "acceptable_dates.csv"
 codes_file <- "species_usable_codes.csv"
 
 # Input data
-ebird <- read.delim(ebird_file, as.is = TRUE)
+ebird <- read.delim(ebird_file, quote = "", as.is = TRUE)
 dates <- read.csv(dates_file, row.names = 1, as.is = TRUE)
 codes <- read.csv(codes_file, row.names = 1, as.is = TRUE)
 
@@ -39,6 +39,8 @@ date_cols <- grep("\\.date$", names(dates), value = TRUE)
 
 # Shouldn't need to modify anything past this point
 
+# remove empty last column from eBird data
+ebird[, "X"] <- NULL
 
 # Subset ebird to those species listed in codes
 missing <- setdiff(ebird[, ename], rownames(codes))
@@ -64,15 +66,14 @@ codes[, "F"] <- as.integer(1)
 # The following 3 lines should return FALSE
 any(is.na(dates))
 any(is.na(codes))
-any(is.na(ebird[, c(ename, ecode, edate)]))  # there are NAs in ecode
+any(is.na(ebird[, c(ename, ecode, edate)]))
 
 # Function to check date format:
 # Returns TRUE if all values in x are formatted as, e.g., "10/9/2016"
 check_date_format <- function(x) all(grepl("\\d{1,2}/\\d{1,2}/\\d{4}", x))
 
 # Check that dates are all formatted the same
-# The following 2 lines should both return TRUE
-check_date_format(ebird[edate])
+# The following line should both return TRUE
 all(vapply(dates[, date_cols], check_date_format, TRUE))
 
 
@@ -83,11 +84,11 @@ all(vapply(dates[, date_cols], check_date_format, TRUE))
 dates[, date_cols] <- lapply(dates[, date_cols],
                              function(x) as.Date(x, "%m/%d/%Y"))
 
-ebird[, edate] <- as.Date(ebird[, edate], "%m/%d/%Y")
+ebird[, edate] <- as.Date(ebird[, edate], "%Y-%m-%d")
 
 
 # Remove space from code ----
-ebird[, ecode] <- gsub(" ", "", ebird[, ecode])
+ebird[, ecode] <- trimws(ebird[, ecode])
 
 
 # remove observed and flyover ----

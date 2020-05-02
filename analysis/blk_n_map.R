@@ -52,8 +52,7 @@ fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
 # sample WBBA data from ebird
-sp_in <- read.delim("ebird_data_sample_wbbaii.txt", as.is = TRUE)
-# sp_in <- read.delim("wiatlas2samplespecies3.txt", as.is = TRUE, quote = "")
+sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
 
 # data prep ----
@@ -85,8 +84,9 @@ sp_in <- sp_in[order(sp_in$TAXONOMIC.ORDER), ]
 
 # create a SpatialPointsDataFrame from "sp_in"
 wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
-sp_wgs <- SpatialPointsDataFrame(sp_in[, c("LONGITUDE", "LATITUDE")], sp_in,
-                                 coords.nrs = c(23, 22), proj4string = wgs84)
+sp_wgs <- sp_in
+coordinates(sp_wgs) <- ~ LONGITUDE + LATITUDE
+proj4string(sp_wgs) <- wgs84
 
 # transform projection to match blocks
 nad83 <- CRS(proj4string(block_in))  # use NAD83 from block_in
@@ -109,8 +109,8 @@ sp <-sp_nad
 sp$BREEDING.BIRD.ATLAS.CODE <- trimws(sp$BREEDING.BIRD.ATLAS.CODE)
 
 # add date columns
-sp$DDDD <- as.Date(sp$OBSERVATION.DATE, format="%m/%d/%Y")
-# sp$DDDD <- date(sp$OBSERVATION.DATE)
+# sp$DDDD <- as.Date(sp$OBSERVATION.DATE, format="%m/%d/%Y")
+sp$DDDD <- date(sp$OBSERVATION.DATE)
 
 sp$month <- month(sp$DDDD)
 month_levels <- unique(data.frame(num = sp$month, lab = month.name[sp$month]))

@@ -13,7 +13,7 @@ out_pdf <- "chonology_plot.pdf"
 # load data ----
 
 # ebird data
-ebird <- read.delim("ebird_data_sample_wbbaii.txt", as.is = TRUE)
+ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
 # remove hybrid, spuh, and slash taxonomic categories (optional)
 taxa <- c("species", "issf", "domestic", "form")
@@ -43,7 +43,7 @@ chronplot <- function(comname, ebird) {
   ebird$code <- trimws(ebird$code)
 
   # make obsdate a date object
-  ebird$obsdate <- as.Date(ebird$obsdate, "%m/%d/%Y")
+  ebird$obsdate <- as.Date(ebird$obsdate, "%Y-%m-%d")
 
   # set order that box plots will be plotted
   # http://stackoverflow.com/questions/19681586/ordering-bars-in-barplot

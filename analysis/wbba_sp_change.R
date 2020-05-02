@@ -44,8 +44,8 @@ alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 
 sp <- list()
-sp$ii <- read.delim("ebird_data_sample_wbbaii.txt", as.is = TRUE)
-sp$i <- read.delim("ebird_data_sample_wbbai.txt", as.is = TRUE)
+sp$ii <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
+sp$i <- read.delim("ebird_data_sample_wbbai.txt", quote = "", as.is = TRUE)
 
 # optional county layer --  only used for map printing
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
@@ -56,10 +56,6 @@ cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 # how do we want to treat domestic MALL?  currently setting to normal MALL.
 dom_mall <- sp$ii$COMMON.NAME == "Mallard (Domestic type)"
 sp$ii[dom_mall, "COMMON.NAME"] <- "Mallard"
-
-# match column names
-names(sp$i)[names(sp$i) == "COM_NAME"] <- "COMMON.NAME"
-names(sp$i)[names(sp$i) == "BBA_CODE"] <- "BREEDING.BIRD.ATLAS.CODE"
 
 # update_sp removes non-species taxa (i.e., hybrid, spuh, and slash taxonomic
 # categories), removes records with no breeding evidence (i.e., F, NA, and the
@@ -114,8 +110,8 @@ get_blks <- function(x) {
 
 sp <- lapply(sp, get_blks)
 
-vapply(sp, function(x) anyNA(x$BLOCK_ID), NA)  # should return FALSe
-sum(is.na(sp$ii$BLOCK_ID))                     # returns count of unmatched records if there were any
+vapply(sp, function(x) anyNA(x$BLOCK_ID), NA)  # should return FALSE
+sum(is.na(sp$ii$BLOCK_ID))  # returns count of unmatched records if any
 # View(sp$ii[is.na(sp$ii$BLOCK_ID), ])
 
 # Remove records outside of blocks. Hopefully there will be another solution to

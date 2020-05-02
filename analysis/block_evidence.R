@@ -42,7 +42,7 @@ block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
 # sample WBBA data from ebird
-sp_in <- read.delim("ebird_data_sample_wbbaii.txt", as.is = TRUE)
+sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
 
 # data prep ----
@@ -71,8 +71,9 @@ sp_in <- sp_in[sp_in$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
 
 # create a SpatialPointsDataFrame from "sp_in"
 wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
-sp_wgs <- SpatialPointsDataFrame(sp_in[, c("LONGITUDE", "LATITUDE")], sp_in,
-                                 coords.nrs = c(23, 22), proj4string = wgs84)
+sp_wgs <- sp_in
+coordinates(sp_wgs) <- ~ LONGITUDE + LATITUDE
+proj4string(sp_wgs) <- wgs84
 
 # transform projection to match blocks
 nad83 <- CRS(proj4string(block_in))  # use NAD83 from block_in
