@@ -42,10 +42,9 @@ fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
 # sample WBBA data from ebird
-# sp_in <- read.delim("ebird_data_sample_wbbaii.txt", as.is = TRUE)
- sp_in <- read.delim("ebd_US-WI_yelrai_201410_201912_relSep-2019.txt", as.is = TRUE, quote = "")
+sp_in <- read.delim("ebird_data_sample_wbbaii.txt", as.is = TRUE, quote = "")
 
-# get most resent eBird taxonomy -- link me need to be updated
+# get most resent eBird taxonomy -- link may need to be updated
 url <- "https://www.birds.cornell.edu/clementschecklist/download/"
 pg <- read_html(url)
 pg_urls <- html_attr(html_nodes(pg, "a"), "href")
@@ -95,8 +94,9 @@ sp_in <- sp_in[order(sp_in$TAXONOMIC.ORDER), ]
 
 # create a SpatialPointsDataFrame from "sp_in"
 wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
-sp_wgs <- SpatialPointsDataFrame(sp_in[, c("LONGITUDE", "LATITUDE")], sp_in,
-                                 coords.nrs = c(23, 22), proj4string = wgs84)
+sp_wgs <- sp_in
+coordinates(sp_wgs) <- ~ LONGITUDE + LATITUDE
+proj4string(sp_wgs) <- wgs84
 
 # transform projection to match blocks
 nad83 <- CRS(proj4string(block_in))  # use NAD83 from block_in
@@ -106,7 +106,9 @@ sp_nad <- spTransform(sp_wgs, nad83)
 # number rows as sp_nad; each row is a record from block that overlays the
 # points in sp_nad
 block_over <- over(sp_nad, block_in)
-names(block_over)[13] <- "CO_eBird"  # COUNTY is in both data frames
+
+# COUNTY is in both data frames
+names(block_over)[names(block_over) == "COUNTY"] <- "CO_eBird"
 
 # ...and join them to the bird data frame
 sp_nad@data <- cbind(sp_nad@data, block_over)
@@ -135,14 +137,17 @@ mo_quartile <- function(d) {
   out <- findInterval(day(d), breaks, rightmost.closed = TRUE)
   out
 }
+
 sp$quartile <- vapply(seq_along(sp$DDDD), function(i) mo_quartile(sp$DDDD[i]), NA_real_)
 sp$quartile <- factor(sp$quartile, levels = 1:4, labels = paste0("q", 1:4))
 
 # sp$BREEDING.BIRD.ATLAS.CODE <- factor(sp$BREEDING.BIRD.ATLAS.CODE,
 #                                       levels = unique(sp$BREEDING.BIRD.ATLAS.CODE))
 sp$BREEDING.BIRD.ATLAS.CATEGORY[sp$BREEDING.BIRD.ATLAS.CATEGORY == ""] <- "C1"
+
+cat_levels <- unique(sp$BREEDING.BIRD.ATLAS.CATEGORY)
 sp$BREEDING.BIRD.ATLAS.CATEGORY <- factor(sp$BREEDING.BIRD.ATLAS.CATEGORY,
-                                          levels = sort(unique(sp$BREEDING.BIRD.ATLAS.CATEGORY)))
+                                          levels = sort(cat_levels))
 
 # print maps ----
 
@@ -155,33 +160,33 @@ if (print_map) {
   # not_rep <- "Not reported"
   # block_map@data[is.na(block_map@data)] <- no_rep
   # block_map@data[block_map@data == ""] <- not_rep
-  
+
   # make evidence a factor and choose factor order -- used to order map legend
   sp_vec <- unique(sp$SPEC)
   # ord <- c(rev(vapply(breeding_codes, "[[", NA_character_, 2)), not_rep, no_rep)
   # block_map@data[, sp_vec] <- lapply(sp_vec, function(x)
   #   factor(block_map@data[[x]], levels = ord))
-  
+
   line_gray <- "#4e4e4e"
   # pal <- brewer.pal(4, "RdGy")
   pal <- brewer.pal(4, "PuOr")
   shapes <- c(3, 4, 2, 1)
   n <- length(sp_vec)
-  
+
   # open pdf device
   n_plots <- 12
   width = 7 * n_plots
   height = 7
   pdf(out_pdf, width = width, height = height)
-  
+
   for (i in seq_along(sp_vec)) {
     # if (i == 1) {
     #   message(paste("Printing", n, "maps"))
     #   t0 <- Sys.time()
     # }
-    
+
     species <- sp_vec[i]
-    
+
     # current <- sp[sp$SPEC == species & month(sp$DDDD) == mo, ]
     # if (nrow(current) == 0) {
     #   next
@@ -195,14 +200,14 @@ if (print_map) {
     #               legend.show = FALSE) +
     #   tm_legend(title = species, position = c("left", "bottom"), bg.alpha = 0,
     #             main.title.fontface = 2, title.fontface = 2)
-    
+
     # out <- tm_shape(block_in) +
     #   tm_polygons(title = "Evidence", border.col = "black", legend.show = FALSE) +
-    
+
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
     jit <- 0.15
-    
+
     out <-  tm_shape(cnty) +
       tm_polygons(border.col = line_gray, alpha = 0, lwd = 0.5, border.alpha = 0.2,
                   legend.show = FALSE) +
@@ -230,9 +235,9 @@ if (print_map) {
     #           main.title = m_title, main.title.size = 1,
     #           outside = TRUE,
     #           outside.position = "bottom")
-    
+
     print(out)
-    
+
     # message(paste("Finished map", i, "of", n))
     #
     # if (i == 1) {
@@ -242,7 +247,7 @@ if (print_map) {
     #   message(paste("Estmimated time to print:", t_el, "minutes"))
     # }
   }
-  
+
   # close pdf device
   dev.off()
 }
