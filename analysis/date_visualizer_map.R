@@ -42,7 +42,7 @@ fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
 # sample WBBA data from ebird
-# sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
+# sp_in <- read.delim("ebird_data_sample_wbbaii.txt", as.is = TRUE)
  sp_in <- read.delim("ebd_US-WI_yelrai_201410_201912_relSep-2019.txt", as.is = TRUE, quote = "")
 
 # get most resent eBird taxonomy -- link me need to be updated

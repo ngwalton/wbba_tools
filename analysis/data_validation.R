@@ -18,7 +18,7 @@ setwd(here::here("data"))
 out_file <- "out.csv"
 
 # Modify each of these file names as needed
-ebird_file <- "eBirdDataSampleWIAtlasII.txt"
+ebird_file <- "ebird_data_sample_wbbaii.txt"
 dates_file <- "acceptable_dates.csv"
 codes_file <- "species_usable_codes.csv"
 

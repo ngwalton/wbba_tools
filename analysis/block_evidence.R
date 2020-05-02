@@ -42,7 +42,7 @@ block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
 # sample WBBA data from ebird
-sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
+sp_in <- read.delim("ebird_data_sample_wbbaii.txt", as.is = TRUE)
 
 
 # data prep ----

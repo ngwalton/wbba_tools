@@ -13,7 +13,7 @@ out_pdf <- "chonology_plot.pdf"
 # load data ----
 
 # ebird data
-ebird <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
+ebird <- read.delim("ebird_data_sample_wbbaii.txt", as.is = TRUE)
 
 # remove hybrid, spuh, and slash taxonomic categories (optional)
 taxa <- c("species", "issf", "domestic", "form")
