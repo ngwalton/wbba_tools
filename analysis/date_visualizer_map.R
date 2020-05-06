@@ -1,6 +1,8 @@
-# Script to produce maps of species by month with to visualize the progression
-# of observations. Observations within a given month are colored to indicate
-# which quartile they were observed in.
+# Script to produce maps of species by month to visualize the progression of
+# observations. Observations within a given month are colored to indicate which
+# quartile they were observed in. Note that this script will require internet
+# access to retrieve the latest eBird taxonomy.
+
 
 library(rgdal)
 library(foreign)
@@ -12,15 +14,33 @@ library(RColorBrewer)
 
 setwd(here::here("data"))
 
+
+# pdf options ----
+
+# the following should be updated as the user sees fit. to print a single output
+# pdf, set split_fam to FALSE, and max_sp to 0.
+
 # set to FALSE to suppress printing pdf of each species -- printing maps can be
 # time consuming
 print_map <- TRUE
 
+# split by family (TRUE/FALSE). if TRUE, the output pdf will be split across
+# files based on family.
+split_fam <- TRUE
+
+# max species per file (0 or a positive integer). if set to a positive
+# integer, the output pdf will be split to have no more than max_sp species. set
+# to 0 to suppress splitting by the number of species.
+max_sp <- 20
+
 
 # output files ----
 
-# name of output pdf file if printing maps
-out_pdf <- "date_visualizer.pdf"
+# base name of output pdf file if printing maps. if split_fam is TRUE, the
+# family name will be appended to the file name. if max_sp > 0, a file number
+# will be appended to the file name. the pdf extention will be appended so do
+# not include it here.
+out_pdf <- "date_visualizer"
 
 
 # load data ----
@@ -59,6 +79,72 @@ if (! length(tax_url) == 1) {
 if ("ï..TAXON_ORDER" %in% names(ebird_taxa)) {
   names(ebird_taxa)[names(ebird_taxa) == "ï..TAXON_ORDER"] <- "TAXON_ORDER"
 }
+
+
+# functions ----
+
+# function to find quartile of day within in month of given year
+mo_quartile <- function(d) {
+  breaks <- quantile(1:days_in_month(d))
+  out <- findInterval(day(d), breaks, rightmost.closed = TRUE)
+  out
+}
+
+# function to divide a vector of alpha codes (spec_vec) into a list of vectors
+# with max length max_sp
+get_groups <- function(sp_vec, max_sp) {
+  split(sp_vec, ceiling(seq_along(sp_vec) / max_sp))
+}
+
+# make a single species map
+make_map <- function(sp, species, cnty, fltr, pal, jitter = 0.15) {
+  # sp is a data.frame, potentially containing multiple species
+  # species is the species to map
+  # cnty is the county bounds spatial data
+  # fltr is the eBird filter spatial data
+  # pal is the is color palate to use when plotting observations
+  # jitter is the amount of jitter to add when plotting observations
+
+  # subset to desired species
+  current <- sp[sp$SPEC == species, ]
+
+  # title will be common name
+  m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
+
+  # line color for county bounds
+  line_gray <- "#4e4e4e"
+
+  out <-  tm_shape(cnty) +
+    tm_polygons(border.col = line_gray, alpha = 0, lwd = 0.5, border.alpha = 0.2,
+      legend.show = FALSE) +
+    tm_shape(current) +
+    ### shape only
+    # tm_symbols(size = 0.1, shape = "BREEDING.BIRD.ATLAS.CATEGORY",
+    #            shapes = shapes, title.shape = "Code", alpha = 0.6,
+    #            jitter = jitter) +
+    ### color only
+    tm_dots("quartile", size = 0.1, title = "Quarter Month", pal = pal,
+      jitter = jitter) +
+    ### both
+    # tm_symbols(size = 0.1, col = "quartile", shape = "BREEDING.BIRD.ATLAS.CATEGORY",
+    #            shapes = shapes, pal = pal, title.col = "Day quartile", title.shape = "Code",
+    #            jitter = jitter, alpha = 0.6) +
+    tm_facets(by = "month", free.coords = FALSE, drop.empty.facets = FALSE,
+      free.scales = TRUE, nrow = 1) +
+    tm_shape(fltr) +
+    tm_polygons(border.col = "#00cc44", alpha = 0, lwd = 1.25,
+      legend.show = FALSE) +
+    tm_layout(title = m_title, title.size = 1) +
+    tm_legend(bg.alpha = 0, outside.position = c("left", "top"))
+  # tm_legend(bg.alpha = 0,
+  #           main.title.fontface = 2, #title.fontface = 2,
+  #           main.title = m_title, main.title.size = 1,
+  #           outside = TRUE,
+  #           outside.position = "bottom")
+
+  out
+}
+
 
 # data prep ----
 
@@ -120,7 +206,6 @@ sp <- sp_nad
 sp$BREEDING.BIRD.ATLAS.CODE <- trimws(sp$BREEDING.BIRD.ATLAS.CODE)
 
 # add date columns
-#sp$DDDD <- as.Date(sp$OBSERVATION.DATE, format="%m/%d/%Y")
 sp$DDDD <- date(sp$OBSERVATION.DATE)
 
 #format date as julian (requires lubridate) - not sure if Julian is the way to go
@@ -131,18 +216,9 @@ month_levels <- unique(data.frame(num = sp$month, lab = month.name[sp$month]))
 month_levels <- month_levels[order(month_levels$num), ]
 sp$month <- factor(sp$month, levels = month_levels$num, labels = month_levels$lab)
 
-# function to find quartile of day within in month of given year
-mo_quartile <- function(d) {
-  breaks <- quantile(1:days_in_month(d))
-  out <- findInterval(day(d), breaks, rightmost.closed = TRUE)
-  out
-}
-
 sp$quartile <- vapply(seq_along(sp$DDDD), function(i) mo_quartile(sp$DDDD[i]), NA_real_)
 sp$quartile <- factor(sp$quartile, levels = 1:4, labels = paste0("q", 1:4))
 
-# sp$BREEDING.BIRD.ATLAS.CODE <- factor(sp$BREEDING.BIRD.ATLAS.CODE,
-#                                       levels = unique(sp$BREEDING.BIRD.ATLAS.CODE))
 sp$BREEDING.BIRD.ATLAS.CATEGORY[sp$BREEDING.BIRD.ATLAS.CATEGORY == ""] <- "C1"
 
 cat_levels <- unique(sp$BREEDING.BIRD.ATLAS.CATEGORY)
@@ -155,99 +231,80 @@ sp$BREEDING.BIRD.ATLAS.CATEGORY <- factor(sp$BREEDING.BIRD.ATLAS.CATEGORY,
 # time consuming
 
 if (print_map) {
-  # block_map <- block_out
-  # no_rep <- "No checklists"
-  # not_rep <- "Not reported"
-  # block_map@data[is.na(block_map@data)] <- no_rep
-  # block_map@data[block_map@data == ""] <- not_rep
 
-  # make evidence a factor and choose factor order -- used to order map legend
-  sp_vec <- unique(sp$SPEC)
-  # ord <- c(rev(vapply(breeding_codes, "[[", NA_character_, 2)), not_rep, no_rep)
-  # block_map@data[, sp_vec] <- lapply(sp_vec, function(x)
-  #   factor(block_map@data[[x]], levels = ord))
-
-  line_gray <- "#4e4e4e"
   # pal <- brewer.pal(4, "RdGy")
   pal <- brewer.pal(4, "PuOr")
-  shapes <- c(3, 4, 2, 1)
-  n <- length(sp_vec)
+  # shapes <- c(3, 4, 2, 1)
 
-  # open pdf device
+  # pdf dimentions
   n_plots <- 12
   width = 7 * n_plots
   height = 7
-  pdf(out_pdf, width = width, height = height)
 
-  for (i in seq_along(sp_vec)) {
-    # if (i == 1) {
-    #   message(paste("Printing", n, "maps"))
-    #   t0 <- Sys.time()
-    # }
+  if (split_fam) {
+    fam_vec <- unique(sp$FAMILY)
+    fam_vec <- vapply(fam_vec, function(x) strsplit(x, " ")[[1]][1],
+      NA_character_)
 
-    species <- sp_vec[i]
+    for (j in seq_along(fam_vec)) {
+      fam <- fam_vec[j]
+      current_fam <- sp[sp$FAMILY == names(fam), ]
+      sp_vec <- unique(current_fam$SPEC)
 
-    # current <- sp[sp$SPEC == species & month(sp$DDDD) == mo, ]
-    # if (nrow(current) == 0) {
-    #   next
-    # }
-    current <- sp[sp$SPEC == species, ]
-    # current$juliandate <- droplevels(current$juliandate)
-    # out <- tm_shape(block_map) +
-    #   tm_polygons(species, title = "Evidence", border.col = NULL, palette = pal) +
-    #   tm_shape(cnty) +
-    #   tm_polygons(border.col = line_gray, alpha = 0, border.alpha = 0.4,
-    #               legend.show = FALSE) +
-    #   tm_legend(title = species, position = c("left", "bottom"), bg.alpha = 0,
-    #             main.title.fontface = 2, title.fontface = 2)
+      if (max_sp) {  # case split by family and number of species
+        sp_groups <- get_groups(sp_vec, max_sp)
 
-    # out <- tm_shape(block_in) +
-    #   tm_polygons(title = "Evidence", border.col = "black", legend.show = FALSE) +
+        for (i in seq_along(sp_groups)) {
+          grp <- sp_groups[[i]]
+          current_pdf <- paste0(out_pdf, "_", fam, i, ".pdf")
+          pdf(current_pdf, width = width, height = height)
 
-    # m_title <- paste(species, month.name[mo], sep = ": ")
-    m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
-    jit <- 0.15
+          for (species in grp) {
+            out <- make_map(sp, species, cnty, fltr, pal)
+            print(out)
+          }
 
-    out <-  tm_shape(cnty) +
-      tm_polygons(border.col = line_gray, alpha = 0, lwd = 0.5, border.alpha = 0.2,
-                  legend.show = FALSE) +
-      tm_shape(current) +
-      ### shape only
-      # tm_symbols(size = 0.1, shape = "BREEDING.BIRD.ATLAS.CATEGORY",
-      #            shapes = shapes, title.shape = "Code", alpha = 0.6,
-      #            jitter = jit) +
-      ### color only
-      tm_dots("quartile", size = 0.1, title = "Quarter Month", pal = pal,
-              jitter = jit) +
-      ### both
-      # tm_symbols(size = 0.1, col = "quartile", shape = "BREEDING.BIRD.ATLAS.CATEGORY",
-      #            shapes = shapes, pal = pal, title.col = "Day quartile", title.shape = "Code",
-      #            jitter = jit, alpha = 0.6) +
-      tm_facets(by = "month", free.coords = FALSE, drop.empty.facets = FALSE,
-                free.scales = TRUE, nrow = 1) +
-      tm_shape(fltr) +
-      tm_polygons(border.col = "#00cc44", alpha = 0, lwd = 1.25,
-                  legend.show = FALSE) +
-      tm_layout(title = m_title, title.size = 1) +
-      tm_legend(bg.alpha = 0, outside.position = c("left", "top"))
-    # tm_legend(bg.alpha = 0,
-    #           main.title.fontface = 2, #title.fontface = 2,
-    #           main.title = m_title, main.title.size = 1,
-    #           outside = TRUE,
-    #           outside.position = "bottom")
+          dev.off()
+        }
+      } else {  # case split only by family
+        current_pdf <- paste0(out_pdf, "_", fam, ".pdf")
+        pdf(current_pdf, width = width, height = height)
 
-    print(out)
+        for (species in sp_vec) {
+          out <- make_map(sp, species, cnty, fltr, pal)
+          print(out)
+        }
 
-    # message(paste("Finished map", i, "of", n))
-    #
-    # if (i == 1) {
-    #   t1 <- Sys.time()
-    #   t_el <- t1 - t0
-    #   t_el <- round(t_el * n / 60, 1)
-    #   message(paste("Estmimated time to print:", t_el, "minutes"))
-    # }
+        dev.off()
+      }
+    }
+  } else {
+    sp_vec <- unique(sp$SPEC)
+
+    if (max_sp) {  # case split by number of species
+      sp_groups <- get_groups(sp_vec, max_sp)
+
+      for (i in seq_along(sp_groups)) {
+        grp <- sp_groups[[i]]
+        current_pdf <- paste0(out_pdf, i, ".pdf")
+        pdf(current_pdf, width = width, height = height)
+
+        for (species in grp) {
+          out <- make_map(sp, species, cnty, fltr, pal)
+          print(out)
+        }
+
+        dev.off()
+      }
+    } else {  # case all species in single file
+      pdf(paste0(out_pdf, ".pdf"), width = width, height = height)
+
+      for (species in sp_vec) {
+        out <- make_map(sp, species, cnty, fltr, pal)
+        print(out)
+      }
+
+      dev.off()
+    }
   }
-
-  # close pdf device
-  dev.off()
 }
