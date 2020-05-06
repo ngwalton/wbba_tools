@@ -4,7 +4,7 @@ Here you'll find a variety of scripts used to proof, visualize, and display eBir
 
 If you download the whole zip file, it comes with sample WI data, so you should be able to run these right out of the box to check if things are working, and then you can customize them with data and other files for your region. These are designed to run using eBird data downloads from the EBD, available at: https://ebird.org/data/download
  
-There are currently 4 different scripts.
+There are currently 6 different scripts.
 
 ## 1. data_validation (Data Validation Tool)
 
@@ -15,7 +15,7 @@ This script screens your data for suspect records. It uses two filters, one base
 You’ll need 3 files:
 1.	The download of the data from eBird.org.
 
-2.	Temporal filter element: The acceptable_dates.csv file was created from what Wisconsin is calling the Breeding Guideline Bar Chart – essentially a broader guide to “safe dates”, although Wisconsin did not employ strict safe dates. For this file you must specify a start and end date to B (thought of as “safe Breeding”) and a start and end date to E (thought of as the Either period where a species may be breeding or may be migrating). You can adjust the code to run off of B or E (it currently is only filtering to B, but if you wanted it to flag more records, you could have it flagging the E records also)
+2.	Temporal filter element: The acceptable_dates.csv file was created from what Wisconsin is calling the Breeding Guideline Bar Chart – essentially a broader guide to “safe dates”, although Wisconsin did not employ strict safe dates. For this file you must specify a start and end date to B (thought of as “safe Breeding”) and a start and end date to E (thought of as the Either period where a species may be breeding or may be migrating). You can adjust the code to run off of B or E (it currently is only filtering to B, but if you wanted it to flag more records, you could have it flagging the E records also). At the moment this runs each batch by year. You'll need to change the years on the dates to run it for a different year, but a simple find/replace in excel will do that.
 
 3.	Breeding code filter element: The species_usable_codes.csv file was created from what Wisconsin is calling the Acceptable Breeding Codes Chart. This is a grid indicating which codes are most expected for each species. A 1 indicates it is a common code for a species, a 2 indicates it is a relatively expected code for a species, a 3 indicates it is an unexpected or atypical code for a species, and a 4 indicates it is a very unexpected or impossible code for a species. As currently written, any values of 3 or 4 will be flagged.
 
