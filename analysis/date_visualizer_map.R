@@ -58,7 +58,7 @@ ebird_file <- "ebird_data_sample_wbbaii.txt"
 n_core <- detectCores() - 1
 sp <- fread(ebird_file, quote = "", nThread = n_core, check.names = TRUE)
 
-# get most resent eBird taxonomy -- link may need to be updated
+# get most recent eBird taxonomy -- link may need to be updated
 url <- "https://www.birds.cornell.edu/clementschecklist/download/"
 pg <- read_html(url)
 pg_urls <- html_attr(html_nodes(pg, "a"), "href")
@@ -153,7 +153,7 @@ month_levels <- sp[, .(lab = month.name[month]), by = month][order(month)]
 sp[, month := factor(month, levels = month_levels$month,
   labels = month_levels$lab)]
 
-# calculate quntile within month
+# calculate quartile within month
 sp[, quartile := mo_quartile(DDDD), by = DDDD]
 sp[, quartile := factor(quartile, levels = 1:4, labels = paste0("q", 1:4))]
 
