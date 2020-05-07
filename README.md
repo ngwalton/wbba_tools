@@ -108,7 +108,7 @@ sp$i <- read.delim("ebird_data_sample_wbbai.txt", quote = "", as.is = TRUE)
 
 This produces a map for each species for each month, and is color-coded to show the part of the month in which each observation occurred (dark orange q1 = first quartile of the month). Dots are jittered to allow for better viewing of clustered observations.
 
-Note: This can take a long time to run - we've found it takes about an hour to run on one year of data (650 MB) for a state. On a 4 GB file, it was a half hour before the first pdf was printed.
+Note: This can take a long time to run - we've found it takes about an hour to run on one year of data (650 MB) for a state. On a 4 GB file, it was a half hour before the first pdf was printed, and total run time approached 3 hours.
 
 To customize it, enter the name of your eBird data file within the quotes here:
 ````
