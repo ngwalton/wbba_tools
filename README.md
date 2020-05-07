@@ -10,7 +10,7 @@ There are currently 6 different scripts.
 
 ![datascreening](https://github.com/ngwalton/wbba_tools/blob/master/datascreening.png)
 
-This script screens your data for suspect records. It uses two filters, one based on allowable breeding codes, and the other based on allowable data values. The filters flag records as early or late, or using a rare code, and extract only those records into a separate spreadsheet for review.
+This script screens your data for suspect records. It uses two filters, one based on allowable breeding codes, and the other based on allowable date values. The filters flag records as early or late, or using a rare code, and extract only those records into a separate spreadsheet for review.
 
 You’ll need 3 files:
 1.	The download of the data from eBird.org.
