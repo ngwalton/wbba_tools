@@ -32,7 +32,7 @@ The primary places you’ll need to edit the data_validation.R code to customize
 out_file <- "out.csv"
 
 # Modify each of these file names as needed
-ebird_file <- "eBirdDataSampleWIAtlasII.txt"
+ebird_file <- "ebird_data_sample_wbbaii.txt"
 dates_file <- "acceptable_dates.csv"
 codes_file <- "species_usable_codes.csv"
 ````
@@ -46,7 +46,7 @@ This maps out each breeding code across the season so you can visualize when eac
 The main thing you'll have to do is edit this line to point to your eBird data download:
 ````
 # ebird data
-ebird <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
+ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 ````
 If you need to edit the breeding codes used, or you'd like to change the order in which they appear, edit this line:
 ````
@@ -87,7 +87,7 @@ cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 And the 4th file is your eBird data download. 
 ````
 # sample WBBA data from ebird
-sp_in <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
+sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 ````
 ## 4. wbba_sp_change (Change Map)
 
@@ -98,8 +98,8 @@ This produces a block map indicating for each species whether it was found in th
 Settings you need to know about are similar to the Species Block Map above, except you will need to input two eBird data files, one with the first atlas data, and one with the second atlas data. 
 ````
 sp <- list()
-sp$ii <- read.delim("eBirdDataSampleWIAtlasII.txt", as.is = TRUE)
-sp$i <- read.delim("eBirdDataSampleWIAtlasI.txt", as.is = TRUE)
+sp$ii <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
+sp$i <- read.delim("ebird_data_sample_wbbai.txt", quote = "", as.is = TRUE)
 ```` 
 
 ## 5. date_visualizer_map (Quarter-Month Viewer)
