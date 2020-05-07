@@ -112,29 +112,17 @@ make_map <- function(sp, species, cnty, fltr, pal, jitter = 0.15) {
     tm_polygons(border.col = line_gray, alpha = 0, lwd = 0.5, border.alpha = 0.2,
       legend.show = FALSE) +
     tm_shape(current) +
-    ### shape only
-    # tm_symbols(size = 0.1, shape = "BREEDING.BIRD.ATLAS.CATEGORY",
-    #            shapes = shapes, title.shape = "Code", alpha = 0.6,
-    #            jitter = jitter) +
-    ### color only
     tm_dots("quartile", size = 0.1, title = "Quarter Month", pal = pal,
-      jitter = jitter) +
-    ### both
-    # tm_symbols(size = 0.1, col = "quartile", shape = "BREEDING.BIRD.ATLAS.CATEGORY",
-    #            shapes = shapes, pal = pal, title.col = "Day quartile", title.shape = "Code",
-    #            jitter = jitter, alpha = 0.6) +
+      jitter = jitter, legend.hist = TRUE, legend.hist.title = "Frequency") +
     tm_facets(by = "month", free.coords = FALSE, drop.empty.facets = FALSE,
-      free.scales = TRUE, nrow = 1) +
+      free.scales = FALSE, nrow = 1) +
     tm_shape(fltr) +
     tm_polygons(border.col = "#00cc44", alpha = 0, lwd = 1.25,
       legend.show = FALSE) +
-    tm_layout(title = m_title, title.size = 1) +
-    tm_legend(bg.alpha = 0, outside.position = c("left", "top"))
-  # tm_legend(bg.alpha = 0,
-  #           main.title.fontface = 2, #title.fontface = 2,
-  #           main.title = m_title, main.title.size = 1,
-  #           outside = TRUE,
-  #           outside.position = "bottom")
+    tm_layout(title = m_title, title.size = 1,
+      title.position = c("right", "top")) +
+    tm_legend(bg.alpha = 0, outside = FALSE, position = c("left", "bottom"),
+      hist.bg.alpha = 0, hist.height = 0.15, hist.width = 0.3)
 
   out
 }
