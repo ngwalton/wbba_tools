@@ -11,6 +11,8 @@ library(USAboundaries)
 library(lubridate)
 library(rvest)  # to find most up to data eBird taxonomy
 library(RColorBrewer)
+library(parallel)  # only needed for detectCores
+library(data.table)
 
 setwd(here::here("data"))
 
@@ -45,11 +47,6 @@ out_pdf <- "date_visualizer"
 
 # load data ----
 
-# block shapefile; arguments for readOGR are input format dependent -- with a
-# shapefile, the first argument is the directory containing the shp, and the
-# second argument is the name of the shapefile without the extension
-block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
-
 # eBird filter
 fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 
@@ -57,7 +54,9 @@ fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
 # sample WBBA data from ebird
-sp_in <- read.delim("ebird_data_sample_wbbaii.txt", as.is = TRUE, quote = "")
+ebird_file <- "ebird_data_sample_wbbaii.txt"
+n_core <- detectCores() - 1
+sp <- fread(ebird_file, quote = "", nThread = n_core, check.names = TRUE)
 
 # get most resent eBird taxonomy -- link may need to be updated
 url <- "https://www.birds.cornell.edu/clementschecklist/download/"
@@ -80,7 +79,7 @@ if ("ï..TAXON_ORDER" %in% names(ebird_taxa)) {
 
 # function to find quartile of day within in month of given year
 mo_quartile <- function(d) {
-  breaks <- quantile(1:days_in_month(d))
+  breaks <- quantile(seq_len(days_in_month(d)))
   out <- findInterval(day(d), breaks, rightmost.closed = TRUE)
   out
 }
@@ -145,65 +144,49 @@ make_map <- function(sp, species, cnty, fltr, pal, jitter = 0.15) {
 
 # remove hybrid, spuh, and slash taxonomic categories
 taxa <- c("species", "issf", "domestic", "form")
-sp_in <- sp_in[sp_in$CATEGORY %in% taxa, ]
+sp <- sp[CATEGORY %in% taxa]
 
 # this will need modification if other non-species need to be removed
-sp_in <- sp_in[sp_in$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
+sp <- sp[COMMON.NAME != "Domestic goose sp. (Domestic type)"]
 
 # add family from eBird taxonomy
 cols <- c("PRIMARY_COM_NAME", "FAMILY")
-sp_in <- merge(sp_in, ebird_taxa[, cols], by.x = "COMMON.NAME",
+sp <- merge(sp, ebird_taxa[, cols], by.x = "COMMON.NAME",
                by.y = "PRIMARY_COM_NAME", all.x = TRUE)
 
 # order taxonomically
-sp_in <- sp_in[order(sp_in$TAXONOMIC.ORDER), ]
-
-# create a SpatialPointsDataFrame from "sp_in"
-wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
-sp_wgs <- sp_in
-coordinates(sp_wgs) <- ~ LONGITUDE + LATITUDE
-proj4string(sp_wgs) <- wgs84
-
-# transform projection to match blocks
-nad83 <- CRS(proj4string(block_in))  # use NAD83 from block_in
-sp_nad <- spTransform(sp_wgs, nad83)
-
-# extract blocks that overlay points; returns a data frame containing the same
-# number rows as sp_nad; each row is a record from block that overlays the
-# points in sp_nad
-block_over <- over(sp_nad, block_in)
-
-# COUNTY is in both data frames
-names(block_over)[names(block_over) == "COUNTY"] <- "CO_eBird"
-
-# ...and join them to the bird data frame
-sp_nad@data <- cbind(sp_nad@data, block_over)
-
-sp <- sp_nad
-
-# some of the BREEDING.BIRD.ATLAS.CODE codes have a space at the end
-# and some don't - this removes the space
-sp$BREEDING.BIRD.ATLAS.CODE <- trimws(sp$BREEDING.BIRD.ATLAS.CODE)
+sp <- sp[order(TAXONOMIC.ORDER)]
 
 # add date columns
-sp$DDDD <- date(sp$OBSERVATION.DATE)
+sp[, DDDD := ymd(OBSERVATION.DATE)]
 
-#format date as julian (requires lubridate) - not sure if Julian is the way to go
-sp$juliandate <- yday(sp$DDDD)
-sp$juliandate <- factor(sp$juliandate, levels = sort(unique(sp$juliandate)))
-sp$month <- month(sp$DDDD)
-month_levels <- unique(data.frame(num = sp$month, lab = month.name[sp$month]))
-month_levels <- month_levels[order(month_levels$num), ]
-sp$month <- factor(sp$month, levels = month_levels$num, labels = month_levels$lab)
+sp[, month := month(DDDD)]
+month_levels <- sp[, .(lab = month.name[month]), by = month][order(month)]
+sp[, month := factor(month, levels = month_levels$month,
+  labels = month_levels$lab)]
 
-sp$quartile <- vapply(seq_along(sp$DDDD), function(i) mo_quartile(sp$DDDD[i]), NA_real_)
-sp$quartile <- factor(sp$quartile, levels = 1:4, labels = paste0("q", 1:4))
+# calculate quntile within month
+sp[, quartile := mo_quartile(DDDD), by = DDDD]
+sp[, quartile := factor(quartile, levels = 1:4, labels = paste0("q", 1:4))]
 
-sp$BREEDING.BIRD.ATLAS.CATEGORY[sp$BREEDING.BIRD.ATLAS.CATEGORY == ""] <- "C1"
+# set empty breeding evidence category to lowest level
+sp[BREEDING.BIRD.ATLAS.CATEGORY == "" , BREEDING.BIRD.ATLAS.CATEGORY := "C1"]
 
 cat_levels <- unique(sp$BREEDING.BIRD.ATLAS.CATEGORY)
-sp$BREEDING.BIRD.ATLAS.CATEGORY <- factor(sp$BREEDING.BIRD.ATLAS.CATEGORY,
-                                          levels = sort(cat_levels))
+cat_levels <- sort(cat_levels)
+sp[, BREEDING.BIRD.ATLAS.CATEGORY := factor(BREEDING.BIRD.ATLAS.CATEGORY,
+  levels = cat_levels)]
+
+
+# make spatial ----
+
+# coordinate reference system: WGS84
+wgs84 <- CRS("+init=epsg:4326")
+
+# create a SpatialPointsDataFrame from "sp" -- sp is no longer a data.table
+coordinates(sp) <- ~ LONGITUDE + LATITUDE
+proj4string(sp) <- wgs84
+
 
 # print maps ----
 
@@ -216,7 +199,7 @@ if (print_map) {
   pal <- brewer.pal(4, "PuOr")
   # shapes <- c(3, 4, 2, 1)
 
-  # pdf dimentions
+  # pdf dimensions
   n_plots <- 12
   width = 7 * n_plots
   height = 7
