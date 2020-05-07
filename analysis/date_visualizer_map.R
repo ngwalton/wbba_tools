@@ -38,17 +38,12 @@ max_sp <- 20
 
 # base name of output pdf file if printing maps. if split_fam is TRUE, the
 # family name will be appended to the file name. if max_sp > 0, a file number
-# will be appended to the file name. the pdf extention will be appended so do
+# will be appended to the file name. the pdf extension will be appended so do
 # not include it here.
 out_pdf <- "date_visualizer"
 
 
 # load data ----
-
-# birdpop alpha codes;
-# common names are in "COMMONNAME", and 4-letter alpha codes are in "SPEC"
-# source: http://www.birdpop.org/pages/birdSpeciesCodes.php
-alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 
 # block shapefile; arguments for readOGR are input format dependent -- with a
 # shapefile, the first argument is the directory containing the shp, and the
@@ -90,7 +85,7 @@ mo_quartile <- function(d) {
   out
 }
 
-# function to divide a vector of alpha codes (spec_vec) into a list of vectors
+# function to divide a vector of common names (spec_vec) into a list of vectors
 # with max length max_sp
 get_groups <- function(sp_vec, max_sp) {
   split(sp_vec, ceiling(seq_along(sp_vec) / max_sp))
@@ -106,10 +101,10 @@ make_map <- function(sp, species, cnty, fltr, pal, jitter = 0.15) {
   # jitter is the amount of jitter to add when plotting observations
 
   # subset to desired species
-  current <- sp[sp$SPEC == species, ]
+  current <- sp[sp$COMMON.NAME == species, ]
 
   # title will be common name
-  m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
+  m_title <- species
 
   # line color for county bounds
   line_gray <- "#4e4e4e"
@@ -152,22 +147,7 @@ make_map <- function(sp, species, cnty, fltr, pal, jitter = 0.15) {
 taxa <- c("species", "issf", "domestic", "form")
 sp_in <- sp_in[sp_in$CATEGORY %in% taxa, ]
 
-# add alpha codes needed later to name species columns with < 10 chars required
-# for shapefile
-sp_in <- merge(sp_in, alpha[, c("COMMONNAME", "SPEC")], by.x = "COMMON.NAME",
-               by.y = "COMMONNAME", all.x = TRUE, all.y = FALSE)
-
-# if any species were unmatched in alpha, this will print there names; this will
-# require aditional attention if any are not matched
-if (any(is.na(sp_in$SPEC))) {
-  unique(sp_in$COMMON.NAME[is.na(sp_in$SPEC)])
-}
-
-# this will need modification depending on what species were not matched; in
-# this case we provide a custom alpha code domestic Guineafowl and Mallard, and
-# remove Domestic goose sp.
-sp_in$SPEC[sp_in$COMMON.NAME == "Helmeted Guineafowl (Domestic type)"] <- "HEGU"
-sp_in$SPEC[sp_in$COMMON.NAME == "Mallard (Domestic type)"] <- "MALL_DOM"
+# this will need modification if other non-species need to be removed
 sp_in <- sp_in[sp_in$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
 
 # add family from eBird taxonomy
@@ -249,7 +229,7 @@ if (print_map) {
     for (j in seq_along(fam_vec)) {
       fam <- fam_vec[j]
       current_fam <- sp[sp$FAMILY == names(fam), ]
-      sp_vec <- unique(current_fam$SPEC)
+      sp_vec <- unique(current_fam$COMMON.NAME)
 
       if (max_sp) {  # case split by family and number of species
         sp_groups <- get_groups(sp_vec, max_sp)
@@ -279,7 +259,7 @@ if (print_map) {
       }
     }
   } else {
-    sp_vec <- unique(sp$SPEC)
+    sp_vec <- unique(sp$COMMON.NAME)
 
     if (max_sp) {  # case split by number of species
       sp_groups <- get_groups(sp_vec, max_sp)
