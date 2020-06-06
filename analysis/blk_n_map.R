@@ -115,18 +115,36 @@ sp$BREEDING.BIRD.ATLAS.CODE <- trimws(sp$BREEDING.BIRD.ATLAS.CODE)
 sp$DDDD <- ymd(sp$OBSERVATION.DATE)
 
 sp$month <- month(sp$DDDD)
-month_levels <- unique(data.frame(num = sp$month, lab = month.name[sp$month]))
-month_levels <- month_levels[order(month_levels$num), ]
-sp$month <- factor(sp$month, levels = month_levels$num, labels = month_levels$lab)
+sp$month <- month.name[sp$month]
+# month_levels <- unique(data.frame(num = sp$month, lab = month.name[sp$month]))
+# month_levels <- month_levels[order(month_levels$num), ]
+# sp$month <- factor(sp$month, levels = month_levels$num, labels = month_levels$lab)
 
-# limit to desired months
-sp <- sp[sp$month %in% mo, ]
+sp$period <- sp$month
+indx <- sp$period %in% mo
+sp$period[indx] <- "June/July"
+sp$period[! indx] <- "Year"
+sp$period <- factor(sp$period)
+
+sp <- setDT(sp@data)
+
+# limit to priority blocks
 sp <- sp[sp$BLOCK_STAT == "Priority Block", ]
 block_in <- block_in[block_in$BLOCK_STAT == "Priority Block", ]
 
-sp <- setDT(sp@data)
+# limit to C1-C4 evidence categories
 sp <- sp[BREEDING.BIRD.ATLAS.CATEGORY %in% c("C2", "C3", "C4"), ]
-sp <- sp[, .N, by = .(COMMON.NAME, SPEC, BLOCK_ID, month)]
+
+# sum accross June and July
+sp_mo <- sp[sp$month %in% mo, ]
+sp_mo <- sp_mo[, .N, by = .(COMMON.NAME, SPEC, BLOCK_ID, period)]
+
+# sum accross all months
+sp$period <- "Year"
+sp <- sp[, .N, by = .(COMMON.NAME, SPEC, BLOCK_ID, period)]
+
+# add months back to sp
+sp <- rbind(sp, sp_mo)
 
 code <- c("1", "2", "3", "4-10", ">10")
 sp$N1 <- "0"
@@ -181,7 +199,7 @@ if (print_map) {
     #   next
     # }
     current <- sp[SPEC == species, ]
-    current <- merge(block_in, current, by = "BLOCK_ID", all.x = TRUE, duplicateGeoms  = TRUE)
+    current <- merge(block_in, current, by = "BLOCK_ID", all = TRUE, duplicateGeoms  = TRUE)
     # current <- dcast(current, BLOCK_ID ~ month, fun.aggregate = unique, value.var = "N", fill = 0)
     # current$juliandate <- droplevels(current$juliandate)
     # out <- tm_shape(block_map) +
@@ -197,18 +215,19 @@ if (print_map) {
 
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
+    m_title <- c(m_title, "", "")
 
     out <-  tm_shape(cnty) +
       tm_polygons(border.col = line_gray, alpha = 0, border.alpha = 0.4,
                   legend.show = FALSE) +
       tm_shape(current) +
-      tm_polygons("N", title = "n records/month", palette = pal) +
-      tm_facets(by = "month", free.coords = FALSE,
+      tm_polygons("N", title = "n records/period", palette = pal) +
+      tm_facets(by = "period", free.coords = FALSE,
                 free.scales = TRUE, nrow = 1) +
       tm_shape(fltr) +
       tm_polygons(border.col = "#800000", alpha = 0, legend.show = FALSE) +
-      tm_layout(title = m_title, title.size = 1) +
-      tm_legend(bg.alpha = 0, outside.position = c("left", "top"))
+      tm_layout(title = m_title, title.size = 1, title.position = c("left", "bottom")) +
+      tm_legend(bg.alpha = 0)
 
     print(out)
 
