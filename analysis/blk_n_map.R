@@ -1,6 +1,6 @@
 # Work in progress...
 
-# Script to produce maps of species by month with to visualize the number of
+# Script to produce maps of species by month to visualize the number of
 # records per block.
 
 # just jun/july
@@ -96,7 +96,9 @@ sp_nad <- spTransform(sp_wgs, nad83)
 # number rows as sp_nad; each row is a record from block that overlays the
 # points in sp_nad
 block_over <- over(sp_nad, block_in)
-names(block_over)[13] <- "CO_eBird"  # COUNTY is in both data frames
+
+# COUNTY is in both data frames
+names(block_over)[names(block_over) == "COUNTY"] <- "CO_eBird"
 
 # ...and join them to the bird data frame
 sp_nad@data <- cbind(sp_nad@data, block_over)
@@ -110,7 +112,7 @@ sp$BREEDING.BIRD.ATLAS.CODE <- trimws(sp$BREEDING.BIRD.ATLAS.CODE)
 
 # add date columns
 # sp$DDDD <- as.Date(sp$OBSERVATION.DATE, format="%m/%d/%Y")
-sp$DDDD <- date(sp$OBSERVATION.DATE)
+sp$DDDD <- ymd(sp$OBSERVATION.DATE)
 
 sp$month <- month(sp$DDDD)
 month_levels <- unique(data.frame(num = sp$month, lab = month.name[sp$month]))
