@@ -45,9 +45,6 @@ alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 # second argument is the name of the shapefile without the extension
 block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 
-# eBird filter
-fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
-
 # optional county layer --  only used for map printing
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
@@ -224,8 +221,6 @@ if (print_map) {
       tm_polygons("N", title = "n records/period", palette = pal) +
       tm_facets(by = "period", free.coords = FALSE,
                 free.scales = TRUE, nrow = 1) +
-      tm_shape(fltr) +
-      tm_polygons(border.col = "#800000", alpha = 0, legend.show = FALSE) +
       tm_layout(title = m_title, title.size = 1, title.position = c("left", "bottom")) +
       tm_legend(bg.alpha = 0)
 
