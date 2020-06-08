@@ -165,10 +165,10 @@ if (print_map) {
   pdf(out_pdf, width = width, height = height)
 
   for (i in seq_along(sp_vec)) {
-    # if (i == 1) {
-    #   message(paste("Printing", n, "maps"))
-    #   t0 <- Sys.time()
-    # }
+    if (i == 1) {
+      message(paste("Printing", n, "maps"))
+      t0 <- Sys.time()
+    }
 
     species <- sp_vec[i]
 
@@ -191,14 +191,14 @@ if (print_map) {
 
     print(out)
 
-    # message(paste("Finished map", i, "of", n))
-    #
-    # if (i == 1) {
-    #   t1 <- Sys.time()
-    #   t_el <- t1 - t0
-    #   t_el <- round(t_el * n / 60, 1)
-    #   message(paste("Estmimated time to print:", t_el, "minutes"))
-    # }
+    message(paste("Finished map", i, "of", n))
+
+    if (i == 1) {
+      t1 <- Sys.time()
+      t_el <- t1 - t0
+      t_el <- round(t_el * n / 60, 1)
+      message(paste("Estmimated time to print:", t_el, "minutes"))
+    }
   }
 
   # close pdf device
