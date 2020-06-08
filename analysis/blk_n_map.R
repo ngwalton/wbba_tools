@@ -119,9 +119,9 @@ sp$month <- month.name[sp$month]
 
 sp$period <- sp$month
 indx <- sp$period %in% mo
-sp$period[indx] <- "June/July"
-sp$period[! indx] <- "Year"
-sp$period <- factor(sp$period)
+period_levels <- c("Year", "June/July", "Not June/July")
+sp$period[indx] <- period_levels[2]
+sp$period[! indx] <- period_levels[3]
 
 sp <- setDT(sp@data)
 
@@ -132,9 +132,8 @@ block_in <- block_in[block_in$BLOCK_STAT == "Priority Block", ]
 # limit to C1-C4 evidence categories
 sp <- sp[BREEDING.BIRD.ATLAS.CATEGORY %in% c("C2", "C3", "C4"), ]
 
-# sum accross June and July
-sp_mo <- sp[sp$month %in% mo, ]
-sp_mo <- sp_mo[, .N, by = .(COMMON.NAME, SPEC, BLOCK_ID, period)]
+# sum accross June/July and not June/July
+sp_mo <- sp[, .N, by = .(COMMON.NAME, SPEC, BLOCK_ID, period)]
 
 # sum accross all months
 sp$period <- "Year"
@@ -142,6 +141,9 @@ sp <- sp[, .N, by = .(COMMON.NAME, SPEC, BLOCK_ID, period)]
 
 # add months back to sp
 sp <- rbind(sp, sp_mo)
+
+# order period levels
+sp$period <- factor(sp$period, levels = period_levels)
 
 code <- c("1", "2", "3", "4-10", ">10")
 sp$N1 <- "0"
@@ -178,7 +180,7 @@ if (print_map) {
   n <- length(sp_vec)
 
   # open pdf device
-  n_plots <- 3
+  n_plots <- length(period_levels) + 1
   width = 7 * n_plots
   height = 7
   pdf(out_pdf, width = width, height = height)
@@ -212,7 +214,7 @@ if (print_map) {
 
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
-    m_title <- c(m_title, "", "")
+    m_title <- c(m_title, rep("", length(period_levels)))
 
     out <-  tm_shape(cnty) +
       tm_polygons(border.col = line_gray, alpha = 0, border.alpha = 0.4,
@@ -222,7 +224,7 @@ if (print_map) {
       tm_facets(by = "period", free.coords = FALSE,
                 free.scales = TRUE, nrow = 1) +
       tm_layout(title = m_title, title.size = 1, title.position = c("left", "bottom")) +
-      tm_legend(bg.alpha = 0)
+      tm_legend(bg.alpha = 0, position = c("right", "top"))
 
     print(out)
 
