@@ -1,11 +1,7 @@
-# Work in progress...
-
 # Script to produce maps of species by month to visualize the number of
-# records per block.
-
-# just jun/july
-# n obs
-# func
+# records per block. Results in four maps per species, one each for year,
+# June/July combined, all other months combined, and all blocks with no records
+# ("missing").
 
 
 library(rgdal)
@@ -23,7 +19,7 @@ setwd(here::here("data"))
 # time consuming
 print_map <- TRUE
 
-# months of intrest
+# months of interest -- the months will be aggregated
 mo <- c("June", "July")
 
 
@@ -64,7 +60,7 @@ sp_in <- merge(sp_in, alpha[, c("COMMONNAME", "SPEC")], by.x = "COMMON.NAME",
                by.y = "COMMONNAME", all.x = TRUE, all.y = FALSE)
 
 # if any species were unmatched in alpha, this will print there names; this will
-# require aditional attention if any are not matched
+# require additional attention if any are not matched
 if (any(is.na(sp_in$SPEC))) {
   unique(sp_in$COMMON.NAME[is.na(sp_in$SPEC)])
 }
@@ -108,14 +104,10 @@ sp <-sp_nad
 sp$BREEDING.BIRD.ATLAS.CODE <- trimws(sp$BREEDING.BIRD.ATLAS.CODE)
 
 # add date columns
-# sp$DDDD <- as.Date(sp$OBSERVATION.DATE, format="%m/%d/%Y")
 sp$DDDD <- ymd(sp$OBSERVATION.DATE)
 
 sp$month <- month(sp$DDDD)
 sp$month <- month.name[sp$month]
-# month_levels <- unique(data.frame(num = sp$month, lab = month.name[sp$month]))
-# month_levels <- month_levels[order(month_levels$num), ]
-# sp$month <- factor(sp$month, levels = month_levels$num, labels = month_levels$lab)
 
 sp$period <- sp$month
 indx <- sp$period %in% mo
@@ -132,10 +124,10 @@ block_in <- block_in[block_in$BLOCK_STAT == "Priority Block", ]
 # limit to C1-C4 evidence categories
 sp <- sp[BREEDING.BIRD.ATLAS.CATEGORY %in% c("C2", "C3", "C4"), ]
 
-# sum accross June/July and not June/July
+# sum across June/July and not June/July
 sp_mo <- sp[, .N, by = .(COMMON.NAME, SPEC, BLOCK_ID, period)]
 
-# sum accross all months
+# sum across all months
 sp$period <- "Year"
 sp <- sp[, .N, by = .(COMMON.NAME, SPEC, BLOCK_ID, period)]
 
@@ -153,29 +145,16 @@ sp[N > 10, "N1"] <- code[5]
 sp$N <- factor(sp$N1, levels = code)
 sp$N1 <- NULL
 
-# blk <- merge(block_in, sp, by = "BLOCK_ID")
 
 # print maps ----
 
-# print an evidence map for each species to a single pdf; note that this can be
+# print an n records map for each species to a single pdf; note that this can be
 # time consuming
 
 if (print_map) {
-  # block_map <- block_out
-  # no_rep <- "No checklists"
-  # not_rep <- "Not reported"
-  # block_map@data[is.na(block_map@data)] <- no_rep
-  # block_map@data[block_map@data == ""] <- not_rep
-
-  # make evidence a factor and choose factor order -- used to order map legend
   sp_vec <- unique(sp$SPEC)
-  # ord <- c(rev(vapply(breeding_codes, "[[", NA_character_, 2)), not_rep, no_rep)
-  # block_map@data[, sp_vec] <- lapply(sp_vec, function(x)
-  #   factor(block_map@data[[x]], levels = ord))
 
   line_gray <- "#4e4e4e"
-  # pal <- c("black", "#820BBB", "#BF5FFF", "#e6cef1", "#e5e5e5", "white")
-  # pal <- c("#2d03ff","#d5ff03", "#03ff2d", "#ff03d5")
   pal <- c("#cceeff", "#66ccff", "#0099e6", "#006699", "#002233")
   n <- length(sp_vec)
 
@@ -193,24 +172,8 @@ if (print_map) {
 
     species <- sp_vec[i]
 
-    # current <- sp[sp$SPEC == species & month(sp$DDDD) == mo, ]
-    # if (nrow(current) == 0) {
-    #   next
-    # }
     current <- sp[SPEC == species, ]
     current <- merge(block_in, current, by = "BLOCK_ID", all = TRUE, duplicateGeoms  = TRUE)
-    # current <- dcast(current, BLOCK_ID ~ month, fun.aggregate = unique, value.var = "N", fill = 0)
-    # current$juliandate <- droplevels(current$juliandate)
-    # out <- tm_shape(block_map) +
-    #   tm_polygons(species, title = "Evidence", border.col = NULL, palette = pal) +
-    #   tm_shape(cnty) +
-    #   tm_polygons(border.col = line_gray, alpha = 0, border.alpha = 0.4,
-    #               legend.show = FALSE) +
-    #   tm_legend(title = species, position = c("left", "bottom"), bg.alpha = 0,
-    #             main.title.fontface = 2, title.fontface = 2)
-
-    # out <- tm_shape(block_in) +
-    #   tm_polygons(title = "Evidence", border.col = "black", legend.show = FALSE) +
 
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
