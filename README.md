@@ -121,9 +121,32 @@ Also, it can be quite helpful for eBird filter editing to import a file showing 
 fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 ````
 
-## 6. blk_n_map (Coded Records Map) (IN PROGRESS)
+## 6. blk_n_map (Records Per Block Map) 
 
-This map shows the total number of observations that have a breeding code (excluding F) in a block during the atlas period. It features one map with the records in June and July, one map with all records, and one map shows blocks that have no coded breeding record for that species.
+![records_per_block_example.png](https://github.com/ngwalton/wbba_tools/blob/master/records_per_block_example.png)
+
+This map shows the total number of observations that have a breeding code (excluding F) in a block during a period. It currently shows 4 maps: 1. Year-round codes, 2. June and July codes, 3. The year excluding June and July, and 4. All blocks where the species was never coded.  
+
+It may take about an hour to run, assuming 5 years of data for a state.
+
+To customize it, enter the name of your eBird data file within the quotes here:
+````
+# sample WBBA data from ebird
+sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
+````
+
+And change the state for the county outline here:
+````
+# optional county layer --  only used for map printing
+cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
+````
+You could also adjust the months of interest here:
+````
+# months of interest -- the months will be aggregated
+mo <- c("June", "July")
+````
+
+
 
 
 
