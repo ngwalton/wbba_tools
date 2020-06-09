@@ -137,6 +137,7 @@ sp <- rbind(sp, sp_mo)
 # order period levels
 sp$period <- factor(sp$period, levels = period_levels)
 
+#old code with 5 levels, distinguishing 2 records from 3 records
 #code <- c("1", "2", "3", "4-10", ">10")
 #sp$N1 <- "0"
 #sp[N < 4, "N1"] <- code[sp[N < 4, N]]
@@ -164,9 +165,7 @@ if (print_map) {
   sp_vec <- unique(sp$SPEC)
   
   line_blue <- "#235FFF"
-  #pal <- c("#cceeff", "#66ccff", "#0099e6", "#006699", "#002233")
-  #pal <- c("#F6B8B8", "#0099e6", "#006699", "#002233")
-   pal <- c("#CA0020", "#F4A582", "#BABABA", "#404040")
+  pal <- c("#F4A582", "#CA0020",  "#6A6A6A", "black")
   n <- length(sp_vec)
   
   # open pdf device
