@@ -183,7 +183,9 @@ if (print_map) {
     factor(block_map@data[[x]], levels = 0:3, labels = labels))
 
   line_gray <- "#4e4e4e"
+  #         not det  at1    at2      both                                    
   pal <- c("white", "red", "green", "blue")
+  # pal <- c("white", "#F3EC00", "#0055F3", "#00B500") # PA style
 
   n <- length(sp_vec)
 
