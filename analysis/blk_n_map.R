@@ -183,7 +183,7 @@ if (print_map) {
       tm_polygons(border.col = line_gray, alpha = 0, border.alpha = 0.4,
                   legend.show = FALSE) +
       tm_shape(current) +
-      tm_polygons("N", title = "n records/period", palette = pal) +
+      tm_polygons("N", title = "n records/period", palette = pal, colorNA = "black") +
       tm_facets(by = "period", free.coords = FALSE,
                 free.scales = TRUE, nrow = 1) +
       tm_layout(title = m_title, title.size = 1, title.position = c("left", "bottom")) +
