@@ -152,7 +152,7 @@ if (print_map) {
   line_gray <- "#4e4e4e"
   #          conf      prob       poss      obs        not obs    not sampled
   pal <- c("black", "#820BBB", "#BF5FFF", "#e6cef1", "#e5e5e5", "white") #ebird style
-  #pal <- c("#473B00", "#A9932A", "#E5D069", "white", "white", "white") #NY style
+  #pal <- c("#473B00", "#B49518", "#E5D069", "white", "white", "white") #NY style
 
   n <- length(sp_vec)
 
