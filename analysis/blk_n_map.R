@@ -137,11 +137,20 @@ sp <- rbind(sp, sp_mo)
 # order period levels
 sp$period <- factor(sp$period, levels = period_levels)
 
-code <- c("1", "2", "3", "4-10", ">10")
+#code <- c("1", "2", "3", "4-10", ">10")
+#sp$N1 <- "0"
+#sp[N < 4, "N1"] <- code[sp[N < 4, N]]
+#sp[N %in% 4:10, "N1"] <- code[4]
+#sp[N > 10, "N1"] <- code[5]
+#sp$N <- factor(sp$N1, levels = code)
+#sp$N1 <- NULL
+
+code <- c("1", "2-3", "4-10", ">10")
 sp$N1 <- "0"
-sp[N < 4, "N1"] <- code[sp[N < 4, N]]
-sp[N %in% 4:10, "N1"] <- code[4]
-sp[N > 10, "N1"] <- code[5]
+sp[N < 2, "N1"] <- code[sp[N < 2, N]]
+sp[N %in% 2:3, "N1"] <- code[2]
+sp[N %in% 4:10, "N1"] <- code[3]
+sp[N > 10, "N1"] <- code[4]
 sp$N <- factor(sp$N1, levels = code)
 sp$N1 <- NULL
 
@@ -153,46 +162,48 @@ sp$N1 <- NULL
 
 if (print_map) {
   sp_vec <- unique(sp$SPEC)
-
-  line_orange <- "#C87D0A"
-  pal <- c("#cceeff", "#66ccff", "#0099e6", "#006699", "#002233")
+  
+  line_blue <- "#235FFF"
+  #pal <- c("#cceeff", "#66ccff", "#0099e6", "#006699", "#002233")
+  #pal <- c("#F6B8B8", "#0099e6", "#006699", "#002233")
+   pal <- c("#CA0020", "#F4A582", "#BABABA", "#404040")
   n <- length(sp_vec)
-
+  
   # open pdf device
   n_plots <- length(period_levels) + 1
   width = 7 * n_plots
   height = 7
   pdf(out_pdf, width = width, height = height)
-
+  
   for (i in seq_along(sp_vec)) {
     if (i == 1) {
       message(paste("Printing", n, "maps"))
       t0 <- Sys.time()
     }
-
+    
     species <- sp_vec[i]
-
+    
     current <- sp[SPEC == species, ]
     current <- merge(block_in, current, by = "BLOCK_ID", all = TRUE, duplicateGeoms  = TRUE)
-
+    
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
     m_title <- c(m_title, rep("", length(period_levels)))
-
+    
     out <-  tm_shape(cnty) +
-      tm_polygons(border.col = line_orange, alpha = 0, border.alpha = 0.4,
+      tm_polygons(border.col = line_blue, alpha = 0, border.alpha = 0.4,
                   legend.show = FALSE) +
       tm_shape(current) +
-      tm_polygons("N", title = "n records/period", palette = pal, colorNA = "black") +
+      tm_polygons("N", title = "n records/period", palette = pal, colorNA = "black", border.alpha = 0) +
       tm_facets(by = "period", free.coords = FALSE,
                 free.scales = TRUE, nrow = 1) +
       tm_layout(title = m_title, title.size = 1, title.position = c("left", "bottom")) +
       tm_legend(bg.alpha = 0, position = c("right", "top"))
-
+    
     print(out)
-
+    
     message(paste("Finished map", i, "of", n))
-
+    
     if (i == 1) {
       t1 <- Sys.time()
       t_el <- t1 - t0
@@ -200,7 +211,7 @@ if (print_map) {
       message(paste("Estmimated time to print:", t_el, "minutes"))
     }
   }
-
+  
   # close pdf device
   dev.off()
 }
