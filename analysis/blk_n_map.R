@@ -154,7 +154,7 @@ sp$N1 <- NULL
 if (print_map) {
   sp_vec <- unique(sp$SPEC)
 
-  line_gray <- "#4e4e4e"
+  line_orange <- "#C87D0A"
   pal <- c("#cceeff", "#66ccff", "#0099e6", "#006699", "#002233")
   n <- length(sp_vec)
 
@@ -180,7 +180,7 @@ if (print_map) {
     m_title <- c(m_title, rep("", length(period_levels)))
 
     out <-  tm_shape(cnty) +
-      tm_polygons(border.col = line_gray, alpha = 0, border.alpha = 0.4,
+      tm_polygons(border.col = line_orange, alpha = 0, border.alpha = 0.4,
                   legend.show = FALSE) +
       tm_shape(current) +
       tm_polygons("N", title = "n records/period", palette = pal, colorNA = "black") +
