@@ -72,9 +72,6 @@ sp_in$SPEC[sp_in$COMMON.NAME == "Helmeted Guineafowl (Domestic type)"] <- "HEGU"
 sp_in$SPEC[sp_in$COMMON.NAME == "Mallard (Domestic type)"] <- "MALL_DOM"
 sp_in <- sp_in[sp_in$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
 
-# order taxonomically
-sp_in <- sp_in[order(sp_in$TAXONOMIC.ORDER), ]
-
 # create a SpatialPointsDataFrame from "sp_in"
 wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
 sp_wgs <- sp_in
@@ -124,6 +121,16 @@ block_in <- block_in[block_in$BLOCK_STAT == "Priority Block", ]
 # limit to C1-C4 evidence categories
 sp <- sp[BREEDING.BIRD.ATLAS.CATEGORY %in% c("C2", "C3", "C4"), ]
 
+# remove records duplicated across shared checklists
+sp_g <- sp[GROUP.IDENTIFIER != ""]  # split records with group id set
+sp <- sp[GROUP.IDENTIFIER == ""]    # records without group id are not shared
+cols <- c("COMMON.NAME", "SUBSPECIES.COMMON.NAME", "GROUP.IDENTIFIER")
+sp_g <- sp_g[! duplicated(sp_g, by = cols)]
+sp <- rbind(sp, sp_g)
+
+# order taxonomically
+setorder(sp, TAXONOMIC.ORDER, GLOBAL.UNIQUE.IDENTIFIER)
+
 # sum across June/July and not June/July
 sp_mo <- sp[, .N, by = .(COMMON.NAME, SPEC, BLOCK_ID, period)]
 
@@ -163,32 +170,32 @@ sp$N1 <- NULL
 
 if (print_map) {
   sp_vec <- unique(sp$SPEC)
-  
+
   line_blue <- "#235FFF"
   pal <- c("#F4A582", "#CA0020",  "#6A6A6A", "black")
   n <- length(sp_vec)
-  
+
   # open pdf device
   n_plots <- length(period_levels) + 1
   width = 7 * n_plots
   height = 7
   pdf(out_pdf, width = width, height = height)
-  
+
   for (i in seq_along(sp_vec)) {
     if (i == 1) {
       message(paste("Printing", n, "maps"))
       t0 <- Sys.time()
     }
-    
+
     species <- sp_vec[i]
-    
+
     current <- sp[SPEC == species, ]
     current <- merge(block_in, current, by = "BLOCK_ID", all = TRUE, duplicateGeoms  = TRUE)
-    
+
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
     m_title <- c(m_title, rep("", length(period_levels)))
-    
+
     out <-  tm_shape(cnty) +
       tm_polygons(border.col = line_blue, alpha = 0, border.alpha = 0.4,
                   legend.show = FALSE) +
@@ -198,11 +205,11 @@ if (print_map) {
                 free.scales = TRUE, nrow = 1) +
       tm_layout(title = m_title, title.size = 1, title.position = c("left", "bottom")) +
       tm_legend(bg.alpha = 0, position = c("right", "top"))
-    
+
     print(out)
-    
+
     message(paste("Finished map", i, "of", n))
-    
+
     if (i == 1) {
       t1 <- Sys.time()
       t_el <- t1 - t0
@@ -210,7 +217,7 @@ if (print_map) {
       message(paste("Estmimated time to print:", t_el, "minutes"))
     }
   }
-  
+
   # close pdf device
   dev.off()
 }
