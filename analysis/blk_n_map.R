@@ -48,56 +48,52 @@ block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
 # sample WBBA data from ebird
-sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
+sp <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
 
 # data prep ----
 
 # remove hybrid, spuh, and slash taxonomic categories
 taxa <- c("species", "issf", "domestic", "form")
-sp_in <- sp_in[sp_in$CATEGORY %in% taxa, ]
+sp <- sp[sp$CATEGORY %in% taxa, ]
 
 # add alpha codes needed later to name species columns with < 10 chars required
 # for shapefile
-sp_in <- merge(sp_in, alpha[, c("COMMONNAME", "SPEC")], by.x = "COMMON.NAME",
+sp <- merge(sp, alpha[, c("COMMONNAME", "SPEC")], by.x = "COMMON.NAME",
                by.y = "COMMONNAME", all.x = TRUE, all.y = FALSE)
 
 # if any species were unmatched in alpha, this will print there names; this will
 # require additional attention if any are not matched
-if (any(is.na(sp_in$SPEC))) {
-  unique(sp_in$COMMON.NAME[is.na(sp_in$SPEC)])
+if (any(is.na(sp$SPEC))) {
+  unique(sp$COMMON.NAME[is.na(sp$SPEC)])
 }
 
 # this will need modification depending on what species were not matched; in
 # this case we provide a custom alpha code domestic Guineafowl and Mallard, and
 # remove Domestic goose sp.
-sp_in$SPEC[sp_in$COMMON.NAME == "Helmeted Guineafowl (Domestic type)"] <- "HEGU"
-sp_in$SPEC[sp_in$COMMON.NAME == "Mallard (Domestic type)"] <- "MALL_DOM"
-sp_in <- sp_in[sp_in$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
+sp$SPEC[sp$COMMON.NAME == "Helmeted Guineafowl (Domestic type)"] <- "HEGU"
+sp$SPEC[sp$COMMON.NAME == "Mallard (Domestic type)"] <- "MALL_DOM"
+sp <- sp[sp$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
 
-# create a SpatialPointsDataFrame from "sp_in"
+# create a SpatialPointsDataFrame from "sp"
 wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
-sp_wgs <- sp_in
-coordinates(sp_wgs) <- ~ LONGITUDE + LATITUDE
-proj4string(sp_wgs) <- wgs84
+coordinates(sp) <- ~ LONGITUDE + LATITUDE
+proj4string(sp) <- wgs84
 
 # transform projection to match blocks
 nad83 <- CRS(proj4string(block_in))  # use NAD83 from block_in
-sp_nad <- spTransform(sp_wgs, nad83)
+sp <- spTransform(sp, nad83)
 
 # extract blocks that overlay points; returns a data frame containing the same
-# number rows as sp_nad; each row is a record from block that overlays the
-# points in sp_nad
-block_over <- over(sp_nad, block_in)
+# number rows as sp; each row is a record from block that overlays the
+# points in sp
+block_over <- over(sp, block_in)
 
 # COUNTY is in both data frames
 names(block_over)[names(block_over) == "COUNTY"] <- "CO_eBird"
 
 # ...and join them to the bird data frame
-sp_nad@data <- cbind(sp_nad@data, block_over)
-
-
-sp <-sp_nad
+sp@data <- cbind(sp@data, block_over)
 
 # some of the BREEDING.BIRD.ATLAS.CODE codes have a space at the end
 # and some don't - this removes the space
