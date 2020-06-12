@@ -125,7 +125,7 @@ fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 
 ![records_per_block_example.png](https://github.com/ngwalton/wbba_tools/blob/master/records_per_block_example.png)
 
-This map shows the total number of observations that have a breeding code (excluding F) in a block during a period. It is currently set up to only display priority blocks. It shows 4 maps: 1. Year-round codes, 2. June and July codes, 3. The year excluding June and July, and 4. All blocks where the species was never coded.  
+This map shows the total number of observations that have a breeding code (excluding F) in a block during a period. It is currently set up to only display priority blocks. It shows 4 maps: 1. Year-round codes, 2. June and July codes, 3. Codes all year but excluding June and July, and 4. All blocks where the species was never coded.  
 
 It may take about an hour to run, assuming 5 years of data for a state.
 
