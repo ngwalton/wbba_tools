@@ -22,6 +22,9 @@ print_map <- TRUE
 # months of interest -- the months will be aggregated
 mo <- c("June", "July")
 
+# print only priority blocks?
+priority_only <- TRUE
+
 
 # output files ----
 
@@ -115,8 +118,10 @@ sp$period[! indx] <- period_levels[3]
 sp <- setDT(sp@data)
 
 # limit to priority blocks
-sp <- sp[sp$BLOCK_STAT == "Priority Block", ]
-block_in <- block_in[block_in$BLOCK_STAT == "Priority Block", ]
+if (priority_only) {
+  sp <- sp[sp$BLOCK_STAT == "Priority Block", ]
+  block_in <- block_in[block_in$BLOCK_STAT == "Priority Block", ]
+}
 
 # limit to C1-C4 evidence categories
 sp <- sp[BREEDING.BIRD.ATLAS.CATEGORY %in% c("C2", "C3", "C4"), ]
