@@ -34,11 +34,6 @@ out_pdf <- "block_n_map.pdf"
 
 # load data ----
 
-# birdpop alpha codes;
-# common names are in "COMMONNAME", and 4-letter alpha codes are in "SPEC"
-# source: http://www.birdpop.org/pages/birdSpeciesCodes.php
-alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
-
 # block shapefile; arguments for readOGR are input format dependent -- with a
 # shapefile, the first argument is the directory containing the shp, and the
 # second argument is the name of the shapefile without the extension
@@ -57,22 +52,6 @@ sp <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 taxa <- c("species", "issf", "domestic", "form")
 sp <- sp[sp$CATEGORY %in% taxa, ]
 
-# add alpha codes needed later to name species columns with < 10 chars required
-# for shapefile
-sp <- merge(sp, alpha[, c("COMMONNAME", "SPEC")], by.x = "COMMON.NAME",
-               by.y = "COMMONNAME", all.x = TRUE, all.y = FALSE)
-
-# if any species were unmatched in alpha, this will print there names; this will
-# require additional attention if any are not matched
-if (any(is.na(sp$SPEC))) {
-  unique(sp$COMMON.NAME[is.na(sp$SPEC)])
-}
-
-# this will need modification depending on what species were not matched; in
-# this case we provide a custom alpha code domestic Guineafowl and Mallard, and
-# remove Domestic goose sp.
-sp$SPEC[sp$COMMON.NAME == "Helmeted Guineafowl (Domestic type)"] <- "HEGU"
-sp$SPEC[sp$COMMON.NAME == "Mallard (Domestic type)"] <- "MALL_DOM"
 sp <- sp[sp$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
 
 # create a SpatialPointsDataFrame from "sp"
@@ -133,11 +112,11 @@ sp <- rbind(sp, sp_g)
 setorder(sp, TAXONOMIC.ORDER, GLOBAL.UNIQUE.IDENTIFIER)
 
 # sum across June/July and not June/July
-sp_mo <- sp[, .N, by = .(COMMON.NAME, SPEC, BLOCK_ID, period)]
+sp_mo <- sp[, .N, by = .(COMMON.NAME, BLOCK_ID, period)]
 
 # sum across all months
 sp$period <- "Year"
-sp <- sp[, .N, by = .(COMMON.NAME, SPEC, BLOCK_ID, period)]
+sp <- sp[, .N, by = .(COMMON.NAME, BLOCK_ID, period)]
 
 # add months back to sp
 sp <- rbind(sp, sp_mo)
@@ -170,7 +149,7 @@ sp$N1 <- NULL
 # time consuming
 
 if (print_map) {
-  sp_vec <- unique(sp$SPEC)
+  sp_vec <- unique(sp$COMMON.NAME)
 
   line_blue <- "#235FFF"
   pal <- c("#F4A582", "#CA0020",  "#6A6A6A", "black")
@@ -190,12 +169,11 @@ if (print_map) {
 
     species <- sp_vec[i]
 
-    current <- sp[SPEC == species, ]
+    current <- sp[COMMON.NAME == species, ]
     current <- merge(block_in, current, by = "BLOCK_ID", all = TRUE, duplicateGeoms  = TRUE)
 
     # m_title <- paste(species, month.name[mo], sep = ": ")
-    m_title <- alpha[alpha$SPEC == species, "COMMONNAME"]
-    m_title <- c(m_title, rep("", length(period_levels)))
+    m_title <- c(species, rep("", length(period_levels)))
 
     out <-  tm_shape(cnty) +
       tm_polygons(border.col = line_blue, alpha = 0, border.alpha = 0.4,
