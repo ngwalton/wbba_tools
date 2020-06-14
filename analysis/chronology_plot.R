@@ -2,6 +2,7 @@
 
 
 library(here)
+library(lubridate)
 
 setwd(here::here("data"))
 
@@ -72,10 +73,12 @@ chronplot <- function(comname, ebird) {
           data = ebird, border = "white")
 
   # set length.out to the number of date labels desired
-  labels <- with(ebird, seq(min(obsdate), max(obsdate), length.out = 5))
+  date0 <- round_date(min(ebird$obsdate), "month")
+  date1 <- round_date(max(ebird$obsdate), "month")
+  labels <- seq(from = date0, to = date1, by = "month")
 
   # if you'd like labels like "Aug 23", use format "%b %d"
-  axis(1, labels, format(labels, "%m/%d"), col.axis = "red")
+  axis(1, labels, format(labels, "%m/%d"), col.axis = "red", las = 2)
 
   # select colors for stripchart
   # should be able to use "codecolors[levels(ebird$code)]",  but
