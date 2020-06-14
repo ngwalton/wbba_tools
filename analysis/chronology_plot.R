@@ -3,6 +3,8 @@
 
 library(here)
 library(lubridate)
+library(grid)
+library(gridBase)
 
 setwd(here::here("data"))
 
@@ -73,13 +75,33 @@ chronplot <- function(comname, ebird) {
           data = ebird, border = "white", main = comname,
           xlab = "Date (Month/Day)", ylab = "Breeding Codes")
 
-  # set length.out to the number of date labels desired
   date0 <- round_date(min(ebird$obsdate), "month")
   date1 <- round_date(max(ebird$obsdate), "month")
   labels <- seq(from = date0, to = date1, by = "month")
 
   # if you'd like labels like "Aug 23", use format "%b %d"
-  axis(1, labels, format(labels, "%m/%d"), col.axis = "red", las = 2)
+  names(labels) <- format(labels, "%m/%d")
+
+  # limit labels to those within observed range
+  int <- interval(min(ebird$obsdate), max(ebird$obsdate))
+  labels <- labels[labels %within% int]
+
+  vps <- baseViewports()
+  pushViewport(vps$inner, vps$figure, vps$plot)
+
+  # label x axis; set font size in gpar(cex = relative_fontsize);
+  # grid.text is can be hard to follow but allows for arbitrary rotation of
+  # x labels
+  grid.text(names(labels), x = unit(labels, "native"), y = unit(-0.7, "lines"),
+            just = "right", rot = 65, gp = gpar(cex = 0.9))
+  popViewport(3)
+
+  # add tick marks
+  axis(1, labels, labels = FALSE)
+
+  # uncomment this to label the x axis a second time for sanity check
+  # because grid.text can be difficult to understand
+  # axis(1, labels, format(labels, "%m/%d"), col.axis = "red", las = 2)
 
   # select colors for stripchart
   # should be able to use "codecolors[levels(ebird$code)]",  but
