@@ -66,11 +66,12 @@ chronplot <- function(comname, ebird) {
   # used droplevels so that codes that where not observed are not plotted;
   # remove droplevels if you'd like unobserved codes to be included on the plot
   ebird$code <- droplevels(factor(ebird$code, levels = codelevels,
-                                      ordered = TRUE))
+                                  ordered = TRUE))
 
   # plot "empty" box plot
   boxplot(obsdate ~ code, horizontal = TRUE, cex.axis = 0.5, xaxt = "n",
-          data = ebird, border = "white")
+          data = ebird, border = "white", main = comname,
+          xlab = "Date (Month/Day)", ylab = "Breeding Codes")
 
   # set length.out to the number of date labels desired
   date0 <- round_date(min(ebird$obsdate), "month")
@@ -85,13 +86,11 @@ chronplot <- function(comname, ebird) {
   # that's giving an issue matching the empty string...
   col <- codecolors[names(codecolors) %in% levels(ebird$code)]
 
-  stripchart (obsdate ~ code, data = ebird, vertical = FALSE, method = "jitter",
-              pch = 16, col = col, add = TRUE)
+  stripchart(obsdate ~ code, data = ebird, vertical = FALSE, method = "jitter",
+             pch = 16, col = col, add = TRUE)
 
   boxplot(obsdate ~ code, horizontal = TRUE, cex.axis = 0.5, xaxt = "n",
           data = ebird, add = TRUE)
-
-  title(comname, xlab = "Date (Month/Day)", ylab = "Breeding Codes")
 }
 
 
