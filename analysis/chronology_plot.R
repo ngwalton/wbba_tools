@@ -1,16 +1,22 @@
-# Function to save chronology plot for each species an eBird dataset.
+# Function to save chronology plot for each species in an eBird dataset.
 
 
 library(here)
 library(lubridate)
 library(grid)
 library(gridBase)
+library(RColorBrewer)
 
 setwd(here::here("data"))
 
 
 # output pdf file -- rename as needed
 out_pdf <- "chonology_plot.pdf"
+
+# choose a named RColorBrewer pallet (multiple colors), or a single color (name
+# or hex); see brewer.pal.info for list and display.brewer.all() to view all
+# pallets
+pal <- "Paired"
 
 
 # load data ----
@@ -26,10 +32,9 @@ ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 ebird <- ebird[order(ebird$TAXONOMIC.ORDER), ]
 
 
-
 # chron plot function ----
 
-chronplot <- function(comname, ebird) {
+chronplot <- function(comname, ebird, pal) {
   # comname is the common name of the species to plot, ebird is the WBBA data
   # downloaded from ebird function assumes that column names have not been
   # changed from ebird download
@@ -62,7 +67,13 @@ chronplot <- function(comname, ebird) {
   }
 
   # associate colors with codelevels
-  codecolors <- rainbow(length(codelevels))
+  if (pal %in% rownames(brewer.pal.info)) {
+    n <- brewer.pal.info[pal, "maxcolors"]
+    codecolors <- colorRampPalette(brewer.pal(n, pal))(length(codelevels))
+  } else {
+    codecolors <- rep(pal, length(codelevels))
+  }
+
   names(codecolors) <- codelevels
 
   # used droplevels so that codes that where not observed are not plotted;
@@ -129,7 +140,7 @@ sp <- unique(ebird$COMMON.NAME)
 pdf(out_pdf)
 
 for (i in sp) {
-  chronplot(i, ebird)
+  chronplot(i, ebird, pal)
 }
 
 dev.off()
