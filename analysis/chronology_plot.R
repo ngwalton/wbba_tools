@@ -18,11 +18,22 @@ out_pdf <- "chonology_plot.pdf"
 # pallets
 pal <- "Paired"
 
+# evidence codes to lump -- uncomment/edit as needed
+# this is a list of named vectors where the vector name is used to place all
+# codes in the corresponding vector (e.g. 'S = c("S", "S7", "M")' replaces all
+# "S", "S7", and "M" with "S"). Note that any code that is not already in
+# variable "codelevels" in function "chronplot" (below) will need to be added
+# there.
+# lump <- list(S = c("S", "S7", "M"), O = c("", "F"))
+
 
 # load data ----
 
 # ebird data
 ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
+
+
+# data prep ----
 
 # remove hybrid, spuh, and slash taxonomic categories (optional)
 taxa <- c("species", "issf", "domestic", "form")
@@ -30,6 +41,17 @@ ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 
 # order by TAXONOMIC.ORDER
 ebird <- ebird[order(ebird$TAXONOMIC.ORDER), ]
+
+# remove white space from evidence codes
+ebird$BREEDING.BIRD.ATLAS.CODE <- trimws(ebird$BREEDING.BIRD.ATLAS.CODE)
+
+# lump evidence codes if lump has been set
+if (exists("lump")) {
+  for (i in seq_along(lump)) {
+    indx <- ebird$BREEDING.BIRD.ATLAS.CODE %in% lump[[i]]
+    ebird[indx, "BREEDING.BIRD.ATLAS.CODE"] <- names(lump)[i]
+  }
+}
 
 
 # chron plot function ----
@@ -46,10 +68,6 @@ chronplot <- function(comname, ebird, pal) {
   ebird <- ebird[ebird$COMMON.NAME == comname, cols]
   names(ebird) <- newnames
 
-  # some of the codes have a space at the end and some don't - this removes the
-  # space
-  ebird$code <- trimws(ebird$code)
-
   # make obsdate a date object
   ebird$obsdate <- as.Date(ebird$obsdate, "%Y-%m-%d")
 
@@ -58,7 +76,7 @@ chronplot <- function(comname, ebird, pal) {
   # this will be the order that codes are plotted in
   codelevels <- c("H", "S", "S7", "M", "T", "P", "C", "B", "CN", "NB", "A", "N",
                   "DD", "ON", "NE", "FS", "CF", "NY", "FY", "FL", "PE", "UN",
-                  "F", "")
+                  "F", "", "O")
 
   if (! all(ebird$code %in% codelevels)) {
     warn <- paste("Not all eBird codes (BREEDING.BIRD.ATLAS.CODE) for",
