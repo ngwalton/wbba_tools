@@ -61,10 +61,10 @@ chronplot <- function(comname, ebird, pal) {
   # downloaded from ebird function assumes that column names have not been
   # changed from ebird download
 
-  # select records for the desired species; consider moving this outside the
-  # function if more complex subsetting is needed
+
+  # rename columns because ebird names are long
   cols <- c("COMMON.NAME", "BREEDING.BIRD.ATLAS.CODE", "OBSERVATION.DATE")
-  newnames <- c("name", "code", "obsdate")  # just because ebirds names are long
+  newnames <- c("name", "code", "obsdate")
   ebird <- ebird[ebird$COMMON.NAME == comname, cols]
   names(ebird) <- newnames
 
