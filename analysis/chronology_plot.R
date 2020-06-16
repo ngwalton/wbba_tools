@@ -71,9 +71,10 @@ chronplot <- function(comname, ebird, pal) {
   # make obsdate a date object
   ebird$obsdate <- as.Date(ebird$obsdate, "%Y-%m-%d")
 
-  # set order that box plots will be plotted
+  # set order that box plots will be plotted.
   # http://stackoverflow.com/questions/19681586/ordering-bars-in-barplot
-  # this will be the order that codes are plotted in
+  # this will be the order that codes are plotted in.
+  # this vector will need updating if any new codes are introduced via "lump".
   codelevels <- c("H", "S", "S7", "M", "T", "P", "C", "B", "CN", "NB", "A", "N",
                   "DD", "ON", "NE", "FS", "CF", "NY", "FY", "FL", "PE", "UN",
                   "F", "", "O")
