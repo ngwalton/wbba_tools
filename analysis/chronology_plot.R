@@ -42,6 +42,9 @@ ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 # order by TAXONOMIC.ORDER
 ebird <- ebird[order(ebird$TAXONOMIC.ORDER), ]
 
+# put all dates within the same year -- ignores leap year
+ebird$OBSERVATION.DATE <- sub("^20\\d\\d", "2015", ebird$OBSERVATION.DATE)
+
 # remove white space from evidence codes
 ebird$BREEDING.BIRD.ATLAS.CODE <- trimws(ebird$BREEDING.BIRD.ATLAS.CODE)
 
