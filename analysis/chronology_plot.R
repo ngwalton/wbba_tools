@@ -26,6 +26,10 @@ pal <- "Paired"
 # there.
 # lump <- list(S = c("S", "S7", "M"), O = c("", "F"))
 
+# evidence codes to remove -- uncomment/edit as needed
+# this is a vector of evidence codes that will be not be plotted
+# drop <- c("PE", "UN")
+
 
 # load data ----
 
@@ -54,6 +58,11 @@ if (exists("lump")) {
     indx <- ebird$BREEDING.BIRD.ATLAS.CODE %in% lump[[i]]
     ebird[indx, "BREEDING.BIRD.ATLAS.CODE"] <- names(lump)[i]
   }
+}
+
+# remove unneeded evidence codes
+if (exists("drop")) {
+  ebird <- ebird[! ebird$BREEDING.BIRD.ATLAS.CODE %in% drop, ]
 }
 
 
