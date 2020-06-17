@@ -121,8 +121,9 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   date1 <- round_date(max(ebird$obsdate), "month")
   labels <- seq(from = date0, to = date1, by = "month")
 
-  # if you'd like labels like "Aug 23", use format "%b %d"
-  names(labels) <- format(labels, "%m/%d")
+  # use format "%m/%d" for e.g. 06/01
+  # use format "%b %d" for e.g. "Aug 23"
+  names(labels) <- format(labels, "%b %d")
 
   # limit labels to those within observed range
   int <- interval(min(ebird$obsdate), max(ebird$obsdate))
