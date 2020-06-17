@@ -68,7 +68,7 @@ if (exists("drop")) {
 
 # chron plot function ----
 
-chronplot <- function(comname, ebird, pal) {
+chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   # comname is the common name of the species to plot, ebird is the WBBA data
   # downloaded from ebird function assumes that column names have not been
   # changed from ebird download
@@ -113,8 +113,8 @@ chronplot <- function(comname, ebird, pal) {
                                   ordered = TRUE))
 
   # plot "empty" box plot
-  boxplot(obsdate ~ code, horizontal = TRUE, cex.axis = 0.5, xaxt = "n",
-          data = ebird, border = "white", main = comname,
+  boxplot(obsdate ~ code, horizontal = TRUE, cex.axis = cex.y.axis, xaxt = "n",
+          data = ebird, border = "white", main = comname, las = 2,
           xlab = "Date (Month/Day)", ylab = "Breeding Codes")
 
   date0 <- round_date(min(ebird$obsdate), "month")
@@ -135,7 +135,7 @@ chronplot <- function(comname, ebird, pal) {
   # grid.text is can be hard to follow but allows for arbitrary rotation of
   # x labels
   grid.text(names(labels), x = unit(labels, "native"), y = unit(-0.7, "lines"),
-            just = "right", rot = 65, gp = gpar(cex = 0.9))
+            just = "right", rot = 65, gp = gpar(cex = cex.x.axis))
   popViewport(3)
 
   # add tick marks
@@ -153,7 +153,7 @@ chronplot <- function(comname, ebird, pal) {
   stripchart(obsdate ~ code, data = ebird, vertical = FALSE, method = "jitter",
              pch = 16, col = col, add = TRUE)
 
-  boxplot(obsdate ~ code, horizontal = TRUE, cex.axis = 0.5, xaxt = "n",
+  boxplot(obsdate ~ code, horizontal = TRUE, yaxt = "n", xaxt = "n",
           data = ebird, add = TRUE)
 }
 
