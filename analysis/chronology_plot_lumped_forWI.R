@@ -29,7 +29,7 @@ lump <- list("O/F" = c("", "F"), "S/S7/M" = c("S", "S7", "M"), "P/C" = c("P", "C
 
 # evidence codes to remove -- uncomment/edit as needed
 # this is a vector of evidence codes that will be not be plotted
-# drop <- c("PE", "UN")
+no_plot_codes <- c("PE", "UN")
 
 
 # load data ----
@@ -61,8 +61,10 @@ if (exists("lump")) {
   }
 }
 
-# do not plot UN or PE
-ebird <- ebird[! ebird$BREEDING.BIRD.ATLAS.CODE %in% c("UN", "PE"), ]
+# remove unneeded evidence codes
+if (exists("no_plot_codes")) {
+  ebird <- ebird[! ebird$BREEDING.BIRD.ATLAS.CODE %in% no_plot_codes, ]
+}
 
 # chron plot function ----
 

@@ -28,7 +28,7 @@ pal <- "Paired"
 
 # evidence codes to remove -- uncomment/edit as needed
 # this is a vector of evidence codes that will be not be plotted
-# drop <- c("PE", "UN")
+# no_plot_codes <- c("PE", "UN")
 
 
 # load data ----
@@ -61,8 +61,8 @@ if (exists("lump")) {
 }
 
 # remove unneeded evidence codes
-if (exists("drop")) {
-  ebird <- ebird[! ebird$BREEDING.BIRD.ATLAS.CODE %in% drop, ]
+if (exists("no_plot_codes")) {
+  ebird <- ebird[! ebird$BREEDING.BIRD.ATLAS.CODE %in% no_plot_codes, ]
 }
 
 
