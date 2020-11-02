@@ -47,7 +47,7 @@ ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 ebird <- ebird[order(ebird$TAXONOMIC.ORDER), ]
 
 # put all dates within the same year -- ignores leap year
-ebird$OBSERVATION.DATE <- sub("^20\\d\\d", "2015", ebird$OBSERVATION.DATE)
+ebird$OBSERVATION.DATE <- sub("^20\\d\\d", "2016", ebird$OBSERVATION.DATE)
 
 # remove white space from evidence codes
 ebird$BREEDING.BIRD.ATLAS.CODE <- trimws(ebird$BREEDING.BIRD.ATLAS.CODE)
@@ -125,9 +125,11 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   # use format "%b %d" for e.g. "Aug 23"
   names(labels) <- format(labels, "%b %d")
 
-  # limit labels to those within observed range
-  int <- interval(min(ebird$obsdate), max(ebird$obsdate))
-  labels <- labels[labels %within% int]
+  if (length(labels) > 1) {
+    # limit labels to those within observed range
+    int <- interval(min(ebird$obsdate), max(ebird$obsdate))
+    labels <- labels[labels %within% int]
+  }
 
   vps <- baseViewports()
   pushViewport(vps$inner, vps$figure, vps$plot)
