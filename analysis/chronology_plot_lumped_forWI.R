@@ -110,6 +110,9 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   ebird$code <- droplevels(factor(ebird$code, levels = codelevels,
                                   ordered = TRUE))
 
+  # make room for longer y axis labels
+  old_par <- par(mar = c(5, 5, 4, 2) + 0.1, mgp = c(3.75, 1, 0))
+
   # plot "empty" box plot
   boxplot(obsdate ~ code, horizontal = TRUE, cex.axis = cex.y.axis, xaxt = "n",
           data = ebird, border = "white", main = comname, las = 2,
@@ -156,6 +159,8 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
 
   boxplot(obsdate ~ code, horizontal = TRUE, yaxt = "n", xaxt = "n",
           data = ebird, add = TRUE)
+
+  par(old_par)
 }
 
 
