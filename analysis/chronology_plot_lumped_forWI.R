@@ -24,8 +24,16 @@ pal <- "Paired"
 # "S", "S7", and "M" with "S"). Note that any code that is not already in
 # variable "codelevels" in function "chronplot" (below) will need to be added
 # there.
-lump <- list("O/F" = c("", "F"), "S/S7/M" = c("S", "S7", "M"), "P/C" = c("P", "C"), "T/A" = c("T", "A"), "B/N" = c("B", "N"), "CN/NB" = c("CN", "NB"),  "FS/NY"= c("FS", "NY"), "FY/FL" = c("FY", "FL"))
-
+lump <- list(
+  "O/F" = c("", "F"),
+  "S/S7/M" = c("S", "S7", "M"),
+  "P/C" = c("P", "C"),
+  "T/A" = c("T", "A"),
+  "B/N" = c("B", "N"),
+  "CN/NB" = c("CN", "NB"),
+  "FS/NY" = c("FS", "NY"),
+  "FY/FL" = c("FY", "FL")
+)
 
 # evidence codes to remove -- uncomment/edit as needed
 # this is a vector of evidence codes that will be not be plotted
