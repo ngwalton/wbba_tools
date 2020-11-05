@@ -124,7 +124,7 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   # plot "empty" box plot
   boxplot(obsdate ~ code, horizontal = TRUE, cex.axis = cex.y.axis, xaxt = "n",
           data = ebird, border = "white", main = comname, las = 2,
-          xlab = "Date", ylab = "Breeding Codes")
+          xlab = "Date", ylab = "Breeding Codes", show.names = TRUE)
 
   date0 <- round_date(min(ebird$obsdate), "month")
   date1 <- round_date(max(ebird$obsdate), "month")
