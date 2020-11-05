@@ -122,15 +122,22 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   date1 <- round_date(max(ebird$obsdate), "month")
   labels <- seq(from = date0, to = date1, by = "month")
 
-  # use format "%m/%d" for e.g. 06/01
-  # use format "%b %d" for e.g. "Aug 23"
-  names(labels) <- format(labels, "%b %d")
-
-  if (length(labels) > 1) {
+  if (length(unique(month(ebird$obsdate))) == 1) {
+    labels <- c(min(ebird$obsdate), max(ebird$obsdate))
+    labels <- unique(labels)  # in case there's only one obs
+  } else {
     # limit labels to those within observed range
     int <- interval(min(ebird$obsdate), max(ebird$obsdate))
     labels <- labels[labels %within% int]
+
+    if (nrow(ebird) > 1 && length(labels) == 1) {
+      labels <- unique(c(min(ebird$obsdate), max(ebird$obsdate)))
+    }
   }
+
+  # use format "%m/%d" for e.g. 06/01
+  # use format "%b %d" for e.g. "Aug 23"
+  names(labels) <- format(labels, "%b %d")
 
   vps <- baseViewports()
   pushViewport(vps$inner, vps$figure, vps$plot)
