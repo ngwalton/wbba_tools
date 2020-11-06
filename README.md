@@ -39,7 +39,7 @@ codes_file <- "species_usable_codes.csv"
 
 ## 2. chronology_plot (Breeding Chronology Plot)
 
-![chronology_plot_example.PNG](https://github.com/ngwalton/wbba_tools/blob/master/chronology_plot_example.PNG)
+![chronology_plot_example.PNG](https://github.com/ngwalton/wbba_tools/blob/master/chronology_plot_example.png)
 
 This maps out each breeding code across the season so you can visualize when each bird species is in each phase of its breeding cycle. Box plots overlay points to help you screen for data that may be an outlier.
 
