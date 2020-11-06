@@ -54,6 +54,7 @@ codelevels <- c("H", "S", "S7", "M", "T", "P", "C", "B", "CN", "NB", "A", "N",
                   "DD", "ON", "NE", "FS", "CF", "NY", "FY", "FL", "PE", "UN",
                   "F", "")
 ````
+There is also a version of the chronology plot code where similar codes are lumped together.
 
 ## 3. block_evidence (Species Block Map)
 
