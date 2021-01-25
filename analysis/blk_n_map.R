@@ -25,6 +25,14 @@ mo <- c("June", "July")
 # print only priority blocks?
 priority_only <- TRUE
 
+# include eBird range map? requires downloading/unzipping maps from eBird at:
+# https://ebird.org/science/status-and-trends/download-data
+include_range <- TRUE
+
+# location of directory containing optional eBird range map files; required if
+# include_range is TRUE
+range_dir <- "./ebird_range"
+
 
 # output files ----
 
@@ -44,6 +52,9 @@ cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
 # sample WBBA data from ebird
 sp <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
+
+# ebird taxonomy needed to match up eBird range map with species
+tax <- read.csv("eBird_Taxonomy_v2019.csv", as.is = TRUE)
 
 
 # data prep ----
@@ -175,7 +186,29 @@ if (print_map) {
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- c(species, rep("", length(period_levels)))
 
-    out <-  tm_shape(cnty) +
+    if (include_range) {
+      sp_code <- tax[tax$PRIMARY_COM_NAME == species, "SPECIES_CODE"]
+      range_file <- paste0(sp_code, "-range-mr-2020.gpkg")
+      range_sub_dir <- paste0(sp_code, "-range-2020.gpkg")
+
+      # embedded file.path to remove potential trailing slash on range_dir
+      ebird_range <- file.path(file.path(range_dir), range_sub_dir, range_file)
+
+      if (file.exists(ebird_range)) {
+        ebird_range <- readOGR(ebird_range, "range", verbose = FALSE)
+        ebird_range <- ebird_range[ebird_range$season_name == "breeding", ]
+
+        out <- tm_shape(ebird_range) +
+          tm_polygons(border.col = "red", alpha = .5, border.alpha = 0.4,
+                      legend.show = FALSE)
+      } else {
+        out <- NULL
+      }
+    } else {
+      out <- NULL
+    }
+
+    out <-  out + tm_shape(cnty, is.master = TRUE) +
       tm_polygons(border.col = line_blue, alpha = 0, border.alpha = 0.4,
                   legend.show = FALSE) +
       tm_shape(current) +
