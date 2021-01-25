@@ -190,10 +190,9 @@ if (print_map) {
     if (include_range) {
       sp_code <- tax$species_code[tax$common_name == species]
       range_file <- paste0(sp_code, "-range-mr-2020.gpkg")
-      range_sub_dir <- paste0(sp_code, "-range-2020.gpkg")
 
       # embedded file.path to remove potential trailing slash on range_dir
-      ebird_range <- file.path(file.path(range_dir), range_sub_dir, range_file)
+      ebird_range <- file.path(file.path(range_dir), range_file)
 
       if (file.exists(ebird_range)) {
         ebird_range <- readOGR(ebird_range, "range", verbose = FALSE)
