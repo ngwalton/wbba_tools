@@ -11,6 +11,7 @@ library(foreign)
 library(tmap) # only needed for map making
 library(USAboundaries) # only needed for map making
 library(lubridate)
+library(auk)  # needed for eBird taxonomy
 
 setwd(here::here("data"))
 
@@ -54,7 +55,7 @@ cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 sp <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
 # eBird taxonomy needed to match up eBird range map with species
-tax <- read.csv("eBird_Taxonomy_v2019.csv", as.is = TRUE)
+tax <- get_ebird_taxonomy()
 
 
 # data prep ----
@@ -187,7 +188,7 @@ if (print_map) {
     m_title <- c(species, rep("", length(period_levels)))
 
     if (include_range) {
-      sp_code <- tax[tax$PRIMARY_COM_NAME == species, "SPECIES_CODE"]
+      sp_code <- tax$species_code[tax$common_name == species]
       range_file <- paste0(sp_code, "-range-mr-2020.gpkg")
       range_sub_dir <- paste0(sp_code, "-range-2020.gpkg")
 
