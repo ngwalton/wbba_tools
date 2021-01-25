@@ -50,10 +50,10 @@ block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 # optional county layer --  only used for map printing
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
-# sample WBBA data from ebird
+# sample WBBA data from eBird
 sp <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
-# ebird taxonomy needed to match up eBird range map with species
+# eBird taxonomy needed to match up eBird range map with species
 tax <- read.csv("eBird_Taxonomy_v2019.csv", as.is = TRUE)
 
 
