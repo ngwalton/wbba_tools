@@ -77,6 +77,12 @@ sp <- sp[sp$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
 # add common name to point count data
 pt_count$common <- alpha[match(pt_count$speciescode, alpha$SPEC), "COMMONNAME"]
 
+# check for unmatched common names and fix any that should be included in
+# analysis; in the full WBBA2 data, we fix Canad Jay and remove a couple hybrids
+unique(pt_count$speciescode[is.na(pt_count$common)])
+pt_count[pt_count$speciescode == "GRAJ", "common"] <- "Canada Jay"
+pt_count <- pt_count[! is.na(pt_count$common), ]
+
 pt_count$ldgn <- "Point count"
 
 # create a SpatialPointsDataFrame from "sp"
