@@ -183,7 +183,8 @@ if (print_map) {
     species <- sp_vec[i]
 
     current <- sp[COMMON.NAME == species, ]
-    current <- merge(block_in, current, by = "BLOCK_ID", all = TRUE, duplicateGeoms  = TRUE)
+    current <- merge(block_in, current, by = "BLOCK_ID", all = TRUE,
+                     duplicateGeoms  = TRUE)
 
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- c(species, rep("", length(period_levels)))
@@ -199,11 +200,13 @@ if (print_map) {
 
       if (file.exists(ebird_range)) {
         ebird_range <- readOGR(ebird_range, "range", verbose = FALSE)
-        ebird_range <- ebird_range[ebird_range$season_name %in% c("breeding", "resident"), ]
+
+        seasons <- c("breeding", "resident")
+        ebird_range <- ebird_range[ebird_range$season_name %in% seasons, ]
 
         if (nrow(ebird_range@data) > 0) {
           out <- tm_shape(ebird_range) +
-            tm_polygons(border.col = "red", alpha = .5, border.alpha = 0.4,
+            tm_polygons(border.col = "red", alpha = 0.5, border.alpha = 0.4,
                         legend.show = FALSE)
         }
       }
@@ -213,10 +216,12 @@ if (print_map) {
       tm_polygons(border.col = line_blue, alpha = 0, border.alpha = 0.4,
                   legend.show = FALSE) +
       tm_shape(current) +
-      tm_polygons("N", title = "n records/period", palette = pal, colorNA = "black", border.alpha = 0) +
+      tm_polygons("N", title = "n records/period", palette = pal,
+                  colorNA = "black", border.alpha = 0) +
       tm_facets(by = "period", free.coords = FALSE,
                 free.scales = TRUE, nrow = 1) +
-      tm_layout(title = m_title, title.size = 1, title.position = c("left", "bottom")) +
+      tm_layout(title = m_title, title.size = 1,
+                title.position = c("left", "bottom")) +
       tm_legend(bg.alpha = 0, position = c("right", "top"))
 
     print(out)
