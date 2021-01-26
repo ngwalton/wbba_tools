@@ -74,6 +74,10 @@ sp <- sp[sp$CATEGORY %in% taxa, ]
 
 sp <- sp[sp$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
 
+# aggregate point counts to reduce size of output
+form <- count ~ pointid + latitude + longitude + speciescode
+pt_count <- aggregate(form, pt_count, sum)
+
 # add common name to point count data
 pt_count$common <- alpha[match(pt_count$speciescode, alpha$SPEC), "COMMONNAME"]
 
