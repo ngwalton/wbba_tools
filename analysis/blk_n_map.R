@@ -12,6 +12,8 @@ library(tmap) # only needed for map making
 library(USAboundaries) # only needed for map making
 library(lubridate)
 library(auk)  # needed for eBird taxonomy
+library(readxl)
+library(foreign)
 
 setwd(here::here("data"))
 
@@ -55,6 +57,11 @@ cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 # sample WBBA data from eBird
 sp <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
+pt_count <- read_excel("point_count_data_sample_wbbaii.xlsx",
+                       sheet = "sample_data")
+
+alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
+
 # eBird taxonomy needed to match up eBird range map with species
 tax <- get_ebird_taxonomy()
 
@@ -67,6 +74,11 @@ sp <- sp[sp$CATEGORY %in% taxa, ]
 
 sp <- sp[sp$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
 
+# add common name to point count data
+pt_count$common <- alpha[match(pt_count$speciescode, alpha$SPEC), "COMMONNAME"]
+
+pt_count$ldgn <- "Point count"
+
 # create a SpatialPointsDataFrame from "sp"
 wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
 coordinates(sp) <- ~ LONGITUDE + LATITUDE
@@ -75,6 +87,10 @@ proj4string(sp) <- wgs84
 # transform projection to match blocks
 nad83 <- CRS(proj4string(block_in))  # use NAD83 from block_in
 sp <- spTransform(sp, nad83)
+
+# create a SpatialPointsDataFrame from "pt_count"
+coordinates(pt_count) <- ~ longitude + latitude
+proj4string(pt_count) <- nad83  # based on meta data
 
 # extract blocks that overlay points; returns a data frame containing the same
 # number rows as sp; each row is a record from block that overlays the
@@ -186,10 +202,12 @@ if (print_map) {
     current <- merge(block_in, current, by = "BLOCK_ID", all = TRUE,
                      duplicateGeoms  = TRUE)
 
+    current_pt <- pt_count[pt_count$common == species, ]
+
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- c(species, rep("", length(period_levels)))
 
-    out <- NULL
+    rng_map <- NULL
 
     if (include_range) {
       sp_code <- tax$species_code[tax$common_name == species]
@@ -205,16 +223,19 @@ if (print_map) {
         ebird_range <- ebird_range[ebird_range$season_name %in% seasons, ]
 
         if (nrow(ebird_range@data) > 0) {
-          out <- tm_shape(ebird_range) +
+          rng_map <- tm_shape(ebird_range) +
             tm_polygons(border.col = "red", alpha = 0.5, border.alpha = 0.4,
                         legend.show = FALSE)
         }
       }
     }
 
-    out <-  out + tm_shape(cnty, is.master = TRUE) +
+    bg_map <- rng_map +
+      tm_shape(cnty, is.master = TRUE) +
       tm_polygons(border.col = line_blue, alpha = 0, border.alpha = 0.4,
-                  legend.show = FALSE) +
+        legend.show = FALSE)
+
+    blk_map <- bg_map +
       tm_shape(current) +
       tm_polygons("N", title = "n records/period", palette = pal,
                   colorNA = "black", border.alpha = 0) +
@@ -223,6 +244,18 @@ if (print_map) {
       tm_layout(title = m_title, title.size = 1,
                 title.position = c("left", "bottom")) +
       tm_legend(bg.alpha = 0, position = c("right", "top"))
+
+    if (nrow(current_pt) > 0) {
+      pt_map <- bg_map +
+        tm_shape(current_pt) +
+        tm_dots("ldgn", size = 0.08, col = "red") +
+        tm_legend(title.color = "white", bg.alpha = 0,
+          position = c("right", "top"))
+    } else {
+      pt_map <- bg_map
+    }
+
+    out <- tmap_arrange(blk_map, pt_map, widths = c(4, 1))
 
     print(out)
 
