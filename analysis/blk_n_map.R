@@ -32,6 +32,7 @@ include_range <- TRUE
 
 # location of directory containing optional eBird range map files; required if
 # include_range is TRUE
+# NOTE - FOR 2020 REMOVE SHORT-EARED OWL FILE, it lacks breeding or resident ranges and will cause a crash.
 range_dir <- "./ebird_range"
 
 
@@ -196,7 +197,7 @@ if (print_map) {
 
       if (file.exists(ebird_range)) {
         ebird_range <- readOGR(ebird_range, "range", verbose = FALSE)
-        ebird_range <- ebird_range[ebird_range$season_name == "breeding", ]
+        ebird_range <- ebird_range[ebird_range$season_name %in% c("breeding", "resident"), ]
 
         out <- tm_shape(ebird_range) +
           tm_polygons(border.col = "red", alpha = .5, border.alpha = 0.4,
