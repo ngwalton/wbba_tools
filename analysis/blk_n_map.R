@@ -188,6 +188,8 @@ if (print_map) {
     # m_title <- paste(species, month.name[mo], sep = ": ")
     m_title <- c(species, rep("", length(period_levels)))
 
+    out <- NULL
+
     if (include_range) {
       sp_code <- tax$species_code[tax$common_name == species]
       range_file <- paste0(sp_code, "-range-mr-2020.gpkg")
@@ -203,14 +205,8 @@ if (print_map) {
           out <- tm_shape(ebird_range) +
             tm_polygons(border.col = "red", alpha = .5, border.alpha = 0.4,
                         legend.show = FALSE)
-        } else {
-          out <- NULL
         }
-      } else {
-        out <- NULL
       }
-    } else {
-      out <- NULL
     }
 
     out <-  out + tm_shape(cnty, is.master = TRUE) +
