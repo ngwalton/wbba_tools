@@ -25,7 +25,7 @@ print_map <- TRUE
 # months of interest -- the months will be aggregated
 mo <- c("June", "July")
 
-# print only priority blocks?
+# print only priority/specialty blocks?
 priority_only <- TRUE
 
 # include eBird range map? requires downloading/unzipping maps from eBird at:
@@ -131,10 +131,11 @@ sp$period[! indx] <- period_levels[3]
 
 sp <- setDT(sp@data)
 
-# limit to priority blocks
+# limit to priority/specialty blocks
 if (priority_only) {
-  sp <- sp[sp$BLOCK_STAT == "Priority Block", ]
-  block_in <- block_in[block_in$BLOCK_STAT == "Priority Block", ]
+  priority_lvls <- c("Priority Block", "Specialty Block")
+  sp <- sp[sp$BLOCK_STAT %in% priority_lvls, ]
+  block_in <- block_in[block_in$BLOCK_STAT %in% priority_lvls, ]
 }
 
 # limit to C1-C4 evidence categories
