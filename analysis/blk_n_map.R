@@ -183,6 +183,23 @@ sp$N <- factor(sp$N1, levels = code)
 sp$N1 <- NULL
 
 
+# create polygon for clipping eBird range maps; eBird range maps are clipped to
+# reduce output file size
+clip_box <- st_bbox(cnty)
+
+# adjust the divisor if clipping removes too much of the eBird range map (e.g.
+# if you can see the clipped edge of the range map in the printed version)
+add_x <- (clip_box["xmin"] - clip_box["xmax"]) / 4
+add_y <- (clip_box["ymax"] - clip_box["ymin"]) / 4
+
+clip_box["xmax"] <- clip_box["xmax"] - add_x
+clip_box["xmin"] <- clip_box["xmin"] + add_x
+clip_box["ymax"] <- clip_box["ymax"] + add_y
+clip_box["ymin"] <- clip_box["ymin"] - add_y
+
+clip_box <- st_as_sfc(clip_box)
+
+
 # print maps ----
 
 # print an n records map for each species to a single pdf; note that this can be
@@ -228,12 +245,23 @@ if (print_map) {
       ebird_range <- file.path(file.path(range_dir), range_file)
 
       if (file.exists(ebird_range)) {
-        ebird_range <- readOGR(ebird_range, "range", verbose = FALSE)
+        ebird_range <- st_read(ebird_range, "range", quiet = TRUE)
+        ebird_range <- ebird_range["season_name"]
 
         seasons <- c("breeding", "resident")
         ebird_range <- ebird_range[ebird_range$season_name %in% seasons, ]
 
-        if (nrow(ebird_range@data) > 0) {
+        # clip ebird_range
+        # suppressing warnings and messages because st_intersection generates
+        # several of each warning about clipping with lon/lat but this is not
+        # important for our purposes
+        ebird_range <- suppressWarnings(
+          suppressMessages(
+            st_intersection(ebird_range, clip_box)
+          )
+        )
+
+        if (nrow(ebird_range) > 0) {
           rng_map <- tm_shape(ebird_range) +
             tm_polygons(border.col = "red", alpha = 0.5, border.alpha = 0.4,
                         legend.show = FALSE)
