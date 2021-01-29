@@ -367,42 +367,134 @@ clip_box <- st_as_sfc(clip_box)
 # be time consuming
 
 if (print_map) {
-  sp_vec <- unique(sp$COMMON.NAME)
 
   line_blue <- "#235FFF"
   pal <- c("#F4A582", "#CA0020",  "#6A6A6A", "black")
-  n <- length(sp_vec)
+  n <- length(unique(sp$COMMON.NAME))
 
   season_pal <- c(breeding = "red", resident = "black")
 
-  # open pdf device
+  # pdf dimensions
   n_plots <- length(period_levels) + 2
   width = 7 * n_plots
   height = 7 * 1.15
-  pdf(paste0(out_pdf, ".pdf"), width = width, height = height)
 
-  for (i in seq_along(sp_vec)) {
-    if (i == 1) {
-      message(paste("Printing", n, "maps"))
-      t0 <- Sys.time()
+  message(paste("Printing", n, "maps"))
+  cnt <- 0  # file counter
+  t0 <- Sys.time()
+
+  if (split_fam) {
+    fam_vec <- unique(sp$family)
+    fam_vec <- vapply(fam_vec, function(x) strsplit(x, " ")[[1]][1],
+      NA_character_)
+
+    for (j in seq_along(fam_vec)) {
+      fam <- fam_vec[j]
+      current_fam <- sp[sp$family == names(fam), ]
+      sp_vec <- unique(current_fam$COMMON.NAME)
+
+      if (max_sp) {  # case split by family and number of species
+        sp_groups <- get_groups(sp_vec, max_sp)
+
+        for (i in seq_along(sp_groups)) {
+          grp <- sp_groups[[i]]
+          current_pdf <- paste0(out_pdf, "_", fam, i, ".pdf")
+          pdf(current_pdf, width = width, height = height)
+
+          for (species in grp) {
+            out <- make_map(sp, species, cnty, block_in, pal, tax, clip_box,
+              season_pal)
+
+            print(out)
+
+            cnt <- cnt + 1
+            message(paste("Finished map", cnt, "of", n))
+
+            if (cnt == 1) {
+              t1 <- Sys.time()
+              t_el <- t1 - t0
+              t_el <- round(t_el * n / 60, 1)
+              message(paste("Estimated time to print:", t_el, "minutes"))
+            }
+          }
+
+          dev.off()
+        }
+      } else {  # case split only by family
+        current_pdf <- paste0(out_pdf, "_", fam, ".pdf")
+        pdf(current_pdf, width = width, height = height)
+
+        for (species in sp_vec) {
+          out <- make_map(sp, species, cnty, block_in, pal, tax, clip_box,
+            season_pal)
+
+          print(out)
+
+          cnt <- cnt + 1
+          message(paste("Finished map", cnt, "of", n))
+
+          if (cnt == 1) {
+            t1 <- Sys.time()
+            t_el <- t1 - t0
+            t_el <- round(t_el * n / 60, 1)
+            message(paste("Estimated time to print:", t_el, "minutes"))
+          }
+        }
+
+        dev.off()
+      }
     }
+  } else {
+    sp_vec <- unique(sp$COMMON.NAME)
 
-    species <- sp_vec[i]
+    if (max_sp) {  # case split by number of species
+      sp_groups <- get_groups(sp_vec, max_sp)
 
-    out <- make_map(sp, species, cnty, block_in, pal, tax, clip_box, season_pal)
+      for (i in seq_along(sp_groups)) {
+        grp <- sp_groups[[i]]
+        current_pdf <- paste0(out_pdf, i, ".pdf")
+        pdf(current_pdf, width = width, height = height)
 
-    print(out)
+        for (species in grp) {
+          out <- make_map(sp, species, cnty, block_in, pal, tax, clip_box,
+            season_pal)
 
-    message(paste("Finished map", i, "of", n))
+          print(out)
 
-    if (i == 1) {
-      t1 <- Sys.time()
-      t_el <- t1 - t0
-      t_el <- round(t_el * n / 60, 1)
-      message(paste("Estimated time to print:", t_el, "minutes"))
+          cnt <- cnt + 1
+          message(paste("Finished map", cnt, "of", n))
+
+          if (cnt == 1) {
+            t1 <- Sys.time()
+            t_el <- t1 - t0
+            t_el <- round(t_el * n / 60, 1)
+            message(paste("Estimated time to print:", t_el, "minutes"))
+          }
+        }
+
+        dev.off()
+      }
+    } else {  # case all species in single file
+      pdf(paste0(out_pdf, ".pdf"), width = width, height = height)
+
+      for (species in sp_vec) {
+        out <- make_map(sp, species, cnty, block_in, pal, tax, clip_box,
+          season_pal)
+
+        print(out)
+
+        cnt <- cnt + 1
+        message(paste("Finished map", cnt, "of", n))
+
+        if (cnt == 1) {
+          t1 <- Sys.time()
+          t_el <- t1 - t0
+          t_el <- round(t_el * n / 60, 1)
+          message(paste("Estimated time to print:", t_el, "minutes"))
+        }
+      }
+
+      dev.off()
     }
   }
-
-  # close pdf device
-  dev.off()
 }
