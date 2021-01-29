@@ -13,14 +13,30 @@ library(USAboundaries) # only needed for map making
 library(lubridate)
 library(auk)  # needed for eBird taxonomy
 library(readxl)
-library(foreign)
 
 setwd(here::here("data"))
 
 
+# pdf options ----
+
+# the following should be updated as the user sees fit. to print a single output
+# pdf, set split_fam to FALSE, and max_sp to 0.
+
 # set to FALSE to suppress printing pdf of each species -- printing maps can be
 # time consuming
 print_map <- TRUE
+
+# split by family (TRUE/FALSE). if TRUE, the output pdf will be split across
+# files based on family.
+split_fam <- TRUE
+
+# max species per file (0 or a positive integer). if set to a positive
+# integer, the output pdf will be split to have no more than max_sp species. set
+# to 0 to suppress splitting by the number of species.
+max_sp <- 20
+
+
+# other options ----
 
 # months of interest -- the months will be aggregated
 mo <- c("June", "July")
@@ -41,8 +57,11 @@ range_dir <- "./ebird_range"
 
 # output files ----
 
-# name of output pdf file if printing maps
-out_pdf <- "block_n_map.pdf"
+# base name of output pdf file if printing maps. if split_fam is TRUE, the
+# family name will be appended to the file name. if max_sp > 0, a file number
+# will be appended to the file name. the pdf extension will be appended so do
+# not include it here.
+out_pdf <- "block_n_map"
 
 
 # load data ----
@@ -74,6 +93,7 @@ tax <- get_ebird_taxonomy()
 
 # functions ----
 
+# function to prep atlas data
 prep_sp <- function(sp_df, blk, taxa, mo, priority_only, priority_lvls) {
 
   sp_df <- sp_df[sp_df$CATEGORY %in% taxa, ]
@@ -170,6 +190,108 @@ prep_sp <- function(sp_df, blk, taxa, mo, priority_only, priority_lvls) {
   sp_df
 }
 
+# function to divide a vector of common names (spec_vec) into a list of vectors
+# with max length max_sp
+get_groups <- function(sp_vec, max_sp) {
+  split(sp_vec, ceiling(seq_along(sp_vec) / max_sp))
+}
+
+# make a single species map
+make_map <- function(sp, species, cnty, block_in, pal, tax, clip_box, season_pal) {
+  # sp is a data.frame, potentially containing multiple species
+  # species is the species to map
+  # cnty is the county bounds spatial data
+  # block_in is the atlas block spatial data
+  # pal is the is color palette to use when plotting observations
+  # tax is the eBird taxonomy tibble
+  # clip_box is used to clip the eBird range maps to a reasonable size
+  # season_pal is the color palette used when plotting the eBird range
+
+  current <- sp[COMMON.NAME == species, ]
+  current <- merge(block_in, current, by = "BLOCK_ID", all = TRUE,
+    duplicateGeoms  = TRUE)
+
+  current_pt <- pt_count[pt_count$common == species, ]
+
+  # m_title <- paste(species, month.name[mo], sep = ": ")
+  m_title <- c(species, rep("", length(levels(sp$period))))
+
+  rng_map <- NULL
+
+  if (include_range) {
+    sp_code <- tax$species_code[tax$common_name == species]
+    range_file <- paste0(sp_code, "-range-mr-2020.gpkg")
+
+    # embedded file.path to remove potential trailing slash on range_dir
+    ebird_range <- file.path(file.path(range_dir), range_file)
+
+    if (file.exists(ebird_range)) {
+      ebird_range <- st_read(ebird_range, "range", quiet = TRUE)
+      ebird_range <- ebird_range["season_name"]
+
+      seasons <- c("breeding", "resident")
+      ebird_range <- ebird_range[ebird_range$season_name %in% seasons, ]
+      ebird_range$season_name <- factor(ebird_range$season_name,
+        levels = seasons)
+
+      ebird_range$season_name <- droplevels(ebird_range$season_name)
+
+      # clip ebird_range
+      # suppressing warnings and messages because st_intersection generates
+      # several of each warning about clipping with lon/lat but this is not
+      # important for our purposes
+      ebird_range <- suppressWarnings(
+        suppressMessages(
+          st_intersection(ebird_range, clip_box)
+        )
+      )
+
+      if (nrow(ebird_range) > 0) {
+        indx <- names(season_pal) %in% unique(ebird_range$season_name)
+        spal <- season_pal[indx]
+        rng_map <- tm_shape(ebird_range) +
+          tm_polygons("season_name", title = "eBird range",
+            border.col = spal, palette = "gray", alpha = 0.5,
+            border.alpha = 0.4)
+      }
+    }
+  }
+
+  bg_map <- rng_map +
+    tm_shape(cnty, is.master = TRUE) +
+    tm_polygons(border.col = line_blue, alpha = 0, border.alpha = 0.4,
+      legend.show = FALSE)
+
+  blk_map <- bg_map +
+    tm_shape(current) +
+    tm_polygons("N", title = "n records/period", palette = pal,
+      colorNA = "black", border.alpha = 0) +
+    tm_facets(by = "period", free.coords = FALSE,
+      free.scales = TRUE, nrow = 1) +
+    tm_layout(title = m_title, title.size = 1,
+      outer.margins = c(.02, 0.005, .02, 0),
+      title.position = c("left", "bottom"), panel.label.height = 1.4,
+      panel.label.size = 1.1, legend.title.size = 1.2) +
+    tm_legend(bg.alpha = 0, position = c("right", "top"))
+
+  if (nrow(current_pt) > 0) {
+    pt_map <- bg_map +
+      tm_shape(current_pt) +
+      tm_dots("Point count", size = 0.08, col = "red") +
+      tm_layout(panel.labels = "Point-count detections",
+        outer.margins = c(.02, 0.015, .02, .02),
+        panel.label.height = 1.5) +
+      tm_legend(bg.alpha = 0, position = c("right", "top"))
+  } else {
+    pt_map <- bg_map
+  }
+
+  out <- tmap_arrange(blk_map, pt_map, widths = c(5, 1),
+    outer.margins = NULL)
+
+  out
+}
+
 
 # data prep ----
 
@@ -187,6 +309,14 @@ sp1$period <- factor(wbbai_lab, levels = period_levels)
 sp$period <- factor(sp$period, levels = period_levels)
 
 sp <- rbind(sp, sp1)
+
+# add family and taxonomic order from eBird taxonomy
+cols <- c("common_name", "family", "taxon_order")
+sp <- merge(sp, tax[, cols], by.x = "COMMON.NAME",
+  by.y = "common_name", all.x = TRUE)
+
+# order taxonomically
+setorder(sp, taxon_order)
 
 # limit to priority/specialty blocks
 if (priority_only) {
@@ -233,8 +363,8 @@ clip_box <- st_as_sfc(clip_box)
 
 # print maps ----
 
-# print an n records map for each species to a single pdf; note that this can be
-# time consuming
+# print an n records map for each species to a or more pdfs; note that this can
+# be time consuming
 
 if (print_map) {
   sp_vec <- unique(sp$COMMON.NAME)
@@ -249,7 +379,7 @@ if (print_map) {
   n_plots <- length(period_levels) + 2
   width = 7 * n_plots
   height = 7 * 1.15
-  pdf(out_pdf, width = width, height = height)
+  pdf(paste0(out_pdf, ".pdf"), width = width, height = height)
 
   for (i in seq_along(sp_vec)) {
     if (i == 1) {
@@ -259,87 +389,7 @@ if (print_map) {
 
     species <- sp_vec[i]
 
-    current <- sp[COMMON.NAME == species, ]
-    current <- merge(block_in, current, by = "BLOCK_ID", all = TRUE,
-                     duplicateGeoms  = TRUE)
-
-    current_pt <- pt_count[pt_count$common == species, ]
-
-    # m_title <- paste(species, month.name[mo], sep = ": ")
-    m_title <- c(species, rep("", length(period_levels)))
-
-    rng_map <- NULL
-
-    if (include_range) {
-      sp_code <- tax$species_code[tax$common_name == species]
-      range_file <- paste0(sp_code, "-range-mr-2020.gpkg")
-
-      # embedded file.path to remove potential trailing slash on range_dir
-      ebird_range <- file.path(file.path(range_dir), range_file)
-
-      if (file.exists(ebird_range)) {
-        ebird_range <- st_read(ebird_range, "range", quiet = TRUE)
-        ebird_range <- ebird_range["season_name"]
-
-        seasons <- c("breeding", "resident")
-        ebird_range <- ebird_range[ebird_range$season_name %in% seasons, ]
-        ebird_range$season_name <- factor(ebird_range$season_name,
-          levels = seasons)
-
-        ebird_range$season_name <- droplevels(ebird_range$season_name)
-
-        # clip ebird_range
-        # suppressing warnings and messages because st_intersection generates
-        # several of each warning about clipping with lon/lat but this is not
-        # important for our purposes
-        ebird_range <- suppressWarnings(
-          suppressMessages(
-            st_intersection(ebird_range, clip_box)
-          )
-        )
-
-        if (nrow(ebird_range) > 0) {
-          indx <- names(season_pal) %in% unique(ebird_range$season_name)
-          spal <- season_pal[indx]
-          rng_map <- tm_shape(ebird_range) +
-            tm_polygons("season_name", title = "eBird range",
-              border.col = spal, palette = "gray", alpha = 0.5,
-              border.alpha = 0.4)
-        }
-      }
-    }
-
-    bg_map <- rng_map +
-      tm_shape(cnty, is.master = TRUE) +
-      tm_polygons(border.col = line_blue, alpha = 0, border.alpha = 0.4,
-        legend.show = FALSE)
-
-    blk_map <- bg_map +
-      tm_shape(current) +
-      tm_polygons("N", title = "n records/period", palette = pal,
-                  colorNA = "black", border.alpha = 0) +
-      tm_facets(by = "period", free.coords = FALSE,
-                free.scales = TRUE, nrow = 1) +
-      tm_layout(title = m_title, title.size = 1,
-        outer.margins = c(.02, 0.005, .02, 0),
-        title.position = c("left", "bottom"), panel.label.height = 1.4,
-        panel.label.size = 1.1, legend.title.size = 1.2) +
-      tm_legend(bg.alpha = 0, position = c("right", "top"))
-
-    if (nrow(current_pt) > 0) {
-      pt_map <- bg_map +
-        tm_shape(current_pt) +
-        tm_dots("Point count", size = 0.08, col = "red") +
-        tm_layout(panel.labels = "Point-count detections",
-          outer.margins = c(.02, 0.015, .02, .02),
-          panel.label.height = 1.5) +
-        tm_legend(bg.alpha = 0, position = c("right", "top"))
-    } else {
-      pt_map <- bg_map
-    }
-
-    out <- tmap_arrange(blk_map, pt_map, widths = c(5, 1),
-      outer.margins = NULL)
+    out <- make_map(sp, species, cnty, block_in, pal, tax, clip_box, season_pal)
 
     print(out)
 
