@@ -313,7 +313,7 @@ if (print_map) {
       t1 <- Sys.time()
       t_el <- t1 - t0
       t_el <- round(t_el * n / 60, 1)
-      message(paste("Estmimated time to print:", t_el, "minutes"))
+      message(paste("Estimated time to print:", t_el, "minutes"))
     }
   }
 
