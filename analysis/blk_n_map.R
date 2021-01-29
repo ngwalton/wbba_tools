@@ -88,7 +88,7 @@ unique(pt_count$speciescode[is.na(pt_count$common)])
 pt_count[pt_count$speciescode == "GRAJ", "common"] <- "Canada Jay"
 pt_count <- pt_count[! is.na(pt_count$common), ]
 
-pt_count[, "Point count"] <- "Location"
+pt_count[, "Point count"] <- "Presence"
 
 # create a SpatialPointsDataFrame from "sp"
 wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
@@ -298,6 +298,7 @@ if (print_map) {
       pt_map <- bg_map +
         tm_shape(current_pt) +
         tm_dots("Point count", size = 0.08, col = "red") +
+        tm_layout(panel.labels = "Point-count detections") +
         tm_legend(bg.alpha = 0, position = c("right", "top"))
     } else {
       pt_map <- bg_map
