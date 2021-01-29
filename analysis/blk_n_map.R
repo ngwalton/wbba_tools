@@ -213,7 +213,7 @@ if (print_map) {
   pal <- c("#F4A582", "#CA0020",  "#6A6A6A", "black")
   n <- length(sp_vec)
 
-  season_pal <- c(breeding = "pink", resident = "gray")
+  season_pal <- c(breeding = "red", resident = "black")
 
   # open pdf device
   n_plots <- length(period_levels) + 1
@@ -273,7 +273,7 @@ if (print_map) {
           spal <- season_pal[indx]
           rng_map <- tm_shape(ebird_range) +
             tm_polygons("season_name", title = "eBird range",
-              border.col = "red", palette = spal, alpha = 0.5,
+              border.col = spal, palette = "gray", alpha = 0.5,
               border.alpha = 0.4)
         }
       }
