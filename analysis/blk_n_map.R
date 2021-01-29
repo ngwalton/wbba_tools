@@ -292,6 +292,18 @@ make_map <- function(sp, species, cnty, block_in, pal, tax, clip_box, season_pal
   out
 }
 
+# function to print progress of map printing
+progress_message <- function(cnt, n) {
+  message(paste("Finished map", cnt, "of", n))
+}
+
+# function to print estimated time to print all maps
+time_est_message <- function(t0, t1, n) {
+  t_el <- t1 - t0
+  t_el <- round(t_el * n / 60, 1)
+  message(paste("Estimated time to print:", t_el, "minutes"))
+}
+
 
 # data prep ----
 
@@ -408,13 +420,11 @@ if (print_map) {
             print(out)
 
             cnt <- cnt + 1
-            message(paste("Finished map", cnt, "of", n))
+            progress_message(cnt, n)
 
             if (cnt == 1) {
               t1 <- Sys.time()
-              t_el <- t1 - t0
-              t_el <- round(t_el * n / 60, 1)
-              message(paste("Estimated time to print:", t_el, "minutes"))
+              time_est_message(t0, t1, n)
             }
           }
 
@@ -431,13 +441,11 @@ if (print_map) {
           print(out)
 
           cnt <- cnt + 1
-          message(paste("Finished map", cnt, "of", n))
+          progress_message(cnt, n)
 
           if (cnt == 1) {
             t1 <- Sys.time()
-            t_el <- t1 - t0
-            t_el <- round(t_el * n / 60, 1)
-            message(paste("Estimated time to print:", t_el, "minutes"))
+            time_est_message(t0, t1, n)
           }
         }
 
@@ -462,13 +470,11 @@ if (print_map) {
           print(out)
 
           cnt <- cnt + 1
-          message(paste("Finished map", cnt, "of", n))
+          progress_message(cnt, n)
 
           if (cnt == 1) {
             t1 <- Sys.time()
-            t_el <- t1 - t0
-            t_el <- round(t_el * n / 60, 1)
-            message(paste("Estimated time to print:", t_el, "minutes"))
+            time_est_message(t0, t1, n)
           }
         }
 
@@ -484,13 +490,11 @@ if (print_map) {
         print(out)
 
         cnt <- cnt + 1
-        message(paste("Finished map", cnt, "of", n))
+        progress_message(cnt, n)
 
         if (cnt == 1) {
           t1 <- Sys.time()
-          t_el <- t1 - t0
-          t_el <- round(t_el * n / 60, 1)
-          message(paste("Estimated time to print:", t_el, "minutes"))
+          time_est_message(t0, t1, n)
         }
       }
 
