@@ -291,20 +291,25 @@ if (print_map) {
       tm_facets(by = "period", free.coords = FALSE,
                 free.scales = TRUE, nrow = 1) +
       tm_layout(title = m_title, title.size = 1,
-                title.position = c("left", "bottom")) +
+        outer.margins = c(.02, 0.005, .02, 0),
+        title.position = c("left", "bottom"), panel.label.height = 1.4,
+        panel.label.size = 1.1, legend.title.size = 1.2) +
       tm_legend(bg.alpha = 0, position = c("right", "top"))
 
     if (nrow(current_pt) > 0) {
       pt_map <- bg_map +
         tm_shape(current_pt) +
         tm_dots("Point count", size = 0.08, col = "red") +
-        tm_layout(panel.labels = "Point-count detections") +
+        tm_layout(panel.labels = "Point-count detections",
+          outer.margins = c(.02, 0.015, .02, .02),
+          panel.label.height = 1.4) +
         tm_legend(bg.alpha = 0, position = c("right", "top"))
     } else {
       pt_map <- bg_map
     }
 
-    out <- tmap_arrange(blk_map, pt_map, widths = c(4, 1))
+    out <- tmap_arrange(blk_map, pt_map, widths = c(4, 1),
+      outer.margins = NULL)
 
     print(out)
 
