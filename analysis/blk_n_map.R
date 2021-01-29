@@ -27,6 +27,7 @@ mo <- c("June", "July")
 
 # print only priority/specialty blocks?
 priority_only <- TRUE
+priority_lvls <- c("Priority Block", "Specialty Block")
 
 # include eBird range map? requires downloading/unzipping maps from eBird at:
 # https://ebird.org/science/status-and-trends/download-data
@@ -54,25 +55,143 @@ block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 # optional county layer --  only used for map printing
 cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
-# sample WBBA data from eBird
+# sample WBBA II data from eBird
 sp <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
+# sample WBBA I from eBird
+sp1 <- read.delim("ebird_data_sample_wbbai.txt", quote = "", as.is = TRUE)
+
+# point count data
 pt_count <- read_excel("point_count_data_sample_wbbaii.xlsx",
                        sheet = "sample_data")
 
+# alpha codes to match point-count data with atlas data
 alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 
 # eBird taxonomy needed to match up eBird range map with species
 tax <- get_ebird_taxonomy()
 
 
+# functions ----
+
+prep_sp <- function(sp_df, blk, taxa, mo, priority_only, priority_lvls) {
+
+  sp_df <- sp_df[sp_df$CATEGORY %in% taxa, ]
+
+  sp_df <- sp_df[sp_df$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
+
+  # create a SpatialPointsDataFrame from "sp_df"
+  wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
+  coordinates(sp_df) <- ~ LONGITUDE + LATITUDE
+  proj4string(sp_df) <- wgs84
+
+  # transform projection to match blocks
+  nad83 <- CRS(proj4string(blk))  # use NAD83 from blk
+  sp_df <- spTransform(sp_df, nad83)
+
+  # extract blocks that overlay points; returns a data frame containing the same
+  # number rows as sp_df; each row is a record from block that overlays the
+  # points in sp_df
+  block_over <- over(sp_df, blk)
+
+  # COUNTY is in both data frames
+  names(block_over)[names(block_over) == "COUNTY"] <- "CO_eBird"
+
+  # ...and join them to the bird data frame
+  sp_df@data <- cbind(sp_df@data, block_over)
+
+  # some of the BREEDING.BIRD.ATLAS.CODE codes have a space at the end
+  # and some don't - this removes the space
+  sp_df$BREEDING.BIRD.ATLAS.CODE <- trimws(sp_df$BREEDING.BIRD.ATLAS.CODE)
+
+  # add date columns
+  sp_df$DDDD <- ymd(sp_df$OBSERVATION.DATE)
+
+  sp_df$month <- month(sp_df$DDDD)
+  sp_df$month <- month.name[sp_df$month]
+
+  sp_df$period <- sp_df$month
+  indx <- sp_df$period %in% mo
+  period_levels <- c("Year", "June/July", "Not June/July")
+  sp_df$period[indx] <- period_levels[2]
+  sp_df$period[! indx] <- period_levels[3]
+
+  sp_df <- setDT(sp_df@data)
+
+  # limit to priority/specialty blocks
+  if (priority_only) {
+    sp_df <- sp_df[sp_df$BLOCK_STAT %in% priority_lvls, ]
+  }
+
+  # limit to C1-C4 evidence categories
+  sp_df <- sp_df[BREEDING.BIRD.ATLAS.CATEGORY %in% c("C2", "C3", "C4"), ]
+
+  # remove records duplicated across shared checklists
+  sp_g <- sp_df[GROUP.IDENTIFIER != ""]  # split records with group id set
+  sp_df <- sp_df[GROUP.IDENTIFIER == ""]    # records without group id are not shared
+  cols <- c("COMMON.NAME", "SUBSPECIES.COMMON.NAME", "GROUP.IDENTIFIER")
+  sp_g <- sp_g[! duplicated(sp_g, by = cols)]
+  sp_df <- rbind(sp_df, sp_g)
+
+  # order taxonomically
+  setorder(sp_df, TAXONOMIC.ORDER, GLOBAL.UNIQUE.IDENTIFIER)
+
+  # sum across June/July and not June/July
+  sp_mo <- sp_df[, .N, by = .(COMMON.NAME, BLOCK_ID, period)]
+
+  # sum across all months
+  sp_df$period <- "Year"
+  sp_df <- sp_df[, .N, by = .(COMMON.NAME, BLOCK_ID, period)]
+
+  # add months back to sp_df
+  sp_df <- rbind(sp_df, sp_mo)
+
+  # order period levels
+  sp_df$period <- factor(sp_df$period, levels = period_levels)
+
+  #old code with 5 levels, distinguishing 2 records from 3 records
+  #code <- c("1", "2", "3", "4-10", ">10")
+  #sp_df$N1 <- "0"
+  #sp_df[N < 4, "N1"] <- code[sp_df[N < 4, N]]
+  #sp_df[N %in% 4:10, "N1"] <- code[4]
+  #sp_df[N > 10, "N1"] <- code[5]
+  #sp_df$N <- factor(sp_df$N1, levels = code)
+  #sp_df$N1 <- NULL
+
+  code <- c("1", "2-3", "4-10", ">10")
+  sp_df$N1 <- "0"
+  sp_df[N < 2, "N1"] <- code[sp_df[N < 2, N]]
+  sp_df[N %in% 2:3, "N1"] <- code[2]
+  sp_df[N %in% 4:10, "N1"] <- code[3]
+  sp_df[N > 10, "N1"] <- code[4]
+  sp_df$N <- factor(sp_df$N1, levels = code)
+  sp_df$N1 <- NULL
+
+  sp_df
+}
+
+
 # data prep ----
 
 # remove hybrid, spuh, and slash taxonomic categories
 taxa <- c("species", "issf", "domestic", "form")
-sp <- sp[sp$CATEGORY %in% taxa, ]
 
-sp <- sp[sp$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
+sp <- prep_sp(sp, block_in, taxa, mo, priority_only, priority_lvls)
+sp1 <- prep_sp(sp1, block_in, taxa, mo, priority_only, priority_lvls)
+
+sp1 <- sp1[sp1$period == "Year"]
+wbbai_lab <- "WBBA I (year)"
+period_levels <- c(wbbai_lab, levels(sp$period))
+sp1$period <- factor(wbbai_lab, levels = period_levels)
+
+sp$period <- factor(sp$period, levels = period_levels)
+
+sp <- rbind(sp, sp1)
+
+# limit to priority/specialty blocks
+if (priority_only) {
+  block_in <- block_in[block_in$BLOCK_STAT %in% priority_lvls, ]
+}
 
 # aggregate point counts to reduce size of output
 form <- count ~ pointid + latitude + longitude + speciescode
@@ -90,99 +209,10 @@ pt_count <- pt_count[! is.na(pt_count$common), ]
 
 pt_count[, "Point count"] <- "Presence"
 
-# create a SpatialPointsDataFrame from "sp"
-wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
-coordinates(sp) <- ~ LONGITUDE + LATITUDE
-proj4string(sp) <- wgs84
-
-# transform projection to match blocks
-nad83 <- CRS(proj4string(block_in))  # use NAD83 from block_in
-sp <- spTransform(sp, nad83)
-
 # create a SpatialPointsDataFrame from "pt_count"
 coordinates(pt_count) <- ~ longitude + latitude
+nad83 <- CRS(proj4string(block_in))  # use NAD83 from block_in
 proj4string(pt_count) <- nad83  # based on meta data
-
-# extract blocks that overlay points; returns a data frame containing the same
-# number rows as sp; each row is a record from block that overlays the
-# points in sp
-block_over <- over(sp, block_in)
-
-# COUNTY is in both data frames
-names(block_over)[names(block_over) == "COUNTY"] <- "CO_eBird"
-
-# ...and join them to the bird data frame
-sp@data <- cbind(sp@data, block_over)
-
-# some of the BREEDING.BIRD.ATLAS.CODE codes have a space at the end
-# and some don't - this removes the space
-sp$BREEDING.BIRD.ATLAS.CODE <- trimws(sp$BREEDING.BIRD.ATLAS.CODE)
-
-# add date columns
-sp$DDDD <- ymd(sp$OBSERVATION.DATE)
-
-sp$month <- month(sp$DDDD)
-sp$month <- month.name[sp$month]
-
-sp$period <- sp$month
-indx <- sp$period %in% mo
-period_levels <- c("Year", "June/July", "Not June/July")
-sp$period[indx] <- period_levels[2]
-sp$period[! indx] <- period_levels[3]
-
-sp <- setDT(sp@data)
-
-# limit to priority/specialty blocks
-if (priority_only) {
-  priority_lvls <- c("Priority Block", "Specialty Block")
-  sp <- sp[sp$BLOCK_STAT %in% priority_lvls, ]
-  block_in <- block_in[block_in$BLOCK_STAT %in% priority_lvls, ]
-}
-
-# limit to C1-C4 evidence categories
-sp <- sp[BREEDING.BIRD.ATLAS.CATEGORY %in% c("C2", "C3", "C4"), ]
-
-# remove records duplicated across shared checklists
-sp_g <- sp[GROUP.IDENTIFIER != ""]  # split records with group id set
-sp <- sp[GROUP.IDENTIFIER == ""]    # records without group id are not shared
-cols <- c("COMMON.NAME", "SUBSPECIES.COMMON.NAME", "GROUP.IDENTIFIER")
-sp_g <- sp_g[! duplicated(sp_g, by = cols)]
-sp <- rbind(sp, sp_g)
-
-# order taxonomically
-setorder(sp, TAXONOMIC.ORDER, GLOBAL.UNIQUE.IDENTIFIER)
-
-# sum across June/July and not June/July
-sp_mo <- sp[, .N, by = .(COMMON.NAME, BLOCK_ID, period)]
-
-# sum across all months
-sp$period <- "Year"
-sp <- sp[, .N, by = .(COMMON.NAME, BLOCK_ID, period)]
-
-# add months back to sp
-sp <- rbind(sp, sp_mo)
-
-# order period levels
-sp$period <- factor(sp$period, levels = period_levels)
-
-#old code with 5 levels, distinguishing 2 records from 3 records
-#code <- c("1", "2", "3", "4-10", ">10")
-#sp$N1 <- "0"
-#sp[N < 4, "N1"] <- code[sp[N < 4, N]]
-#sp[N %in% 4:10, "N1"] <- code[4]
-#sp[N > 10, "N1"] <- code[5]
-#sp$N <- factor(sp$N1, levels = code)
-#sp$N1 <- NULL
-
-code <- c("1", "2-3", "4-10", ">10")
-sp$N1 <- "0"
-sp[N < 2, "N1"] <- code[sp[N < 2, N]]
-sp[N %in% 2:3, "N1"] <- code[2]
-sp[N %in% 4:10, "N1"] <- code[3]
-sp[N > 10, "N1"] <- code[4]
-sp$N <- factor(sp$N1, levels = code)
-sp$N1 <- NULL
-
 
 # create polygon for clipping eBird range maps; eBird range maps are clipped to
 # reduce output file size
@@ -216,9 +246,9 @@ if (print_map) {
   season_pal <- c(breeding = "red", resident = "black")
 
   # open pdf device
-  n_plots <- length(period_levels) + 1
+  n_plots <- length(period_levels) + 2
   width = 7 * n_plots
-  height = 7
+  height = 7 * 1.15
   pdf(out_pdf, width = width, height = height)
 
   for (i in seq_along(sp_vec)) {
@@ -302,13 +332,13 @@ if (print_map) {
         tm_dots("Point count", size = 0.08, col = "red") +
         tm_layout(panel.labels = "Point-count detections",
           outer.margins = c(.02, 0.015, .02, .02),
-          panel.label.height = 1.4) +
+          panel.label.height = 1.5) +
         tm_legend(bg.alpha = 0, position = c("right", "top"))
     } else {
       pt_map <- bg_map
     }
 
-    out <- tmap_arrange(blk_map, pt_map, widths = c(4, 1),
+    out <- tmap_arrange(blk_map, pt_map, widths = c(5, 1),
       outer.margins = NULL)
 
     print(out)
