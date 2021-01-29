@@ -88,7 +88,7 @@ unique(pt_count$speciescode[is.na(pt_count$common)])
 pt_count[pt_count$speciescode == "GRAJ", "common"] <- "Canada Jay"
 pt_count <- pt_count[! is.na(pt_count$common), ]
 
-pt_count$ldgn <- "Point count"
+pt_count[, "Point count"] <- "Location"
 
 # create a SpatialPointsDataFrame from "sp"
 wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
@@ -213,6 +213,8 @@ if (print_map) {
   pal <- c("#F4A582", "#CA0020",  "#6A6A6A", "black")
   n <- length(sp_vec)
 
+  season_pal <- c(breeding = "pink", resident = "gray")
+
   # open pdf device
   n_plots <- length(period_levels) + 1
   width = 7 * n_plots
@@ -251,6 +253,10 @@ if (print_map) {
 
         seasons <- c("breeding", "resident")
         ebird_range <- ebird_range[ebird_range$season_name %in% seasons, ]
+        ebird_range$season_name <- factor(ebird_range$season_name,
+          levels = seasons)
+
+        ebird_range$season_name <- droplevels(ebird_range$season_name)
 
         # clip ebird_range
         # suppressing warnings and messages because st_intersection generates
@@ -263,9 +269,12 @@ if (print_map) {
         )
 
         if (nrow(ebird_range) > 0) {
+          indx <- names(season_pal) %in% unique(ebird_range$season_name)
+          spal <- season_pal[indx]
           rng_map <- tm_shape(ebird_range) +
-            tm_polygons(border.col = "red", alpha = 0.5, border.alpha = 0.4,
-                        legend.show = FALSE)
+            tm_polygons("season_name", title = "eBird range",
+              border.col = "red", palette = spal, alpha = 0.5,
+              border.alpha = 0.4)
         }
       }
     }
@@ -288,9 +297,8 @@ if (print_map) {
     if (nrow(current_pt) > 0) {
       pt_map <- bg_map +
         tm_shape(current_pt) +
-        tm_dots("ldgn", size = 0.08, col = "red") +
-        tm_legend(title.color = "white", bg.alpha = 0,
-          position = c("right", "top"))
+        tm_dots("Point count", size = 0.08, col = "red") +
+        tm_legend(bg.alpha = 0, position = c("right", "top"))
     } else {
       pt_map <- bg_map
     }
