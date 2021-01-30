@@ -9,7 +9,7 @@ library(foreign)
 library(tmap)
 library(USAboundaries)
 library(lubridate)
-library(rvest)  # to find most up to data eBird taxonomy
+library(auk)  # needed for eBird taxonomy
 library(RColorBrewer)
 library(parallel)  # only needed for detectCores
 library(data.table)
@@ -58,21 +58,8 @@ ebird_file <- "ebird_data_sample_wbbaii.txt"
 n_core <- detectCores() - 1
 sp <- fread(ebird_file, quote = "", nThread = n_core, check.names = TRUE)
 
-# get most recent eBird taxonomy -- link may need to be updated
-url <- "https://www.birds.cornell.edu/clementschecklist/download/"
-pg <- read_html(url)
-pg_urls <- html_attr(html_nodes(pg, "a"), "href")
-tax_url <- grep("eBird_Taxonomy.+\\.csv$", pg_urls, value = TRUE)
-
-if (! length(tax_url) == 1) {
-  message(paste("There is an issue with tax_link: tax_link has length", length(tax_url)))
-} else {
-  ebird_taxa <- read.csv(tax_url, as.is = TRUE)
-}
-
-if ("ï..TAXON_ORDER" %in% names(ebird_taxa)) {
-  names(ebird_taxa)[names(ebird_taxa) == "ï..TAXON_ORDER"] <- "TAXON_ORDER"
-}
+# eBird taxonomy needed to match up eBird range map with species
+ebird_taxa <- get_ebird_taxonomy()
 
 
 # functions ----
@@ -138,12 +125,12 @@ sp <- sp[CATEGORY %in% taxa]
 sp <- sp[COMMON.NAME != "Domestic goose sp. (Domestic type)"]
 
 # add family from eBird taxonomy
-cols <- c("PRIMARY_COM_NAME", "FAMILY")
+cols <- c("common_name", "family")
 sp <- merge(sp, ebird_taxa[, cols], by.x = "COMMON.NAME",
-               by.y = "PRIMARY_COM_NAME", all.x = TRUE)
+               by.y = "common_name", all.x = TRUE)
 
 # order taxonomically
-sp <- sp[order(TAXONOMIC.ORDER)]
+setorder(sp, TAXONOMIC.ORDER)
 
 # add date columns
 sp[, DDDD := ymd(OBSERVATION.DATE)]
@@ -193,13 +180,13 @@ if (print_map) {
   height = 7
 
   if (split_fam) {
-    fam_vec <- unique(sp$FAMILY)
+    fam_vec <- unique(sp$family)
     fam_vec <- vapply(fam_vec, function(x) strsplit(x, " ")[[1]][1],
       NA_character_)
 
     for (j in seq_along(fam_vec)) {
       fam <- fam_vec[j]
-      current_fam <- sp[sp$FAMILY == names(fam), ]
+      current_fam <- sp[sp$family == names(fam), ]
       sp_vec <- unique(current_fam$COMMON.NAME)
 
       if (max_sp) {  # case split by family and number of species
