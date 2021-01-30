@@ -397,12 +397,10 @@ if (print_map) {
 
   if (split_fam) {
     fam_vec <- unique(sp$family)
-    fam_vec <- vapply(fam_vec, function(x) strsplit(x, " ")[[1]][1],
-      NA_character_)
 
     for (j in seq_along(fam_vec)) {
       fam <- fam_vec[j]
-      current_fam <- sp[sp$family == names(fam), ]
+      current_fam <- sp[sp$family == fam, ]
       sp_vec <- unique(current_fam$COMMON.NAME)
 
       if (max_sp) {  # case split by family and number of species
