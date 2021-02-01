@@ -124,7 +124,7 @@ fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 
 ## 6. blk_n_map (Records Per Block Map) 
 
-![records_per_block_example.png](https://github.com/ngwalton/wbba_tools/blob/master/records_per_block_example.png)
+![blk_n_example.png](https://github.com/ngwalton/wbba_tools/blob/master/blk_n_example.png)
 
 This map shows the total number of observations that have a breeding code (excluding F) in a block during a period. It is currently set up to only display priority blocks. It shows 6 maps: 1. Data from a prior atlas; 2. Year-round codes (current atlas); 3. June and July codes only (current atlas); 4. Codes all year but excluding June and July (current atlas); 5. All blocks where the species was never coded (current atlas); 6. Results from point counts (not eBird data, at point level, not rounded to block level).  
 
