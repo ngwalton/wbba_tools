@@ -126,7 +126,9 @@ fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 
 ![records_per_block_example.png](https://github.com/ngwalton/wbba_tools/blob/master/records_per_block_example.png)
 
-This map shows the total number of observations that have a breeding code (excluding F) in a block during a period. It is currently set up to only display priority blocks. It shows 4 maps: 1. Year-round codes, 2. June and July codes, 3. Codes all year but excluding June and July, and 4. All blocks where the species was never coded.  
+This map shows the total number of observations that have a breeding code (excluding F) in a block during a period. It is currently set up to only display priority blocks. It shows 6 maps: 1. Data from a prior atlas; 2. Year-round codes (current atlas); 3. June and July codes only (current atlas); 4. Codes all year but excluding June and July (current atlas); 5. All blocks where the species was never coded (current atlas); 6. Results from point counts (not eBird data, at point level, not rounded to block level).  
+
+For background reference, we include a range boundary from the eBird Status and Trends Range Maps.
 
 It may take about an hour to run, assuming 5 years of data for a state.
 
@@ -135,7 +137,6 @@ To customize it, enter the name of your eBird data file within the quotes here:
 # sample WBBA data from ebird
 sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 ````
-
 And change the state for the county outline here:
 ````
 # optional county layer --  only used for map printing
@@ -146,8 +147,27 @@ You could also adjust the months of interest here:
 # months of interest -- the months will be aggregated
 mo <- c("June", "July")
 ````
+This points it to data for the prior atlas map:
+````
+# sample WBBA I from eBird
+sp1 <- read.delim("ebird_data_sample_wbbai.txt", quote = "", as.is = TRUE)
+````
+This is the file for the sixth map, showing point counts:
+````
+# point count data
+pt_count <- read_excel("point_count_data_sample_wbbaii.xlsx",
+                       sheet = "sample_data")
+````                     
+This section controls the eBird range maps, as coded it expects them extracted into a subfolder within the working directory
+````
+# include eBird range map? requires downloading/unzipping maps from eBird at:
+# https://ebird.org/science/status-and-trends/download-data
+include_range <- TRUE
 
-
-
+# location of directory containing optional eBird range map files; required if
+# include_range is TRUE; only species with breeding and/or resident ranges will
+# include range in the output map
+range_dir <- "./ebird_range"
+ ````   
 
 
