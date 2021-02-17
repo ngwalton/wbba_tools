@@ -130,12 +130,6 @@ sp_cast <- dcast(sp, BLOCK_ID ~ SPEC, fun.aggregate = code_name,
 # merge species with original blocks
 block_out <- merge(block_in, sp_cast, by = "BLOCK_ID")
 
-# Optional: Uncomment to print a file that shows single breeding status (category) 
-# for each species for each block. Among other things, this allows you to see 
-# which blocks have species reported that are only coded Observed. When running
-# this screen, probably want to upload a main EBD file that includes non-portal 
-# records.
-# write.csv(block_out, file = "Species_Categories_By_Block.csv")
 
 # print maps ----
 
@@ -197,6 +191,14 @@ if (print_map) {
   dev.off()
 }
 
-# write to disc as a shapefile ----
+# write output ----
 
+# write shapefile
 writeOGR(block_out, ".", out_shp, driver = "ESRI Shapefile")
+
+# Optional: Uncomment to print a file that shows single breeding status
+# (category) for each species for each block. Among other things, this allows
+# you to see which blocks have species reported that are only coded Observed.
+# When running this screen, probably want to upload a main EBD file that
+# includes non-portal records.
+# write.csv(block_out, file = "Species_Categories_By_Block.csv")
