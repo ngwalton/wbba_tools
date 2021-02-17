@@ -183,7 +183,7 @@ if (print_map) {
     factor(block_map@data[[x]], levels = 0:3, labels = labels))
 
   line_gray <- "#4e4e4e"
-  #         not det  at1    at2      both                                    
+  #         not det  at1    at2      both
   pal <- c("white", "red", "green", "blue")
   # pal <- c("white", "#F3EC00", "#0055F3", "#00B500") # PA style
 
@@ -214,7 +214,7 @@ if (print_map) {
 
     if (i == 1) {
       t1 <- Sys.time()
-      t_el <- t1 - t0
+      t_el <- difftime(t1, t0, units = "secs")
       t_el <- round(t_el * n / 60, 1)
       message(paste("Estmimated time to print:", t_el, "minutes"))
     }

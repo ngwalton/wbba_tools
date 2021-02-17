@@ -299,7 +299,7 @@ progress_message <- function(cnt, n) {
 
 # function to print estimated time to print all maps
 time_est_message <- function(t0, t1, n) {
-  t_el <- t1 - t0
+  t_el <- difftime(t1, t0, units = "secs")
   t_el <- round(t_el * n / 60, 1)
   message(paste("Estimated time to print:", t_el, "minutes"))
 }

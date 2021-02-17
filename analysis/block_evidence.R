@@ -181,7 +181,7 @@ if (print_map) {
 
     if (i == 1) {
       t1 <- Sys.time()
-      t_el <- t1 - t0
+      t_el <- difftime(t1, t0, units = "secs")
       t_el <- round(t_el * n / 60, 1)
       message(paste("Estmimated time to print:", t_el, "minutes"))
     }
