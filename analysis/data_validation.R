@@ -22,6 +22,9 @@ ebird_file <- "ebird_data_sample_wbbaii.txt"
 dates_file <- "acceptable_dates.csv"
 codes_file <- "species_usable_codes.csv"
 
+# Make any NC (No Code) Breeding Codes Blank
+ebird_file[ebird_file == "NC" ] <- ""
+
 # Input data
 ebird <- read.delim(ebird_file, quote = "", as.is = TRUE)
 dates <- read.csv(dates_file, row.names = 1, as.is = TRUE)
