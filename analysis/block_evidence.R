@@ -102,7 +102,7 @@ sp$conf <- 0
 # numbers are used at first instead of names to simply finding the highest
 # breeding evidence
 breeding_codes <- list(
-  list(1, "Observed",  c("", "F")),
+  list(1, "Observed",  c("", "F", "O", "NC")),
   list(2, "Possible",  c("H", "S")),
   list(3, "Probable",  c("S7", "M", "P", "T", "C", "N", "A", "B")),
   list(4, "Confirmed", c("PE", "CN", "NB", "DD", "UN", "ON", "FL", "CF",

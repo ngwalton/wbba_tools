@@ -17,13 +17,13 @@ setwd(here::here("data"))
 # Output file -- rename file appropriately as needed
 out_file <- "out.csv"
 
+# codes that will be removed from analysis
+codes_to_rm <- c("", "O", "F", "NC")
+
 # Modify each of these file names as needed
 ebird_file <- "ebird_data_sample_wbbaii.txt"
 dates_file <- "acceptable_dates.csv"
 codes_file <- "species_usable_codes.csv"
-
-# Make any NC (No Code) Breeding Codes Blank
-ebird_file[ebird_file == "NC" ] <- ""
 
 # Input data
 ebird <- read.delim(ebird_file, quote = "", as.is = TRUE)
@@ -60,9 +60,6 @@ missing
 # Should these species should be added to dates?
 ebird <- ebird[! ebird[[ename]] %in% miss_date, ]
 
-# Add missing column for "F" breeding code
-codes[, "F"] <- as.integer(1)
-
 
 # Error checking ----
 
@@ -85,7 +82,7 @@ all(vapply(dates[, date_cols], check_date_format, TRUE))
 # Convert date columns to class date -- allows for comparison of dates without
 # using Julian days
 dates[, date_cols] <- lapply(dates[, date_cols],
-                             function(x) as.Date(x, "%m/%d/%Y"))
+  function(x) as.Date(x, "%m/%d/%Y"))
 
 ebird[, edate] <- as.Date(ebird[, edate], "%Y-%m-%d")
 
@@ -95,7 +92,7 @@ ebird[, ecode] <- trimws(ebird[, ecode])
 
 
 # remove observed and flyover ----
-keep <- ! (ebird[, ecode] %in% c("", "O", "F") | is.na(ebird[, ecode]))
+keep <- ! (ebird[, ecode] %in% codes_to_rm | is.na(ebird[, ecode]))
 ebird <- ebird[keep, ]
 
 
@@ -111,7 +108,7 @@ ebird$dv_code[ebird$dv_code < 3] <- NA_integer_
 # temporariliy add date range information to ebird
 name_ord <- c(names(ebird), names(dates)[names(dates) != ename])
 ebird <- merge(ebird, dates, by.x = ename, by.y = "row.names", all.x = TRUE,
-               sort = FALSE)
+  sort = FALSE)
 
 # incase merge reordered columns
 ebird <- ebird[, name_ord]

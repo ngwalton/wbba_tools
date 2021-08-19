@@ -25,7 +25,7 @@ pal <- "Paired"
 # variable "codelevels" in function "chronplot" (below) will need to be added
 # there.
 lump <- list(
-  "O/F" = c("", "F"),
+  "O/F" = c("", "F", "O", "NC"),
   "S/S7/M" = c("S", "S7", "M"),
   "P/C" = c("P", "C"),
   "T/A" = c("T", "A"),
@@ -99,7 +99,7 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
 
   if (! all(ebird$code %in% codelevels)) {
     warn <- paste("Not all eBird codes (BREEDING.BIRD.ATLAS.CODE) for",
-                  comname, "are in codelevels")
+      comname, "are in codelevels")
     warning(warn)
   }
 
@@ -116,15 +116,15 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   # used droplevels so that codes that where not observed are not plotted;
   # remove droplevels if you'd like unobserved codes to be included on the plot
   ebird$code <- droplevels(factor(ebird$code, levels = codelevels,
-                                  ordered = TRUE))
+    ordered = TRUE))
 
   # make room for longer y axis labels
   old_par <- par(mar = c(5, 5, 4, 2) + 0.1, mgp = c(3.75, 1, 0))
 
   # plot "empty" box plot
   boxplot(obsdate ~ code, horizontal = TRUE, cex.axis = cex.y.axis, xaxt = "n",
-          data = ebird, border = "white", main = comname, las = 2,
-          xlab = "Date", ylab = "Breeding Codes", show.names = TRUE)
+    data = ebird, border = "white", main = comname, las = 2,
+    xlab = "Date", ylab = "Breeding Codes", show.names = TRUE)
 
   date0 <- round_date(min(ebird$obsdate), "month")
   date1 <- round_date(max(ebird$obsdate), "month")
@@ -154,7 +154,7 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   # grid.text is can be hard to follow but allows for arbitrary rotation of
   # x labels
   grid.text(names(labels), x = unit(labels, "native"), y = unit(-0.7, "lines"),
-            just = "right", rot = 65, gp = gpar(cex = cex.x.axis))
+    just = "right", rot = 65, gp = gpar(cex = cex.x.axis))
   popViewport(3)
 
   # add tick marks
@@ -170,10 +170,10 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   col <- codecolors[names(codecolors) %in% levels(ebird$code)]
 
   stripchart(obsdate ~ code, data = ebird, vertical = FALSE, method = "jitter",
-             pch = 16, col = col, add = TRUE)
+    pch = 16, col = col, add = TRUE)
 
   boxplot(obsdate ~ code, horizontal = TRUE, yaxt = "n", xaxt = "n",
-          data = ebird, add = TRUE)
+    data = ebird, add = TRUE)
 
   par(old_par)
 }

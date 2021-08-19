@@ -24,7 +24,7 @@ pal <- "Paired"
 # "S", "S7", and "M" with "S"). Note that any code that is not already in
 # variable "codelevels" in function "chronplot" (below) will need to be added
 # there.
-# lump <- list(S = c("S", "S7", "M"), O = c("", "F"))
+# lump <- list(S = c("S", "S7", "M"), O = c("", "F", "O", "NC"))
 
 # evidence codes to remove -- uncomment/edit as needed
 # this is a vector of evidence codes that will be not be plotted
@@ -89,7 +89,7 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   # this vector will need updating if any new codes are introduced via "lump".
   codelevels <- c("H", "S", "S7", "M", "T", "P", "C", "B", "CN", "NB", "A", "N",
                   "DD", "ON", "NE", "FS", "CF", "NY", "FY", "FL", "PE", "UN",
-                  "F", "", "O")
+                  "F", "", "O", "NC")
 
   if (! all(ebird$code %in% codelevels)) {
     warn <- paste("Not all eBird codes (BREEDING.BIRD.ATLAS.CODE) for",
