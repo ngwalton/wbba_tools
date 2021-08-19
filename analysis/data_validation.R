@@ -105,12 +105,12 @@ ebird$dv_code[ebird$dv_code < 3] <- NA_integer_
 
 
 # date code ----
-# temporariliy add date range information to ebird
+# temporarily add date range information to ebird
 name_ord <- c(names(ebird), names(dates)[names(dates) != ename])
 ebird <- merge(ebird, dates, by.x = ename, by.y = "row.names", all.x = TRUE,
   sort = FALSE)
 
-# incase merge reordered columns
+# in case merge reordered columns
 ebird <- ebird[, name_ord]
 
 # add date codes
