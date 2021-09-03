@@ -63,8 +63,8 @@ sp$ii[dom_mall, "COMMON.NAME"] <- "Mallard"
 taxa <- c("species", "issf", "domestic", "form")
 update_sp <- function(x) {
   is_sp <- x$CATEGORY %in% taxa
-  is_obs <- is.na(x$BREEDING.BIRD.ATLAS.CODE) |
-    x$BREEDING.BIRD.ATLAS.CODE %in% c("F ", "")
+  is_obs <- is.na(x$BREEDING.CODE) |
+    x$BREEDING.CODE %in% c("F ", "")
 
   keep <- is_sp & ! is_obs
   x <- x[keep, ]
