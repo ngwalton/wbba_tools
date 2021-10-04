@@ -50,19 +50,19 @@ ebird <- ebird[order(ebird$TAXONOMIC.ORDER), ]
 ebird$OBSERVATION.DATE <- sub("^20\\d\\d", "2016", ebird$OBSERVATION.DATE)
 
 # remove white space from evidence codes
-ebird$BREEDING.BIRD.ATLAS.CODE <- trimws(ebird$BREEDING.BIRD.ATLAS.CODE)
+ebird$BREEDING.CODE <- trimws(ebird$BREEDING.CODE)
 
 # lump evidence codes if lump has been set
 if (exists("lump")) {
   for (i in seq_along(lump)) {
-    indx <- ebird$BREEDING.BIRD.ATLAS.CODE %in% lump[[i]]
-    ebird[indx, "BREEDING.BIRD.ATLAS.CODE"] <- names(lump)[i]
+    indx <- ebird$BREEDING.CODE %in% lump[[i]]
+    ebird[indx, "BREEDING.CODE"] <- names(lump)[i]
   }
 }
 
 # remove unneeded evidence codes
 if (exists("no_plot_codes")) {
-  ebird <- ebird[! ebird$BREEDING.BIRD.ATLAS.CODE %in% no_plot_codes, ]
+  ebird <- ebird[! ebird$BREEDING.CODE %in% no_plot_codes, ]
 }
 
 
@@ -75,7 +75,7 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
 
 
   # rename columns because ebird names are long
-  cols <- c("COMMON.NAME", "BREEDING.BIRD.ATLAS.CODE", "OBSERVATION.DATE")
+  cols <- c("COMMON.NAME", "BREEDING.CODE", "OBSERVATION.DATE")
   newnames <- c("name", "code", "obsdate")
   ebird <- ebird[ebird$COMMON.NAME == comname, cols]
   names(ebird) <- newnames
@@ -92,7 +92,7 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
                   "F", "", "O", "NC")
 
   if (! all(ebird$code %in% codelevels)) {
-    warn <- paste("Not all eBird codes (BREEDING.BIRD.ATLAS.CODE) for",
+    warn <- paste("Not all eBird codes (BREEDING.CODE) for",
                   comname, "are in codelevels")
     warning(warn)
   }
