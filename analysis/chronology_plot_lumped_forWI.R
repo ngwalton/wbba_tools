@@ -172,8 +172,13 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   stripchart(obsdate ~ code, data = ebird, vertical = FALSE, method = "jitter",
     pch = 16, col = col, add = TRUE)
 
-  boxplot(obsdate ~ code, horizontal = TRUE, yaxt = "n", xaxt = "n",
-    data = ebird, add = TRUE)
+  #set boxplot color and partial transparency (where alpha is opacity)
+  #run mycol to get the color code, then paste it into the next line
+  #mycol <- rgb(245, 245, 245, max = 255, alpha = 0, names = "ltgrayclear")
+  #mycol
+  
+  boxplot(obsdate ~ code, horizontal = TRUE,  col = "#F5F5F500", yaxt = "n", xaxt = "n",
+          data = ebird, add = TRUE)
 
   par(old_par)
 }
