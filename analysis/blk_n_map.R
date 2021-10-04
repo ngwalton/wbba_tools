@@ -120,9 +120,9 @@ prep_sp <- function(sp_df, blk, taxa, mo, priority_only, priority_lvls) {
   # ...and join them to the bird data frame
   sp_df@data <- cbind(sp_df@data, block_over)
 
-  # some of the BREEDING.BIRD.ATLAS.CODE codes have a space at the end
+  # some of the BREEDING.CODE codes have a space at the end
   # and some don't - this removes the space
-  sp_df$BREEDING.BIRD.ATLAS.CODE <- trimws(sp_df$BREEDING.BIRD.ATLAS.CODE)
+  sp_df$BREEDING.CODE <- trimws(sp_df$BREEDING.CODE)
 
   # add date columns
   sp_df$DDDD <- ymd(sp_df$OBSERVATION.DATE)
@@ -144,7 +144,7 @@ prep_sp <- function(sp_df, blk, taxa, mo, priority_only, priority_lvls) {
   }
 
   # limit to C1-C4 evidence categories
-  sp_df <- sp_df[BREEDING.BIRD.ATLAS.CATEGORY %in% c("C2", "C3", "C4"), ]
+  sp_df <- sp_df[BREEDING.CATEGORY %in% c("C2", "C3", "C4"), ]
 
   # remove records duplicated across shared checklists
   sp_g <- sp_df[GROUP.IDENTIFIER != ""]  # split records with group id set
