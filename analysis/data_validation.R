@@ -33,7 +33,7 @@ codes <- read.csv(codes_file, row.names = 1, as.is = TRUE)
 # Setup column names for ebird data frame
 # Modify these here if names change over time
 ename <- "COMMON.NAME"
-ecode <- "BREEDING.BIRD.ATLAS.CODE"
+ecode <- "BREEDING.CODE"
 edate <- "OBSERVATION.DATE"
 
 # Extract date column names from dates data frame (assumes all end in ".date")
