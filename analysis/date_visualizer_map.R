@@ -145,11 +145,11 @@ sp[, quartile := mo_quartile(DDDD), by = DDDD]
 sp[, quartile := factor(quartile, levels = 1:4, labels = paste0("q", 1:4))]
 
 # set empty breeding evidence category to lowest level
-sp[BREEDING.BIRD.ATLAS.CATEGORY == "" , BREEDING.BIRD.ATLAS.CATEGORY := "C1"]
+sp[BREEDING.CATEGORY == "" , BREEDING.CATEGORY := "C1"]
 
-cat_levels <- unique(sp$BREEDING.BIRD.ATLAS.CATEGORY)
+cat_levels <- unique(sp$BREEDING.CATEGORY)
 cat_levels <- sort(cat_levels)
-sp[, BREEDING.BIRD.ATLAS.CATEGORY := factor(BREEDING.BIRD.ATLAS.CATEGORY,
+sp[, BREEDING.CATEGORY := factor(BREEDING.CATEGORY,
   levels = cat_levels)]
 
 
