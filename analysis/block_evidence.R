@@ -88,9 +88,9 @@ names(block_over)[13] <- "CO_eBird"  # COUNTY is in both data frames
 # ...and join them to the bird data frame
 sp <- cbind(sp_nad@data, block_over)
 
-# some of the BREEDING.BIRD.ATLAS.CODE codes have a space at the end
+# some of the BREEDING.CODE codes have a space at the end
 # and some don't - this removes the space
-sp$BREEDING.BIRD.ATLAS.CODE <- trimws(sp$BREEDING.BIRD.ATLAS.CODE)
+sp$BREEDING.CODE <- trimws(sp$BREEDING.CODE)
 
 # add column for breeding evidence code
 sp$conf <- 0
@@ -111,7 +111,7 @@ breeding_codes <- list(
 
 # assign numeric breeding code (1 = lowest, 4 = highest)
 for (code in breeding_codes) {
-  sp$conf[sp$BREEDING.BIRD.ATLAS.CODE %in% code[[3]]] <- code[[1]]
+  sp$conf[sp$BREEDING.CODE %in% code[[3]]] <- code[[1]]
 }
 
 # function to assign breeding code name; for a given alpha code/block combo, all
