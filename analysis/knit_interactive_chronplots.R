@@ -10,8 +10,6 @@
  
 # Note that as written this is only pulling the atlas portal records.
 
-# Also note in the final products, right now year will display as 2016 on mouseover, ignore the year and click through to see the original date!
-
 library(plyr)
 
 # loads EBD data
