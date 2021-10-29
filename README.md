@@ -186,6 +186,8 @@ The first part of the script splits your eBird data into invidual .csv files by 
 
 Note that as written this is only pulling the atlas portal records.
 
+The output product will be interactive html files.
+
 
 
 
