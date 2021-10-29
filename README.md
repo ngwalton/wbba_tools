@@ -4,7 +4,7 @@ Here you'll find a variety of scripts used to proof, visualize, and display eBir
 
 If you download the whole zip file, it comes with sample WI data, so you should be able to run these right out of the box to check if things are working, and then you can customize them with data and other files for your region. These are designed to run using eBird data downloads from the EBD, available at: https://ebird.org/data/download
  
-There are currently 6 different scripts.
+There are currently 7 different scripts.
 
 ## 1. data_validation (Data Validation Tool)
 
@@ -169,5 +169,24 @@ include_range <- TRUE
 # include range in the output map
 range_dir <- "./ebird_range"
  ````   
+## 7. knit_interactive_chronplots (Interactive Chronology Plot)
+
+![interactive_chronplot_example.png](https://github.com/ngwalton/wbba_tools/blob/master/interactive_chronplot_example.png)
+
+This is an interactive version of the chronology plot that allows you to see the date of the point on mouseover, and if you click the point it will open the eBird checklist in a new browser window!
+
+The file to open to run this is called knit_interactive_chronplots.R, but it also calls the companion markdown file interactive_chronplot.Rmd.
+
+To load your own data, replace the sample file with your own eBird data:
+````
+# loads EBD data
+ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
+````
+The first part of the script splits your eBird data into invidual .csv files by species. Make sure that the folder does not have other .csv files in it. 
+
+Note that as written this is only pulling the atlas portal records.
+
+
+
 
 
