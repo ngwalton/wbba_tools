@@ -177,7 +177,7 @@ This is an interactive version of the chronology plot that allows you to see the
 
 The file to open to run this is called knit_interactive_chronplots.R, but it also calls the companion markdown file interactive_chronplot.Rmd.
 
-To load your own data, replace the sample file with your own eBird data:
+To load your own data, replace the call to the sample file with a call to your own eBird data file:
 ````
 # loads EBD data
 ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
