@@ -1,19 +1,24 @@
-# Script to compile multiple chonplot html files. 
+# Script to compile multiple chonplot html files.
 
-# The script interactively loads each csv in the working directory and runs the template Rmd file using the
+# Put your EBD file in the folder: data/chrontplot_data, and delete the example file here. 
+# There can only be one csv in this folder. 
+
+# The script interactively loads each csv and runs the template Rmd file using the
 # current data. The output file is names the same as in the corresponding input
 # csv file but with an html extension.
 
 # First, this section below loads your EBD file from eBird and split it into individual csv files for each species
-# This will dump these csv files into the same directory as your input file. There should be no other csv files in this directory. 
-# Make sure the Rmd file is also in this directory.
- 
+# This will dump these csv files into a folder called output on the same level as the data and analysis folders. 
+
 # Note that as written this is only pulling the atlas portal records.
 
 library(plyr)
+library(here)
+setwd(here::here("analysis"))
 
 # loads EBD data
-ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
+ebird <- read.delim("../data/chronplot_data/ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
+
 
 # limits dataset to only WI atlas portal records
 ebirdatlas  <- ebird[ebird$PROJECT.CODE == "EBIRD_ATL_WI", ]
