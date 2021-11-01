@@ -34,7 +34,7 @@ d_ply(ebirdatlas, .(COMMON.NAME),
 library(rmarkdown)
 
 # output directory relative to working directory
-out_dir <- "chronplots"
+out_dir <- "../output/chronplots"
 
 # create output dir if it does not exist
 if (! dir.exists(out_dir)) {
