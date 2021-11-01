@@ -177,16 +177,16 @@ This is an interactive version of the chronology plot that allows you to see the
 
 The file to open to run this is called knit_interactive_chronplots.R, but it also calls the companion markdown file interactive_chronplot.Rmd.
 
-To load your own data, replace the call to the sample file with a call to your own eBird data file:
+To load your own data, put your EBD file in the folder: data/chrontplot_data, and delete the example file here. There can only be one csv in this folder. 
+
+Then replace the call to the sample file with a call to your own eBird data file:
 ````
 # loads EBD data
 ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 ````
-The first part of the script splits your eBird data into invidual .csv files by species. Make sure that the folder does not have other .csv files in it. 
-
 Note that as written this is only pulling the atlas portal records.
 
-The output product will be interactive html files.
+The output product will be interactive html files. It outputs into a new folder called output on the same level as the data and analysis folders.
 
 
 
