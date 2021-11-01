@@ -19,8 +19,8 @@ setwd(here::here("analysis"))
 # loads EBD data
 ebird <- read.delim("../data/chronplot_data/ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
-# remove non-species taxa
-taxa <- c("species", "issf", "domestic", "form")
+# remove spuh and slash taxa
+taxa <- c("species", "issf", "domestic", "form", "hybrid")
 ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 
 # splits into individual csv files by species
