@@ -19,15 +19,14 @@ setwd(here::here("analysis"))
 # loads EBD data
 ebird <- read.delim("../data/chronplot_data/ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
-
-# limits dataset to only WI atlas portal records
-ebirdatlas  <- ebird[ebird$PROJECT.CODE == "EBIRD_ATL_WI", ]
+# remove non-species taxa
+taxa <- c("species", "issf", "domestic", "form")
+ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 
 # splits into individual csv files by species
-d_ply(ebirdatlas, .(COMMON.NAME),
-      function(ebirdatlas) write.csv(ebirdatlas,
-                                file=paste(ebirdatlas$COMMON.NAME[[1]],".csv",sep="")))
-
+d_ply(ebird, .(COMMON.NAME),
+      function(ebird) write.csv(ebird,
+                                file=paste(ebird$COMMON.NAME[[1]],".csv",sep="")))
 # This part interactively loads each csv in the working directory and runs the template Rmd file using the
 # current data.
 
