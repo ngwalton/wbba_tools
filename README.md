@@ -181,8 +181,8 @@ To load your own data, put your EBD file in the folder: data/chrontplot_data, an
 
 Then replace the call to the sample file with a call to your own eBird data file:
 ````
-# loads EBD data
-ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
+# loads EBD data (change this to your filename)
+ebird <- read.delim("../data/chronplot_data/ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 ````
 Note that as written this is only pulling the atlas portal records.
 
