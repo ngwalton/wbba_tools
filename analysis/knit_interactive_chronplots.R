@@ -4,10 +4,9 @@
 # There can only be one file in this folder. 
 
 # The script chopes the eBird data into individuals csv files by species, then interactively loads each csv and runs the template Rmd file using the
-# current data. The output file is named the same as in the corresponding input
-# csv file but with an html extension.
+# current data. The output file is named the same as in the corresponding input csv file but with an html extension.
 
-# First, this section below loads your EBD file from eBird and split it into individual csv files for each species
+# First, this section below loads your EBD file from eBird and split it into individual csv files for each species.
 
 # The final products will be interactive html files in a folder called output on the same level as the data and analysis folders. 
 
