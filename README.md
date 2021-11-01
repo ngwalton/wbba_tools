@@ -186,7 +186,7 @@ ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 ````
 Note that as written this is only pulling the atlas portal records.
 
-The output product will be interactive html files. It outputs into a new folder called output on the same level as the data and analysis folders.
+The output product will be interactive html files. They export into a new folder called "output" on the same level as the data and analysis folders.
 
 
 
