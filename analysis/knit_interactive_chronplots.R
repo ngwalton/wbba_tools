@@ -13,6 +13,8 @@
 # Note that as written this is only pulling the atlas portal records.
 
 library(plyr)
+library(dplyr)
+library(data.table)
 library(here)
 setwd(here::here("analysis"))
 
