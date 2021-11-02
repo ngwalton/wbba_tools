@@ -25,7 +25,7 @@ ebird <- read.delim("../data/chronplot_data/ebird_data_sample_wbbaii.txt", quote
 taxa <- c("species", "issf", "domestic", "form", "hybrid")
 ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 
-# This gets ride of species with no or only category 1 breeding codes, which otherwise crash the program
+# This gets rid of species with no or only category 1 breeding codes, which otherwise crash the program
 
 # create duplicate of category field
 ebird$highestcat <- ebird$BREEDING.CATEGORY
@@ -68,8 +68,11 @@ ebird <- subset(ebird, result != "FALSE")
 d_ply(ebird, .(COMMON.NAME),
       function(ebird) write.csv(ebird,
                                 file=paste(ebird$COMMON.NAME[[1]],".csv",sep="")))
-# This part interactively loads each csv in the working directory and runs the template Rmd file using the
-# current data.
+      
+#remove unneededcolumns
+ebird <- subset(ebird, select = -c(highestcat, result) )
+
+# This part interactively loads each csv and runs the template Rmd file using the current data.
 
 library(rmarkdown)
 
