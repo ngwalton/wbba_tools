@@ -51,6 +51,12 @@ maxcats$result <- ifelse(maxcats$highestcat < 2, FALSE, TRUE)
 lookup <- maxcats[, c("COMMON.NAME","result")]
 ebird <- join(ebird, lookup, by = "COMMON.NAME")
 
+# drop unneeded tables
+rm(group)
+rm(lookup)
+rm(maxcats)
+rm(taxa)
+
 #if any still read NA then make them false too
 ebird$result <- as.character(ebird$result)
 ebird$result[is.na(ebird$result)] <- "FALSE"
@@ -71,6 +77,13 @@ d_ply(ebird, .(COMMON.NAME),
       
 #remove unneededcolumns
 ebird <- subset(ebird, select = -c(highestcat, result) )
+      
+# clearing ebird table to reduce memory used
+rm(ebird)
+
+# garbage collection to further free up memory
+gc(verbose = getOption("verbose"), reset = TRUE, full = TRUE)
+
 
 # This part interactively loads each csv and runs the template Rmd file using the current data.
 
