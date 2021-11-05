@@ -21,9 +21,15 @@ setwd(here::here("analysis"))
 # loads EBD data (change this to your filename)
 ebird <- read.delim("../data/chronplot_data/ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
-# remove spuh and slash taxa
-taxa <- c("species", "issf", "domestic", "form", "hybrid")
+# limits dataset to only WI atlas portal records (change this to your atlas if desired)
+ebird  <- ebird[ebird$PROJECT.CODE == "EBIRD_ATL_WI", ]
+
+# remove spuh, slash, and domestic taxa
+taxa <- c("species", "issf", "form", "hybrid")
 ebird <- ebird[ebird$CATEGORY %in% taxa, ]
+
+# remove parentheses from hybrid names
+ebird$COMMON.NAME<-gsub("[[:punct:]]","",as.character(ebird$COMMON.NAME))
 
 # This gets rid of species with no or only category 1 breeding codes, which otherwise crash the program
 
