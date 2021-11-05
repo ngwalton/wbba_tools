@@ -57,6 +57,10 @@ maxcats$result <- ifelse(maxcats$highestcat < 2, FALSE, TRUE)
 lookup <- maxcats[, c("COMMON.NAME","result")]
 ebird <- join(ebird, lookup, by = "COMMON.NAME")
 
+#if any still read NA then make them false too
+ebird$result <- as.character(ebird$result)
+ebird$result[is.na(ebird$result)] <- "FALSE"
+
 # drop unneeded tables
 rm(group)
 rm(lookup)
@@ -65,10 +69,6 @@ rm(taxa)
 
 # drop rows for the species that never have breeding categories
 ebird <- subset(ebird, result != "FALSE")
-
-#if any still read NA then make them false too
-ebird$result <- as.character(ebird$result)
-ebird$result[is.na(ebird$result)] <- "FALSE"
 
 #remove unneededcolumns
 ebird <- subset(ebird, select = -c(highestcat, result) )
