@@ -64,7 +64,7 @@ ebird$result[is.na(ebird$result)] <- "FALSE"
 # drop rows for the species that never have breeding categories
 ebird <- subset(ebird, result != "FALSE")
 
-# Species Exemption List (Optional)
+# SPECIES EXCLUSION LIST (Optional)
 # If species give you trouble for any reason, or if you don't want them run you can uncomment and remove them here. 
 # Large files (over 80 MB) are likely to cause a freeze or crash!!
 # Or you can just delete the csv file before the second half of the code.
