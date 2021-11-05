@@ -29,7 +29,7 @@ taxa <- c("species", "issf", "form", "hybrid")
 ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 
 # remove parentheses from hybrid names
-ebird$COMMON.NAME<-gsub("[[:punct:]]","",as.character(ebird$COMMON.NAME))
+ebird$COMMON.NAME<-gsub("[()]", "",as.character(ebird$COMMON.NAME))
 
 # This gets rid of species with no or only category 1 breeding codes, which otherwise crash the program
 
