@@ -186,6 +186,8 @@ ebird <- read.delim("../data/chronplot_data/ebird_data_sample_wbbaii.txt", quote
 ````
 Note that as written this is only pulling the atlas portal records.
 
+*IMPORTANT NOTE* csv files over 80 MB tend to crash this program. We have not found a great workaround. I would advise running the first half of the code, then deleting or removing the files over 80 MB or adding them to the exemption list. Most of these are ultra common species that screening may not be as important for. (Alternately, you could remove the uncoded records which would lower the file size, although we did not do this as I kind of like having those uncoded records there for reference with regard to when things arrive in the state and assigning S codes.)
+
 The output product will be interactive html files. They export into a new folder called "output" on the same level as the data and analysis folders.
 
 
