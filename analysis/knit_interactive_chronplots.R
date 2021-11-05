@@ -64,11 +64,18 @@ ebird$result[is.na(ebird$result)] <- "FALSE"
 # drop rows for the species that never have breeding categories
 ebird <- subset(ebird, result != "FALSE")
 
-# (Optional) If other species give you trouble for any reason you can uncomment and remove them here. 
-# AMRO was crashing for me because it was too big.
+# Species Exemption List (Optional)
+# If species give you trouble for any reason, or if you don't want them run you can uncomment and remove them here. 
+# Large files (over 80 MB) are likely to cause a freeze or crash!!
 # Or you can just delete the csv file before the second half of the code.
 # ebird <- subset(ebird, COMMON.NAME != "American Robin")
-# ebird <- subset(ebird, COMMON.NAME != "Common Redpoll")
+# ebird <- subset(ebird, COMMON.NAME != "American Crow")
+# ebird <- subset(ebird, COMMON.NAME != "American Goldfinch")
+# ebird <- subset(ebird, COMMON.NAME != "Black-capped Chickadee")
+# ebird <- subset(ebird, COMMON.NAME != "Blue Jay")
+# ebird <- subset(ebird, COMMON.NAME != "Mourning Dove")
+# ebird <- subset(ebird, COMMON.NAME != "Northern Cardinal")
+# ebird <- subset(ebird, COMMON.NAME != "Red-winged Blackbird")
 
 # splits into individual csv files by species
 d_ply(ebird, .(COMMON.NAME),
@@ -84,6 +91,14 @@ rm(ebird)
 # garbage collection to further free up memory
 gc(verbose = getOption("verbose"), reset = TRUE, full = TRUE)
 
+#################################################################
+#################################################################
+# RUN THE TOP HALF FIRST, THEN STOP HERE!
+# Go inspect the csvs that got created (in the Analysis folder)
+# If any are over 80MB, either remove those and then proceed with the second half of the code or add them to the exclusion list above and rerun the whole code.
+# This script (apparently pandoc is the culprit) really really does not like large files.
+# You may get 90 or 100 MB files to run, but your computer may freeze for a half hour or crash.
+# SO RUN LARGE FILES AT YOUR OWN PERIL!
 
 # This part interactively loads each csv and runs the template Rmd file using the current data.
 
