@@ -57,12 +57,15 @@ rm(lookup)
 rm(maxcats)
 rm(taxa)
 
+# drop rows for the species that never have breeding categories
+ebird <- subset(ebird, result != "FALSE")
+
 #if any still read NA then make them false too
 ebird$result <- as.character(ebird$result)
 ebird$result[is.na(ebird$result)] <- "FALSE"
 
-# drop rows for the species that never have breeding categories
-ebird <- subset(ebird, result != "FALSE")
+#remove unneededcolumns
+ebird <- subset(ebird, select = -c(highestcat, result) )
 
 # SPECIES EXCLUSION LIST (Optional)
 # If species give you trouble for any reason, or if you don't want them run you can uncomment and remove them here. 
@@ -81,10 +84,7 @@ ebird <- subset(ebird, result != "FALSE")
 d_ply(ebird, .(COMMON.NAME),
       function(ebird) write.csv(ebird,
                                 file=paste(ebird$COMMON.NAME[[1]],".csv",sep="")))
-      
-#remove unneededcolumns
-ebird <- subset(ebird, select = -c(highestcat, result) )
-      
+  
 # clearing ebird table to reduce memory used
 rm(ebird)
 
