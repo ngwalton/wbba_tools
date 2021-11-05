@@ -177,7 +177,7 @@ This is an interactive version of the chronology plot that allows you to see the
 
 The file to open to run this is called knit_interactive_chronplots.R, but it also calls the companion markdown file interactive_chronplot.Rmd.
 
-To load your own data, put your EBD file in the folder: data/chrontplot_data, and delete the example file here. There can only be one file in this folder. The script will chop it up into separate files by species.
+To load your own data, put your EBD file in the folder: data/chrontplot_data, and delete the example file here. The script will chop it up into separate files by species, and dump them in the analysis folder. Note you should not have other kinds of csvs in the analysis folder.
 
 Then replace the call to the sample file with a call to your own eBird data file:
 ````
