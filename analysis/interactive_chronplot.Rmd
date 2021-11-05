@@ -41,8 +41,8 @@ pal <- "Paired"
 
 # data prep ----
 
-# remove hybrid, spuh, and slash taxonomic categories (optional)
-taxa <- c("species", "issf", "domestic", "form")
+# remove domestic, spuh, and slash taxonomic categories (optional)
+taxa <- c("species", "issf", "hybrid", "form")
 ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 
 # order by TAXONOMIC.ORDER
