@@ -185,6 +185,10 @@ Then replace the call to the sample file with a call to your own eBird data file
 ebird <- read.delim("../data/chronplot_data/ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 ````
 Note that as written this is only pulling the atlas portal records.
+````
+# limits dataset to only WI atlas portal records (change this to your atlas if desired)
+ebird  <- ebird[ebird$PROJECT.CODE == "EBIRD_ATL_WI", ]
+````
 
 *IMPORTANT NOTE* csv files over 80 MB tend to crash the interactive chronplot. We have not found a great workaround. I would advise running the first half of the code, then deleting or removing the files over 80 MB and running the second half of the code. Alternately you can add them to the species exclusion list (which deletes them from the data file) and then run the full code. Most of these are ultracommon species that screening may not be as important for. (Alternately, you could remove the uncoded records which would lower the file size, although we did not do this as I kind of like having those uncoded records there for reference with regard to when things arrive in the state and assigning S codes.)
 
