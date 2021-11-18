@@ -63,11 +63,25 @@ if (any(is.na(sp_in$SPEC))) {
 }
 
 # this will need modification depending on what species were not matched; in
-# this case we provide a custom alpha code domestic Guineafowl and Mallard, and
+# this case we provide a custom alpha code for Great Tit and and
 # remove Domestic goose sp.
-sp_in$SPEC[sp_in$COMMON.NAME == "Helmeted Guineafowl (Domestic type)"] <- "HEGU"
-sp_in$SPEC[sp_in$COMMON.NAME == "Mallard (Domestic type)"] <- "MALL_DOM"
+sp_in$SPEC[sp_in$COMMON.NAME == "Great Tit"] <- "GTIT"
 sp_in <- sp_in[sp_in$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
+# more fixes for WI
+sp_in$SPEC[sp_in$COMMON.NAME == "Common Ground Dove)"] <- "CGDO" #Must have changed since 2018
+sp_in$SPEC[sp_in$COMMON.NAME == "Muscovy Duck (Domestic type)"] <- "MUDU"
+sp_in <- sp_in[sp_in$COMMON.NAME != "African Collared-Dove (Domestic type or Ringed Turtle-Dove)", ]
+sp_in <- sp_in[sp_in$COMMON.NAME != "Bourke's Parrot", ]
+sp_in <- sp_in[sp_in$COMMON.NAME != "Budgerigar (Domestic type)", ]
+sp_in <- sp_in[sp_in$COMMON.NAME != "Graylag Goose (Domestic type)", ]
+sp_in <- sp_in[sp_in$COMMON.NAME != "Indian Peafowl (Domestic type)", ]
+sp_in <- sp_in[sp_in$COMMON.NAME != "Mallard (Domestic type)", ]
+sp_in <- sp_in[sp_in$COMMON.NAME != "Red-browed Firetail", ]
+sp_in <- sp_in[sp_in$COMMON.NAME != "Red-legged Partridge", ]
+sp_in <- sp_in[sp_in$COMMON.NAME != "Red Junglefowl (Domestic type)", ]
+sp_in <- sp_in[sp_in$COMMON.NAME != "Ring-necked Dove", ]
+sp_in <- sp_in[sp_in$COMMON.NAME != "Wild Turkey (Domestic type)", ]
+sp_in <- sp_in[sp_in$COMMON.NAME != "Mallard (Domestic type)", ]
 
 # create a SpatialPointsDataFrame from "sp_in"
 wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
