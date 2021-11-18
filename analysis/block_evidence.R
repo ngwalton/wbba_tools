@@ -81,7 +81,7 @@ sp_in <- sp_in[sp_in$COMMON.NAME != "Red-legged Partridge", ]
 sp_in <- sp_in[sp_in$COMMON.NAME != "Red Junglefowl (Domestic type)", ]
 sp_in <- sp_in[sp_in$COMMON.NAME != "Ring-necked Dove", ]
 sp_in <- sp_in[sp_in$COMMON.NAME != "Wild Turkey (Domestic type)", ]
-sp_in <- sp_in[sp_in$COMMON.NAME != "Mallard (Domestic type)", ]
+
 
 # create a SpatialPointsDataFrame from "sp_in"
 wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
