@@ -53,9 +53,9 @@ cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 
 # data prep ----
 
-# how do we want to treat domestic MALL?  currently setting to normal MALL.
-dom_mall <- sp$ii$COMMON.NAME == "Mallard (Domestic type)"
-sp$ii[dom_mall, "COMMON.NAME"] <- "Mallard"
+# remove not valid (reason = exotic) records
+sp$ii <- subset(sp$ii, APPROVED != "0")
+sp$i <- subset(sp$i, APPROVED != "0")
 
 # update_sp removes non-species taxa (i.e., hybrid, spuh, domestic, and slash taxonomic
 # categories), removes records with no breeding evidence (i.e., F, NA, and the
