@@ -24,8 +24,11 @@ ebird <- read.delim("../data/chronplot_data/ebird_data_sample_wbbaii.txt", quote
 # limits dataset to only WI atlas portal records (change this to your atlas if desired)
 ebird  <- ebird[ebird$PROJECT.CODE == "EBIRD_ATL_WI", ]
 
+# flag the pigeon entries so they are not removed with the rest of the domestics
+ebird <- transform(ebird, CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
+
 # remove spuh, slash, and domestic taxa
-taxa <- c("species", "issf", "form", "hybrid")
+taxa <- c("species", "issf", "form", "hybrid", "pigeon")
 ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 
 # remove not valid (reason = exotic) records
