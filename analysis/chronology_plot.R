@@ -1,6 +1,5 @@
 # Function to save chronology plot for each species in an eBird dataset.
 
-
 library(here)
 library(lubridate)
 library(grid)
