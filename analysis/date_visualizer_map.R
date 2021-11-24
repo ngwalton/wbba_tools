@@ -117,12 +117,15 @@ make_map <- function(sp, species, cnty, fltr, pal, jitter = 0.15) {
 
 # data prep ----
 
-# remove hybrid, spuh, and slash taxonomic categories
-taxa <- c("species", "issf", "domestic", "form")
+# remove hybrid, spuh, domestic, and slash taxonomic categories
+taxa <- c("species", "issf", "form")
 sp <- sp[CATEGORY %in% taxa]
 
 # this will need modification if other non-species need to be removed
-sp <- sp[COMMON.NAME != "Domestic goose sp. (Domestic type)"]
+# sp <- sp[COMMON.NAME != "Domestic goose sp. (Domestic type)"]
+
+# remove not valid (reason = exotic) records
+sp <- subset(sp, APPROVED != "0")
 
 # add family from eBird taxonomy
 cols <- c("common_name", "family")
