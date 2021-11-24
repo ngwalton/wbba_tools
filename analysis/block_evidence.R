@@ -44,8 +44,10 @@ cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 # sample WBBA data from ebird
 sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
-
 # data prep ----
+
+# remove not valid (reason = exotic) records
+sp_in <- subset(sp_in, APPROVED != "0")
 
 # remove spuh, slash, and domestic taxa
 taxa <- c("species", "issf", "form", "hybrid")
