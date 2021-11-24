@@ -53,7 +53,7 @@ sp_in <- subset(sp_in, APPROVED != "0")
 sp_in <- transform(sp_in, CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
 
 # remove spuh, slash, and domestic taxa
-taxa <- c("species", "issf", "form", "hybrid")
+taxa <- c("species", "issf", "form", "hybrid", "pigeon")
 ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 
 # add alpha codes needed later to name species columns with < 10 chars required
