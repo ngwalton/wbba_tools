@@ -57,10 +57,10 @@ cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
 dom_mall <- sp$ii$COMMON.NAME == "Mallard (Domestic type)"
 sp$ii[dom_mall, "COMMON.NAME"] <- "Mallard"
 
-# update_sp removes non-species taxa (i.e., hybrid, spuh, and slash taxonomic
+# update_sp removes non-species taxa (i.e., hybrid, spuh, domestic, and slash taxonomic
 # categories), removes records with no breeding evidence (i.e., F, NA, and the
 # empty string), and adds an alpha code (for column naming).
-taxa <- c("species", "issf", "domestic", "form")
+taxa <- c("species", "issf", "form")
 update_sp <- function(x) {
   is_sp <- x$CATEGORY %in% taxa
   is_obs <- is.na(x$BREEDING.CODE) |
