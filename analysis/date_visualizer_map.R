@@ -117,8 +117,11 @@ make_map <- function(sp, species, cnty, fltr, pal, jitter = 0.15) {
 
 # data prep ----
 
+# flag the pigeon entries so they are not removed with the rest of the domestics
+sp <- transform(sp, CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
+
 # remove hybrid, spuh, domestic, and slash taxonomic categories
-taxa <- c("species", "issf", "form")
+taxa <- c("species", "issf", "form", "pigeon")
 sp <- sp[CATEGORY %in% taxa]
 
 # this will need modification if other non-species need to be removed
