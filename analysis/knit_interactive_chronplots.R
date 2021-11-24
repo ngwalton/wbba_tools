@@ -28,6 +28,9 @@ ebird  <- ebird[ebird$PROJECT.CODE == "EBIRD_ATL_WI", ]
 taxa <- c("species", "issf", "form", "hybrid")
 ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 
+# remove not valid (reason = exotic) records
+ebird <- subset(ebird, APPROVED != "0")
+
 # This gets rid of species with no or only category 1 breeding codes, which otherwise crash the program
 
 # create duplicate of category field
