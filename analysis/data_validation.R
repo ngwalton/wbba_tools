@@ -30,6 +30,9 @@ ebird <- read.delim(ebird_file, quote = "", as.is = TRUE)
 dates <- read.csv(dates_file, row.names = 1, as.is = TRUE)
 codes <- read.csv(codes_file, row.names = 1, as.is = TRUE)
 
+# remove not valid (reason = exotic) records
+ebird <- subset(ebird, APPROVED != "0")
+
 # Setup column names for ebird data frame
 # Modify these here if names change over time
 ename <- "COMMON.NAME"
