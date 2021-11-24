@@ -51,8 +51,8 @@ ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 # remove not valid (reason = exotic) records
 ebird <- subset(ebird, APPROVED != "0")
 
-# remove hybrid, spuh, and slash taxonomic categories (optional)
-taxa <- c("species", "issf", "domestic", "form")
+# remove hybrid, spuh, domestic, and slash taxonomic categories (optional)
+taxa <- c("species", "issf", "form")
 ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 
 # order by TAXONOMIC.ORDER
