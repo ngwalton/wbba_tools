@@ -46,7 +46,7 @@ ebird <- subset(ebird, APPROVED != "0")
 ebird <- transform(ebird, CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
 
 # remove hybrid, spuh, domestic, and slash taxonomic categories (optional)
-taxa <- c("species", "issf", "form")
+taxa <- c("species", "issf", "form", "pigeon")
 ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 
 # order by TAXONOMIC.ORDER
