@@ -49,6 +49,9 @@ sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 # remove not valid (reason = exotic) records
 sp_in <- subset(sp_in, APPROVED != "0")
 
+# flag the pigeon entries so they are not removed with the rest of the domestics
+sp_in <- transform(sp_in, CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
+
 # remove spuh, slash, and domestic taxa
 taxa <- c("species", "issf", "form", "hybrid")
 ebird <- ebird[ebird$CATEGORY %in% taxa, ]
@@ -58,7 +61,7 @@ ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 sp_in <- merge(sp_in, alpha[, c("COMMONNAME", "SPEC")], by.x = "COMMON.NAME",
                  by.y = "COMMONNAME", all.x = TRUE, all.y = FALSE)
 
-# if any species were unmatched in alpha, this will print there names; this will
+# if any species were unmatched in alpha, this will print their names; this will
 # require aditional attention if any are not matched
 if (any(is.na(sp_in$SPEC))) {
   unique(sp_in$COMMON.NAME[is.na(sp_in$SPEC)])
