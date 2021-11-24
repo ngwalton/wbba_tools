@@ -47,9 +47,9 @@ sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
 # data prep ----
 
-# remove hybrid, spuh, and slash taxonomic categories
-taxa <- c("species", "issf", "domestic", "form")
-sp_in <- sp_in[sp_in$CATEGORY %in% taxa, ]
+# remove spuh, slash, and domestic taxa
+taxa <- c("species", "issf", "form", "hybrid")
+ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 
 # add alpha codes needed later to name species columns with < 10 chars required
 # for shapefile
