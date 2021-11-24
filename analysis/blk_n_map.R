@@ -90,6 +90,11 @@ alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 # eBird taxonomy needed to match up eBird range map with species
 tax <- get_ebird_taxonomy()
 
+# clean data ----
+
+# remove not valid (reason = exotic) records
+sp <- subset(sp, APPROVED != "0")
+sp1 <- subset(sp1, APPROVED != "0")
 
 # functions ----
 
