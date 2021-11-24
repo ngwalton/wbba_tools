@@ -45,6 +45,9 @@ pal <- "Paired"
 taxa <- c("species", "issf", "hybrid", "form")
 ebird <- ebird[ebird$CATEGORY %in% taxa, ]
 
+# remove not valid (reason = exotic) records
+ebird <- subset(ebird, APPROVED != "0")
+
 # order by TAXONOMIC.ORDER
 ebird <- ebird[order(ebird$TAXONOMIC.ORDER), ]
 
