@@ -51,7 +51,7 @@ out_pdf <- "date_visualizer"
 fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
 
 # optional county layer --  only used for map printing
-cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
+cnty <- us_counties(resolution = "high", states = "WI")
 
 # sample WBBA data from ebird
 ebird_file <- "ebird_data_sample_wbbaii.txt"
