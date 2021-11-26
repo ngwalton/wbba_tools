@@ -54,7 +54,7 @@ sp_in <- transform(sp_in, CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeo
 
 # remove spuh, slash, and domestic taxa
 taxa <- c("species", "issf", "form", "hybrid", "pigeon")
-ebird <- ebird[ebird$CATEGORY %in% taxa, ]
+sp_in <- sp_in[sp_in$CATEGORY %in% taxa, ]
 
 # add alpha codes needed later to name species columns with < 10 chars required
 # for shapefile
