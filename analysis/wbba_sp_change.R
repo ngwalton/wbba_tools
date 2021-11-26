@@ -48,7 +48,7 @@ sp$ii <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 sp$i <- read.delim("ebird_data_sample_wbbai.txt", quote = "", as.is = TRUE)
 
 # optional county layer --  only used for map printing
-cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
+cnty <- us_counties(resolution = "high", states = "WI")
 
 
 # data prep ----
