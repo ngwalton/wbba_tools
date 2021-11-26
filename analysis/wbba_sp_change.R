@@ -59,7 +59,7 @@ sp$i <- subset(sp$i, APPROVED != "0")
 
 # flag the pigeon entries so they are not removed with the rest of the domestics
 sp$ii <- transform(sp$ii, CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
-sp$i <- transform(sp$i CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
+sp$i <- transform(sp$i, CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
 
 # update_sp removes non-species taxa (i.e., hybrid, spuh, domestic, and slash taxonomic
 # categories), removes records with no breeding evidence (i.e., F, NA, and the
