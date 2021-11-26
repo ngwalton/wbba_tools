@@ -39,7 +39,7 @@ alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 
 # optional county layer --  only used for map printing
-cnty <- us_boundaries(type = "county", resolution = "high", states = "WI")
+cnty <- us_counties(resolution = "high", states = "WI")
 
 # sample WBBA data from ebird
 sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
