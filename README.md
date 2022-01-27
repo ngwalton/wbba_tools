@@ -102,6 +102,7 @@ sp <- list()
 sp$ii <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 sp$i <- read.delim("ebird_data_sample_wbbai.txt", quote = "", as.is = TRUE)
 ```` 
+A second version of the change map is available, showing only blocks with good coverage in both atlas periods (wbba_sp_change_automatefaircompare)
 
 ## 5. date_visualizer_map (Quarter-Month Viewer)
 
