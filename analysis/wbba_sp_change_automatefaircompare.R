@@ -12,8 +12,6 @@
 # WITH ADEQUATE EFFORT DURING BOTH ATLAS PERIODS
 # (see fair folder for that shapefile)
 
-# NEED TO FIX - ADD BLANK BLOCK OUTLINE TO "Unreported" color
-
 library(rgdal)    # also loads package 'sp'
 library(reshape2) # for dcast function
 library(foreign)  # for read.dbf (alpha codes come as dbf)
@@ -232,14 +230,20 @@ if (print_map) {
     species <- sp_vec[i]
     
     out_map <- tm_shape(block_map) +
-      tm_polygons(species, title = "Legend", border.col = NULL, palette = pal) +
+      tm_polygons(species, border.col = NULL, palette = pal, legend.show = FALSE) +
       tm_shape(fair) +
             tm_borders("black", lwd=0.2)  +
       tm_shape(cnty) +
-            tm_polygons(border.col = "black", alpha = 0, border.alpha = 0.2,
+            tm_polygons(border.col = "#b0a158", alpha = 0, border.alpha = 0.3,
                   legend.show = FALSE) +
-      tm_legend(title = species, position = c("left", "bottom"), bg.alpha = 0,
-                main.title.fontface = 2, title.fontface = 2)
+      tm_legend(title = species) +
+      tm_add_legend(
+                  title = "Legend",
+                  type = c("fill"),
+                  labels = labels,
+                  col = pal,
+                  shape = 21,
+                  border.col = "black")
     
     
     print(out_map)
