@@ -32,7 +32,7 @@ print_map <- TRUE
 out_file <- "wbba_change"  # root name for output file (csv and/or shp)
 
 # name of output pdf file if printing maps
-out_pdf <- "sgcn_fair_change.pdf"
+out_pdf <- "bwwatest.pdf"
 
 
 # load data ----
@@ -47,8 +47,8 @@ alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
 
 sp <- list()
-sp$ii <- read.delim("SGCN_SIN_withoutsensitivesp_WBBA2.txt", quote = "", as.is = TRUE)
-sp$i <- read.delim("SGCN_SIN_withoutsensitivesp_WBBA1.txt", quote = "", as.is = TRUE)
+sp$ii <- read.delim("wbba2bwwa.txt", quote = "", as.is = TRUE)
+sp$i <- read.delim("wbba1bwwa.txt", quote = "", as.is = TRUE)
 
 
 # optional county layer --  only used for map printing
@@ -185,17 +185,6 @@ out[, -1] <- sp_cast$i[, -1] + sp_cast$ii[, -1]
 block_out <- merge(block_in[, c("BLOCK_ID", "BLOCK_STAT")], out,
                    by = "BLOCK_ID")
 
-# delete rows from fair shapefile so that the only blocks with outlines are the empty ones
-#
-##############################BUT HOW DO I DO THIS BY SPECIES?
-#  
-# making a version of block out with a new column name
-#block_out_copy <-block_out
-#names(block_out_copy@data)[names(block_out_copy@data) == 'BLOCK_ID'] <- 'ATLAS.BLOCK'
-#foremptyblocks <- merge(fair@data, block_out_copy@data, by="ATLAS.BLOCK")
-#
-#############################I ALSO WANT TO FIX THE LEGEND SO IT HAS AN OUTLINE FOR NOT DETECTED BUT NO OUTLINE FOR REGULAR
-
 # print maps ----
 
 # print an evidence map for each species to a single pdf; note that this can be
@@ -215,7 +204,7 @@ if (print_map) {
   #         not det  at1    at2      both
   # pal <- c("white", "red", "green", "blue")
   pal <- c("white", "#ffa200",  "#00aeff", "#5c5c5c") # orange blue dkgray
- 
+  
   n <- length(sp_vec)
   
   # open pdf device
@@ -228,22 +217,49 @@ if (print_map) {
     }
     
     species <- sp_vec[i]
+    # this label code sums the blocks for each category - thanks Gabriel Foley
+    labels <- c(
+      paste0("Unreported (",
+             unique(if(is.na(sum(block_map@data[[species]] == "Unreported"))) {
+               0
+             } else {
+               sum(block_map@data[[species]] == "Unreported")
+             }), ")"),
+      paste0("WBBA I only (",
+             unique(if(is.na(sum(block_map@data[[species]] == "WBBA I only"))) {
+               0
+             } else {
+               sum(block_map@data[[species]] == "WBBA I only")
+             }), ")"),
+      paste0("WBBA II only (",
+             unique(if(is.na(sum(block_map@data[[species]] == "WBBA II only"))) {
+               0
+             } else {
+               sum(block_map@data[[species]] ==  "WBBA II only")
+             }), ")"),
+      paste0("Both (",
+             unique(if(is.na(sum(block_map@data[[species]] == "Both"))) {
+               0
+             } else {
+               sum(block_map@data[[species]] ==  "Both")
+             }), ")")
+    )
     
     out_map <- tm_shape(block_map) +
       tm_polygons(species, border.col = NULL, palette = pal, legend.show = FALSE) +
       tm_shape(fair) +
-            tm_borders("black", lwd=0.2)  +
+      tm_borders("black", lwd=0.2)  +
       tm_shape(cnty) +
-            tm_polygons(border.col = "#b0a158", alpha = 0, border.alpha = 0.3,
+      tm_polygons(border.col = "#b0a158", alpha = 0, border.alpha = 0.3,
                   legend.show = FALSE) +
       tm_legend(title = species) +
       tm_add_legend(
-                  title = "Legend",
-                  type = c("fill"),
-                  labels = labels,
-                  col = pal,
-                  shape = 21,
-                  border.col = "black")
+        title = "Legend",
+        type = c("fill"),
+        labels = labels,
+        col = pal,
+        shape = 21,
+        border.col = "black")
     
     
     print(out_map)
@@ -270,5 +286,4 @@ write.csv(out, file = paste0(out_file, ".csv"), row.names = FALSE)
 
 # optionally write to shp
 writeOGR(block_out, ".", out_file, driver = "ESRI Shapefile")
-
 
