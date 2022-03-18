@@ -38,6 +38,15 @@ ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
 # data prep ----
 
+# optional, limit to atlas records only
+# ebird  <- ebird[ebird$PROJECT.CODE == "EBIRD_ATL_WI", ]
+
+# If this came out of excel and the date is screwy, this catches it and fixes it
+# Actually the year will still be wrong because of excel issues, but all years are getting set to 2016 anyway
+# If the program still glitches (possibly because the date format got screwed up in excel)
+# Try resetting the date column format to "General" in excel and this might fix it
+if(is.integer(ebird$OBSERVATION.DATE))  {ebird$OBSERVATION.DATE <- as_date(ebird$OBSERVATION.DATE)}
+
 # remove not valid (reason = exotic) records
 ebird <- subset(ebird, APPROVED != "0")
 
