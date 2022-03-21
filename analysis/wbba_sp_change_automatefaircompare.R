@@ -12,14 +12,16 @@
 # WITH ADEQUATE EFFORT DURING BOTH ATLAS PERIODS
 # (see fair folder for that shapefile)
 
-library(rgdal)    # also loads package 'sp'
-library(reshape2) # for dcast function
+library(sf)       # for mapping and handling shp files
+library(dplyr)    # if you want to use tidyverse functions
+library(purrr)    # for working with lists
+library(tidyr)    # replacement of reshape2 package
 library(foreign)  # for read.dbf (alpha codes come as dbf)
 library(tmap)     # only needed for map making
 library(USAboundaries) # only needed for map making
-library(here)
+library(here)     # for loading files
 
-setwd(here::here("data"))
+#setwd(here::here("data"))
 
 
 # set to FALSE to suppress printing pdf of each species -- printing maps can be
@@ -32,7 +34,7 @@ print_map <- TRUE
 out_file <- "wbba_change"  # root name for output file (csv and/or shp)
 
 # name of output pdf file if printing maps
-out_pdf <- "bwwatest.pdf"
+out_pdf <- "wbba_change_map_test.pdf"
 
 
 # load data ----
@@ -41,48 +43,57 @@ out_pdf <- "bwwatest.pdf"
 # common names are in "COMMONNAME", and 4-letter alpha codes are in "SPEC"
 alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 
-# arguments for readOGR are input format dependent;
+# arguments for st_read are input format dependent;
 # with a shapefile, the first argument is the directory containing the shp,
 # and the second argument is the name of the shapefile without the extension
-block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
+block_in <- st_read(dsn = "blk", layer = "WbbaBlocks2015_v0_2")
 
-sp <- list()
-sp$ii <- read.delim("wbba2bwwa.txt", quote = "", as.is = TRUE)
-sp$i <- read.delim("wbba1bwwa.txt", quote = "", as.is = TRUE)
+# read in the atlas data; each atlas project will be a list within a list
+sp <- list(i = read.delim("ebird_data_sample_wbbai.txt", quote = ""),
+           ii = read.delim("ebird_data_sample_wbbaii.txt", quote = "")) %>%
+  ## only keep the pertinent columns
+  ## rename the atlas block column so it will match later
+  map(select,
+      CATEGORY, COMMON.NAME, BREEDING.CODE, 
+      BLOCK_ID = ATLAS.BLOCK, APPROVED)
 
+glimpse(sp) # see an overview of the dataset
 
 # optional county layer --  only used for map printing
 cnty <- us_counties(resolution = "high", states = "WI")
 
 # load the blank block outlines to show which blocks are fair comparison
-fair<- readOGR("fair", "faircomparisonblocks")
-#column rename renames the block id column so it will match later
-#names(df)[names(df) == 'old.var.name'] <- 'new.var.name'
-names(fair)[names(fair) == 'BLOCK_ID'] <- 'ATLAS.BLOCK'
+fair <- st_read(dsn = "fair", layer = "faircomparisonblocks") %>% 
+  # select the columns you need for mapping
+  select(BLOCK_ID,
+         BLOCK_NAME,
+         BLOCK_STAT)
 
 # data prep ----
 
 # remove not valid (reason = exotic) records
-sp$ii <- subset(sp$ii, APPROVED != "0")
-sp$i <- subset(sp$i, APPROVED != "0")
+sp <- map(sp, subset, APPROVED != "0")
 
 # flag the pigeon entries so they are not removed with the rest of the domestics
-sp$ii <- transform(sp$ii, CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
-sp$i <- transform(sp$i, CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
+sp <- map(sp, transform, 
+          CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
 
-# update_sp removes non-species taxa (i.e., hybrid, spuh, domestic, and slash taxonomic
-# categories), removes records with no breeding evidence (i.e., F, NA, and the
-# empty string), and adds an alpha code (for column naming).
+# update_sp removes non-species taxa (i.e., hybrid, spuh, domestic, and slash 
+# taxonomic categories), removes records with no breeding evidence (i.e., F, 
+# NA, and the empty string), and adds an alpha code (for column naming).
 taxa <- c("species", "issf", "form", "pigeon")
+
 update_sp <- function(x) {
   is_sp <- x$CATEGORY %in% taxa
-  is_obs <- is.na(x$BREEDING.CODE) |
-    x$BREEDING.CODE %in% c("F ", "NC", "") #########################################update this in other codes!
+  
+  is_obs <- is.na(x$BREEDING.CODE) | x$BREEDING.CODE %in% c("F ", "NC", "") 
   
   keep <- is_sp & ! is_obs
+  
   x <- x[keep, ]
   
   ord <- match(x$COMMON.NAME, alpha$COMMONNAME)
+  
   x <- cbind(x, alpha[ord, "SPEC", drop = FALSE])
   
   # currently no official alpha code for Great Tit. GRTI and GRET are already
@@ -92,98 +103,101 @@ update_sp <- function(x) {
   x
 }
 
-sp <- lapply(sp, update_sp)
+sp <- map(sp, update_sp)
 
 # check that no common names in sp were unmatched in alpha
-any(vapply(sp, function(x) anyNA(x$SPEC), NA))  # should return FALSE
+# should return FALSE
+if (any(vapply(sp, function(x) anyNA(x$SPEC), NA))) {
+  warning("Common names and alpha codes did not match as expected")
+}  
 
-#merge fair column onto sp, which also limits it to only rows from fair comparison blocks
-sp$i <- merge(fair@data, sp$i, by="ATLAS.BLOCK")
-sp$ii <- merge(fair@data, sp$ii, by="ATLAS.BLOCK")
+# check for species detected in one project and not the other; if present,
+# add to the other dataset.
+# setdiff returns values from x that are not found in y
+if(!setequal(names(sp$i), names(sp$ii))) {
+  sp$i[, setdiff(names(sp$ii), names(sp$i))] <- 0
+  sp$ii[, setdiff(names(sp$i),  names(sp$ii))] <- 0
+} 
 
-sapply(sp$i, class)
-
-# create a SpatialPointsDataFrame from "sp".
-wgs84 <- CRS("+init=epsg:4326")      # use WGS84 as input CRS.
-nad83 <- CRS(proj4string(block_in))  # will transform to NAD83 from block_in.
-
-mk_spatial <- function(x) {
-  coordinates(x) <- ~ LONGITUDE + LATITUDE
-  proj4string(x) <- wgs84
-  x <- spTransform(x, nad83)
-  x
+# check the species sets to make sure they're still as expected
+if(!setequal(names(sp$i), names(sp$ii))) {
+  warning("Species have not been matched properly")
 }
 
-sp <- lapply(sp, mk_spatial)
-
-# extract blocks that overlay points;
-# get_blks returns a data frame containing the same number rows as x;
-# each row is a record from a block that overlays the points in sp.
-# lastly, join them to the bird data frame.
-get_blks <- function(x) {
-  block_over <- over(x, block_in)
-  names(block_over)[13] <- "CO_eBird"  # COUNTY is in both data frames
-  x <- cbind(x@data, block_over)
-  x
-}
-
-sp <- lapply(sp, get_blks)
-
-vapply(sp, function(x) anyNA(x$BLOCK_ID), NA)  # should return FALSE
-sum(is.na(sp$ii$BLOCK_ID))  # returns count of unmatched records if any
-# View(sp$ii[is.na(sp$ii$BLOCK_ID), ])
-
-# Remove records outside of blocks. Hopefully there will be another solution to
-# this issue that allows us to keep these records.
-sp$ii <- sp$ii[! is.na(sp$ii$BLOCK_ID), ]
-
-# Add column for breeding evidence code.
-sp$i$breed <- 1
-sp$ii$breed <- 2
-
-# This creates a list of data frames with BLOCK_ID as the 1st column, followed
-# by columns for each alpha code, with either a 1 (WBBA I) or 2 (WBBA II)
-# indicating some breeding evidence, and 0 indicating no breeding evidence.
-sp_cast <- lapply(sp, function(x) dcast(x, BLOCK_ID ~ SPEC, fun.aggregate = max,
-                                        fill = 0, value.var = "breed"))
-
-# Add missing species and order columns.
-unique_to_i  <- setdiff(names(sp_cast$i),  names(sp_cast$ii))
-unique_to_ii <- setdiff(names(sp_cast$ii), names(sp_cast$i))
-sp_cast$i[, unique_to_ii] <- 0
-sp_cast$ii[, unique_to_i] <- 0
-
-# check that all species occur in both data frames
-setequal(names(sp_cast$ii), names(sp_cast$i))  # should be TRUE
-
-ord <- c("BLOCK_ID", sort(setdiff(names(sp_cast$ii), "BLOCK_ID")))
-sp_cast <- lapply(sp_cast, "[", ord)
-
-identical(names(sp_cast$ii), names(sp_cast$i))  # should be TRUE
-
-# add missing blocks and order rows
-sp_cast <- lapply(sp_cast, function(x)
-  merge(block_in@data[, "BLOCK_ID", drop = FALSE], x, by = "BLOCK_ID",
-        all = TRUE))
-
+# set all NAs in species columns to 0 (ie no breeding evidence in that block)
 set0 <- function(x) {
   x[is.na(x)] <- 0
   x
 }
 
-sp_cast <- lapply(sp_cast, set0)
 
-# both should be TRUE
-identical(dim(sp_cast$i), dim(sp_cast$ii))
-identical(sp_cast$i$BLOCK_ID, sp_cast$ii$BLOCK_ID)
+sp_vec <- sp %>% 
+  map(select, SPEC) %>%
+  unlist() %>%
+  unique()
 
-# calculate changes from WBBA I to II.
-out <- sp_cast$i
-out[, -1] <- sp_cast$i[, -1] + sp_cast$ii[, -1]
+# Create a list of data frames with BLOCK_ID as the 1st column, followed
+# by columns for each alpha code, with either a 1 (WBBA I) or 2 (WBBA II)
+# indicating some breeding evidence, and 0 indicating no breeding evidence.  
+sp_cast <- sp %>%
+  # create a column with the list name (ie, i, ii)
+  imap(~mutate(.x, project = .y)) %>%
+  # create a column with the breeding evidence (ie 1, 2, 0)
+  map(mutate, BREEDING = case_when(
+    project == "i" & !is.na(BREEDING.CODE) ~ 1,
+    project == "ii" & !is.na(BREEDING.CODE) ~ 2,
+    is.na(BREEDING.CODE) ~ 0
+  )) %>%
+  # merge the two lists together
+  bind_rows() %>%
+  # keep one row for each species in each block in each project
+  distinct(BLOCK_ID, SPEC, BREEDING, project) %>%
+  # 'cast' each list
+  group_by(project) %>%
+  pivot_wider(names_from = SPEC, values_from = BREEDING) %>%
+  # merge 'fair' column onto sp, and use a right_join to keep only rows 
+  # that match with y (ie keep only fair column blocks)
+  right_join(fair, by = "BLOCK_ID") %>%
+  # change NA values to 0 so they can be summed
+  mutate(across(all_of(sp_vec), set0)) %>%
+  group_by(BLOCK_ID) %>%
+  # add the values for each block to get the breeding evidence code, where
+  # 0 == "Unreported", 1 == "WBBA I only", 2 == "WBBA2 only", 3 == "Both".
+  mutate(across(all_of(sp_vec), sum), 
+         project = NULL) %>%
+  ungroup() %>%
+  # get rid of duplicate rows
+  distinct() %>%
+  # make the dataset a spatial feature and set the crs to NAD83 (4269)
+  st_as_sf(sf_column_name = "geometry", crs = 4269) 
 
-# merge species with original blocks
-block_out <- merge(block_in[, c("BLOCK_ID", "BLOCK_STAT")], out,
-                   by = "BLOCK_ID")
+# returns count of unmatched records if any
+if(anyNA(sp_cast$BLOCK_ID)) {
+  warning(paste(sum(is.na(sp_cast$BLOCK_ID)), "unmatched blocks"))
+}
+
+# order the columns and rows
+cols_to_keep <- c("BLOCK_ID", "BLOCK_NAME", "BLOCK_STAT")
+
+ord <- c(cols_to_keep,
+         sort(setdiff(names(sp_cast), c(cols_to_keep, "geometry"))), 
+         "geometry")
+
+sp_cast <- sp_cast[, ord] %>%
+  arrange(BLOCK_ID)
+
+# check the data structure
+glimpse(sp_cast)
+
+# check if any NAs still exist in data
+if(any(is.na(sp_cast))) {
+  warning("NAs present in data")
+}
+
+# check for duplicate blocks
+if(any(duplicated(sp_cast$BLOCK_ID) | duplicated(sp_cast$BLOCK_NAME))) {
+  warning("Duplicate block IDs in dataset")
+}
 
 # print maps ----
 
@@ -191,14 +205,13 @@ block_out <- merge(block_in[, c("BLOCK_ID", "BLOCK_STAT")], out,
 # time consuming
 
 if (print_map) {
-  block_map <- block_out
-  
-  sp_vec <- names(block_map)[- c(1:2)]
+  block_map <- sp_cast
   
   # make evidence a factor and choose factor order -- used to order map legend
   labels <- c("Unreported", "WBBA I only", "WBBA II only", "Both")
-  block_map@data[, sp_vec] <- lapply(sp_vec, function(x)
-    factor(block_map@data[[x]], levels = 0:3, labels = labels))
+  
+  block_map <- modify_if(block_map, names(block_map) %in% sp_vec,
+                         factor, levels = 0:3, labels = labels)
   
   line_gray <- "#4e4e4e"
   #         not det  at1    at2      both
@@ -218,37 +231,26 @@ if (print_map) {
     
     species <- sp_vec[i]
     # this label code sums the blocks for each category - thanks Gabriel Foley
-    labels <- c(
-      paste0("Unreported (",
-             unique(if(is.na(sum(block_map@data[[species]] == "Unreported"))) {
-               0
-             } else {
-               sum(block_map@data[[species]] == "Unreported")
-             }), ")"),
-      paste0("WBBA I only (",
-             unique(if(is.na(sum(block_map@data[[species]] == "WBBA I only"))) {
-               0
-             } else {
-               sum(block_map@data[[species]] == "WBBA I only")
-             }), ")"),
-      paste0("WBBA II only (",
-             unique(if(is.na(sum(block_map@data[[species]] == "WBBA II only"))) {
-               0
-             } else {
-               sum(block_map@data[[species]] ==  "WBBA II only")
-             }), ")"),
-      paste0("Both (",
-             unique(if(is.na(sum(block_map@data[[species]] == "Both"))) {
-               0
-             } else {
-               sum(block_map@data[[species]] ==  "Both")
-             }), ")")
-    )
+    no_geom_block_map <- st_drop_geometry(block_map) 
+    
+    # reassign the label object so that counts aren't cumulatively pasted
+    labels <- c("Unreported", "WBBA I only", "WBBA II only", "Both")
+    
+      for(j in seq_along(labels)) {
+        counts <- NA_integer_
+        counts[j] <- if(is.na(sum(no_geom_block_map[species] == labels[j]))) {
+          0
+        } else {
+          sum(no_geom_block_map[species] == labels[j])
+        }
+        labels[j] <- paste0(labels[j], " (", counts[j], ")")
+      }
     
     out_map <- tm_shape(block_map) +
-      tm_polygons(species, border.col = NULL, palette = pal, legend.show = FALSE) +
+      tm_polygons(species, 
+                  border.col = NULL, palette = pal, legend.show = FALSE) +
       tm_shape(fair) +
-      tm_borders("black", lwd=0.2)  +
+      tm_borders("black", lwd = 0.2)  +
       tm_shape(cnty) +
       tm_polygons(border.col = "#b0a158", alpha = 0, border.alpha = 0.3,
                   legend.show = FALSE) +
@@ -260,7 +262,6 @@ if (print_map) {
         col = pal,
         shape = 21,
         border.col = "black")
-    
     
     print(out_map)
     
@@ -282,8 +283,8 @@ if (print_map) {
 # save output files ----
 
 # write to csv
-write.csv(out, file = paste0(out_file, ".csv"), row.names = FALSE)
+write.csv(st_drop_geometry(block_map), 
+          file = paste0(out_file, ".csv"), row.names = FALSE)
 
 # optionally write to shp
-writeOGR(block_out, ".", out_file, driver = "ESRI Shapefile")
-
+st_write(block_map, ".", out_file, driver = "ESRI Shapefile")
