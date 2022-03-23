@@ -21,8 +21,7 @@ library(tmap)     # only needed for map making
 library(USAboundaries) # only needed for map making
 library(here)     # for loading files
 
-#setwd(here::here("data"))
-
+setwd(here::here("data"))
 
 # set to FALSE to suppress printing pdf of each species -- printing maps can be
 # time consuming
@@ -92,18 +91,24 @@ update_sp <- function(x) {
   
   x <- x[keep, ]
   
-  ord <- match(x$COMMON.NAME, alpha$COMMONNAME)
-  
-  x <- cbind(x, alpha[ord, "SPEC", drop = FALSE])
-  
-  # currently no official alpha code for Great Tit. GRTI and GRET are already
-  # taken, so used GTIT (no conflicts with existing alpha codes).
-  x[x$COMMON.NAME == "Great Tit", "SPEC"] <- "GTIT"
-  
   x
 }
 
 sp <- map(sp, update_sp)
+
+if(!setequal(unique(sp$i$COMMON.NAME), unique(sp$ii$COMMON.NAME))) {
+  sp <- map(sp, full_join, 
+            data.frame(COMMON.NAME = union(unique(sp$i$COMMON.NAME),
+                                           unique(sp$ii$COMMON.NAME))))
+}
+
+# check the species sets to make sure they're still as expected
+if(!setequal(unique(sp$i$COMMON.NAME), unique(sp$ii$COMMON.NAME))) {
+  warning("Species have not been matched properly")
+}
+
+sp <- map(sp, left_join, select(alpha, 
+                                COMMON.NAME = COMMONNAME, SPEC))
 
 # check that no common names in sp were unmatched in alpha
 # should return FALSE
@@ -111,30 +116,24 @@ if (any(vapply(sp, function(x) anyNA(x$SPEC), NA))) {
   warning("Common names and alpha codes did not match as expected")
 }  
 
-# check for species detected in one project and not the other; if present,
-# add to the other dataset.
-# setdiff returns values from x that are not found in y
-if(!setequal(names(sp$i), names(sp$ii))) {
-  sp$i[, setdiff(names(sp$ii), names(sp$i))] <- 0
-  sp$ii[, setdiff(names(sp$i),  names(sp$ii))] <- 0
-} 
-
-# check the species sets to make sure they're still as expected
-if(!setequal(names(sp$i), names(sp$ii))) {
-  warning("Species have not been matched properly")
-}
-
 # set all NAs in species columns to 0 (ie no breeding evidence in that block)
 set0 <- function(x) {
   x[is.na(x)] <- 0
   x
 }
 
-
 sp_vec <- sp %>% 
   map(select, SPEC) %>%
   unlist() %>%
   unique()
+
+# no alpha code exists for Great Tit, so have to add one; GTIT does not 
+# conflict with existing codes.
+if(any(union(unique(sp$i$COMMON.NAME),
+             unique(sp$ii$COMMON.NAME)) %in% "Great Tit")) {
+  sp$i$SPEC[sp$i$COMMON.NAME == "Great Tit"] <- "GTIT"
+  sp$ii$SPEC[sp$ii$COMMON.NAME == "Great Tit"] <- "GTIT"
+}
 
 # Create a list of data frames with BLOCK_ID as the 1st column, followed
 # by columns for each alpha code, with either a 1 (WBBA I) or 2 (WBBA II)
