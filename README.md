@@ -104,6 +104,8 @@ sp$i <- read.delim("ebird_data_sample_wbbai.txt", quote = "", as.is = TRUE)
 ```` 
 A second version of the change map is available, showing only blocks with good coverage in both atlas periods (wbba_sp_change_automatefaircompare)
 
+There are snakecase versions of these files if your headers are like "observation_date" instead of "OBSERVATION.DATE".
+
 ## 5. date_visualizer_map (Quarter-Month Viewer)
 
 ![date_visualizer_example.png](https://github.com/ngwalton/wbba_tools/blob/master/date_visualizer_example.png)
