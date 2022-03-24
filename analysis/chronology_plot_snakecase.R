@@ -1,5 +1,7 @@
 # Function to save chronology plot for each species in an eBird dataset.
 
+# this version uses headers like "common_name" instead of "COMMON.NAME"
+
 library(here)
 library(lubridate)
 library(grid)
