@@ -178,7 +178,9 @@ This is an interactive version of the chronology plot that allows you to see the
 
 The file to open to run this is called knit_interactive_chronplots.R, but it also calls the companion markdown file interactive_chronplot.Rmd.
 
-To load your own data, put your EBD file in the folder: data/chrontplot_data, and delete the example file here. The script will chop it up into separate files by species, and dump them in the analysis folder. Note you should not have other kinds of csvs in the analysis folder.
+There are snakecase versions of these files if your headers are like "observation_date" instead of "OBSERVATION.DATE".
+
+To load your own data, put your EBD file in the folder: data/chronplot_data, and delete the example file here. The script will chop it up into separate files by species, and dump them in the analysis folder. Note you should not have other kinds of csvs in the analysis folder.
 
 Then replace the call to the sample file with a call to your own eBird data file:
 ````
@@ -191,7 +193,7 @@ Note that as written this is only pulling the atlas portal records.
 ebird  <- ebird[ebird$PROJECT.CODE == "EBIRD_ATL_WI", ]
 ````
 
-*IMPORTANT NOTE* csv files over 80 MB tend to crash the interactive chronplot. We have not found a great workaround. I would advise running the first half of the code, then deleting or removing the files over 80 MB and running the second half of the code. Alternately you can add them to the species exclusion list (which deletes them from the data file) and then run the full code. Most of these are ultracommon species that screening may not be as important for. (Alternately, you could remove the uncoded records which would lower the file size, although we did not do this as I kind of like having those uncoded records there for reference with regard to when things arrive in the state and assigning S codes.)
+*IMPORTANT NOTE* csv files over 80 MB (or maybe even over 50) tend to crash the interactive chronplot. We have not found a great workaround. I would advise running the first half of the code, then deleting or removing the files over 80 MB and running the second half of the code. Alternately you can add them to the species exclusion list (which deletes them from the data file) and then run the full code. Most of these are ultracommon species that screening may not be as important for. (Alternately, you could remove the uncoded records which would lower the file size, although we did not do this as I kind of like having those uncoded records there for reference with regard to when things arrive in the state and assigning S codes.)
 
 The output product will be interactive html files. They export into a new folder called "output" on the same level as the data and analysis folders.
 
