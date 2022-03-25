@@ -11,9 +11,9 @@ setwd(here::here("data"))
 
 
 # output pdf file -- rename as needed
-out_pdf <- "chonology_plotLUMP2.pdf"
+out_pdf <- "chronology_plotLUMP2.pdf"
 
-# choose a named RColorBrewer pallet (multiple colors), or a single color (name
+# choose a named RColorBrewer palette (multiple colors), or a single color (name
 # or hex); see brewer.pal.info for list and display.brewer.all() to view all
 # pallets
 pal <- "Paired"
