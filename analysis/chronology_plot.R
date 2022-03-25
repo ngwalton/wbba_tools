@@ -10,7 +10,7 @@ setwd(here::here("data"))
 
 
 # output pdf file -- rename as needed
-out_pdf <- "chonology_plot.pdf"
+out_pdf <- "chronology_plot.pdf"
 
 # choose a named RColorBrewer pallet (multiple colors), or a single color (name
 # or hex); see brewer.pal.info for list and display.brewer.all() to view all
