@@ -1,7 +1,7 @@
 # Script to produce maps of species by month to visualize the number of
-# records per block. Results in four maps per species, one each for year,
-# June/July combined, all other months combined, and all blocks with no records
-# ("missing").
+# records per block. Results in six maps per species: Atlas 1; Year-round coded records (Atlas 2),
+# June/July combined (Atlas 2), all other months combined (Atlas 2), and all blocks with no records ("missing") (Atlas 2), and Point Count records.
+#
 
 
 library(rgdal)
