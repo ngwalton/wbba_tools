@@ -1,3 +1,9 @@
+# NOTE: THE MORE RECENT SNAKECASE VERSION WILL HAVE EDITS THIS ONE DOES NOT. 
+# Specifically:
+# removal of sensitive species in this version,
+# change to use of all months 
+
+
 # Script to produce maps of species by month to visualize the number of
 # records per block. 
 
