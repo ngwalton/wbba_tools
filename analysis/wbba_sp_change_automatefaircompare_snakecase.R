@@ -1,3 +1,5 @@
+# NOTE THIS VERSION DOES NOT CONTAIN 8/22/22 CHANGE INDEX UPDATE YET
+
 # Script to summarize species detections from WBBA I compared to WBBA II.  The
 # resulting csv and/or shp contains species in columns and blocks in rows; cell
 # values indicate if a species was recorded as possible or better ("recorded"
