@@ -33,7 +33,7 @@ print_map <- TRUE
 out_file <- "wbba_change"  # root name for output file (csv and/or shp)
 
 # name of output pdf file if printing maps
-out_pdf <- "wbba_change_map_test2.pdf"
+out_pdf <- "wbba_change_map_test.pdf"
 
 
 # load data ----
@@ -49,7 +49,7 @@ block_in <- st_read(dsn = "blk", layer = "WbbaBlocks2015_v0_2")
 
 # read in the atlas data; each atlas project will be a list within a list
 sp <- list(i = read.delim("ebird_data_sample_wbbai.txt", quote = ""),
-           ii = read.delim("ebird_data_sample_wbbaii_alt2.txt", quote = "")) %>%
+           ii = read.delim("ebird_data_sample_wbbaii.txt", quote = "")) %>%
   ## only keep the pertinent columns
   ## rename the atlas block column so it will match later
   map(select,
