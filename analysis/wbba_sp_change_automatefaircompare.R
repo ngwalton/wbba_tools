@@ -110,6 +110,14 @@ if(!setequal(unique(sp$i$COMMON.NAME), unique(sp$ii$COMMON.NAME))) {
 sp <- map(sp, left_join, select(alpha, 
                                 COMMON.NAME = COMMONNAME, SPEC))
 
+# no alpha code exists for Great Tit, so have to add one; GTIT does not 
+# conflict with existing codes.
+if(any(union(unique(sp$i$COMMON.NAME),
+             unique(sp$ii$COMMON.NAME)) %in% "Great Tit")) {
+  sp$i$SPEC[sp$i$COMMON.NAME == "Great Tit"] <- "GTIT"
+  sp$ii$SPEC[sp$ii$COMMON.NAME == "Great Tit"] <- "GTIT"
+}
+
 # check that no common names in sp were unmatched in alpha
 # should return FALSE
 if (any(vapply(sp, function(x) anyNA(x$SPEC), NA))) {
@@ -126,14 +134,6 @@ sp_vec <- sp %>%
   map(select, SPEC) %>%
   unlist() %>%
   unique()
-
-# no alpha code exists for Great Tit, so have to add one; GTIT does not 
-# conflict with existing codes.
-if(any(union(unique(sp$i$COMMON.NAME),
-             unique(sp$ii$COMMON.NAME)) %in% "Great Tit")) {
-  sp$i$SPEC[sp$i$COMMON.NAME == "Great Tit"] <- "GTIT"
-  sp$ii$SPEC[sp$ii$COMMON.NAME == "Great Tit"] <- "GTIT"
-}
 
 # Create a list of data frames with BLOCK_ID as the 1st column, followed
 # by columns for each alpha code, with either a 1 (WBBA I) or 2 (WBBA II)
