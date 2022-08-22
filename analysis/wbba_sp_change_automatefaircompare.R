@@ -33,7 +33,7 @@ print_map <- TRUE
 out_file <- "wbba_change"  # root name for output file (csv and/or shp)
 
 # name of output pdf file if printing maps
-out_pdf <- "wbba_change_map_test.pdf"
+out_pdf <- "wbba_change_map_test2.pdf"
 
 
 # load data ----
@@ -49,7 +49,7 @@ block_in <- st_read(dsn = "blk", layer = "WbbaBlocks2015_v0_2")
 
 # read in the atlas data; each atlas project will be a list within a list
 sp <- list(i = read.delim("ebird_data_sample_wbbai.txt", quote = ""),
-           ii = read.delim("ebird_data_sample_wbbaii.txt", quote = "")) %>%
+           ii = read.delim("ebird_data_sample_wbbaii_alt2.txt", quote = "")) %>%
   ## only keep the pertinent columns
   ## rename the atlas block column so it will match later
   map(select,
@@ -244,24 +244,62 @@ if (print_map) {
         }
         labels[j] <- paste0(labels[j], " (", counts[j], ")")
       }
+    # provide a change index
+    # 100 * (both + atlas2) - (both + atlas1) / (both + atlas2) + (both + atlas1)
+    # See p38 Keller et al. 2020 European Breeding Bird Atlas 2
+    # Thanks to Gabriel Foley for help coding!
+    changes <- data.frame(rbind(table(no_geom_block_map[species])), 
+                          row.names = NULL)
+    
+    change_index <- round(100*(
+      ((changes$Both + changes$WBBA.II.only) - 
+         (changes$Both + changes$WBBA.I.only)) /
+        ((changes$Both + changes$WBBA.II.only) + 
+           (changes$Both + changes$WBBA.I.only))
+    ), digits = 1)
+    
+    change_color <- if(change_index < 0) {
+      "#ffa200"
+    } else if(change_index > 0) {
+      "#00aeff"
+    } else "black"
+    
+    print_sign <- if(change_index < 0) {
+      ""
+    } else if(change_index > 0) {
+      "+"
+    }
+    
+    # this joins together the change number and the plus sign   
+    change_value <- paste0(print_sign, change_index, sep="")
     
     out_map <- tm_shape(block_map) +
       tm_polygons(species, 
                   border.col = NULL, palette = pal, legend.show = FALSE) +
       tm_shape(fair) +
       tm_borders("black", lwd = 0.2)  +
+      tm_layout(frame = FALSE) +
       tm_shape(cnty) +
       tm_polygons(border.col = "#b0a158", alpha = 0, border.alpha = 0.3,
                   legend.show = FALSE) +
-      tm_legend(title = species) +
+      tm_legend(title = species,
+                position=c(.605, 0.87)) +
       tm_add_legend(
         title = "Legend",
         type = c("fill"),
         labels = labels,
         col = pal,
         shape = 21,
-        border.col = "black")
-    
+        border.col = "black") +
+      tm_credits(text = "Index of Change:",
+                 size = 0.8,
+                 position = c(0.6, 0.836)) +
+      tm_credits(text = as.character(change_value),
+                 size = 0.8,
+                 col = change_color,
+                 position = c(0.775, 0.836),
+                 just = "left",
+                 fontface = "bold") 
     print(out_map)
     
     message(paste("Finished map", i, "of", n))
@@ -285,5 +323,22 @@ if (print_map) {
 write.csv(st_drop_geometry(block_map), 
           file = paste0(out_file, ".csv"), row.names = FALSE)
 
+# exports the change map values and raw block summary into a spreadsheet
+change_values <- st_drop_geometry(sp_cast) %>%
+  pivot_longer(sp_vec, names_to = "common_name", values_to = "status") %>%
+  group_by(common_name) %>%
+  transmute(unreported = sum(status == 0),
+            wbbai = sum(status == 1),
+            wbbaii = sum(status == 2),
+            both = sum(status == 3)) %>%
+  distinct(common_name, .keep_all = TRUE) %>%
+  # 100 * (both + atlas2) - (both + atlas1) / (both + atlas2) + (both + atlas1)
+  mutate(index = (100*((both + wbbaii) - (both + wbbai) )/ 
+                    ((both + wbbaii) + (both + wbbai)))) %>%
+  ungroup() 
+
+write.csv(change_values, here("data", "wbbaii_change-values.csv"),
+          row.names = FALSE)
+
 # optionally write to shp
-st_write(block_map, ".", out_file, driver = "ESRI Shapefile")
+st_write(block_map, ".", out_file, append=FALSE, driver = "ESRI Shapefile")
