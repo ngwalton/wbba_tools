@@ -213,8 +213,20 @@ make_map <- function(sp, species, cnty, block_in, pal, tax, clip_box, season_pal
   # season_pal is the color palette used when plotting the eBird range
 
   current <- sp[COMMON.NAME == species, ]
-  current <- merge(block_in, current, by = "BLOCK_ID", all = TRUE,
-    duplicateGeoms  = TRUE)
+
+  # current <- merge(block_in, current, by = "BLOCK_ID", all = TRUE,
+  #   duplicateGeoms  = TRUE)
+
+  # WBBA I and II data handled separately to avoid including WBBA I in "missing"
+  # blocks
+  currentII <- merge(block_in, current[period != "WBBA I (year)"],
+    by = "BLOCK_ID", all = TRUE, duplicateGeoms  = TRUE)
+
+  currentI <- merge(block_in, current[period == "WBBA I (year)"],
+    by = "BLOCK_ID", all = TRUE, duplicateGeoms  = TRUE)
+  currentI <- currentI[! is.na(currentI$N), ]  # remove "missing" blocks from I
+
+  current <- rbind(currentII, currentI)
 
   current_pt <- pt_count[pt_count$common == species, ]
 
