@@ -33,7 +33,7 @@ print_map <- TRUE
 out_file <- "wbba_change"  # root name for output file (csv and/or shp)
 
 # name of output pdf file if printing maps
-out_pdf <- "wbba_change_map_test.pdf"
+out_pdf <- "wbba_change_map_draft082222.pdf"
 
 
 # load data ----
@@ -48,8 +48,8 @@ alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 block_in <- st_read(dsn = "blk", layer = "WbbaBlocks2015_v0_2")
 
 # read in the atlas data; each atlas project will be a list within a list
-sp <- list(i = read.delim("ebird_data_sample_wbbai.txt", quote = ""),
-           ii = read.delim("ebird_data_sample_wbbaii.txt", quote = "")) %>%
+sp <- list(i = read.delim("ebd_US-WI_199501_200012_relJul-2022.txt", quote = ""),
+           ii = read.delim("ebd_US-WI_201501_201912_relJul-2022.txt", quote = "")) %>%
   ## only keep the pertinent columns
   ## rename the atlas block column so it will match later
   map(select,
@@ -134,6 +134,14 @@ sp_vec <- sp %>%
   map(select, SPEC) %>%
   unlist() %>%
   unique()
+
+# no alpha code exists for Great Tit, so have to add one; GTIT does not 
+# conflict with existing codes.
+if(any(union(unique(sp$i$COMMON.NAME),
+             unique(sp$ii$COMMON.NAME)) %in% "Great Tit")) {
+  sp$i$SPEC[sp$i$COMMON.NAME == "Great Tit"] <- "GTIT"
+  sp$ii$SPEC[sp$ii$COMMON.NAME == "Great Tit"] <- "GTIT"
+}
 
 # Create a list of data frames with BLOCK_ID as the 1st column, followed
 # by columns for each alpha code, with either a 1 (WBBA I) or 2 (WBBA II)
@@ -258,20 +266,26 @@ if (print_map) {
            (changes$Both + changes$WBBA.I.only))
     ), digits = 1)
     
-    change_color <- if(change_index < 0) {
+    # this skips NA values in the change index 
+    if(is.na(change_index)) next(i)
+    
+    change_color <- if(is.na(change_index)) {
+      change_index <- 0
+      "#000000"
+    }  else if(change_index < 0) {
       "#ffa200"
     } else if(change_index > 0) {
       "#00aeff"
-    } else "black"
+    } else "#000000"
     
     print_sign <- if(change_index < 0) {
       ""
     } else if(change_index > 0) {
       "+"
-    }
+    } else ""
     
     # this joins together the change number and the plus sign   
-    change_value <- paste0(print_sign, change_index, sep="")
+    change_value <- paste0(print_sign, change_index)
     
     out_map <- tm_shape(block_map) +
       tm_polygons(species, 
@@ -316,7 +330,6 @@ if (print_map) {
   dev.off()
 }
 
-
 # save output files ----
 
 # write to csv
@@ -337,7 +350,7 @@ change_values <- st_drop_geometry(sp_cast) %>%
                     ((both + wbbaii) + (both + wbbai)))) %>%
   ungroup() 
 
-write.csv(change_values, here("data", "wbbaii_change-values.csv"),
+write.csv(change_values, here("data", "wbbaii_change-values_082222.csv"),
           row.names = FALSE)
 
 # optionally write to shp
