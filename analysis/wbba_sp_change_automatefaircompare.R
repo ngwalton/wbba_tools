@@ -48,8 +48,8 @@ alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 block_in <- st_read(dsn = "blk", layer = "WbbaBlocks2015_v0_2")
 
 # read in the atlas data; each atlas project will be a list within a list
-sp <- list(i = read.delim("ebd_US-WI_199501_200012_relJul-2022.txt", quote = ""),
-           ii = read.delim("ebd_US-WI_201501_201912_relJul-2022.txt", quote = "")) %>%
+sp <- list(i = read.delim("ebird_data_sample_wbbai.txt", quote = ""),
+           ii = read.delim("ebird_data_sample_wbbaii.txt", quote = "")) %>%
   ## only keep the pertinent columns
   ## rename the atlas block column so it will match later
   map(select,
