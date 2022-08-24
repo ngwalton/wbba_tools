@@ -13,6 +13,7 @@ library(USAboundaries) # only needed for map making
 library(lubridate)
 library(auk)  # needed for eBird taxonomy
 library(readxl)
+library(stringr) # column header fixing   
 
 setwd(here::here("data"))
 
@@ -79,6 +80,16 @@ sp <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
 # sample WBBA I from eBird
 sp1 <- read.delim("ebird_data_sample_wbbai.txt", quote = "", as.is = TRUE)
+
+# limit to just atlas data
+sp  <- sp[sp$PROJECT.CODE == "EBIRD_ATL_WI", ]
+sp1  <- sp1[sp1$PROJECT.CODE == "EBIRD_ATL_WI", ]
+
+# fix column names if any are snake_case
+names(sp) <- toupper(names(sp))
+colnames(sp) <- str_replace_all(colnames(sp), "[:punct:]", ".")
+names(sp1) <- toupper(names(sp))
+colnames(sp1) <- str_replace_all(colnames(sp1), "[:punct:]", ".")
 
 # point count data
 pt_count <- read_excel("point_count_data_sample_wbbaii.xlsx",
