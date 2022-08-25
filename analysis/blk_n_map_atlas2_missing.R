@@ -1,9 +1,3 @@
-# NOTE: THE MORE RECENT SNAKECASE VERSION WILL HAVE EDITS THIS ONE DOES NOT. 
-# Specifically:
-# removal of sensitive species in this version,
-# change to use of all months 
-
-
 # Script to produce maps of species by month to visualize the number of
 # records per block. 
 
@@ -86,6 +80,12 @@ sp <- read.delim("ebd_US-WI_amecro_201501_201912_relFeb-2022.txt", quote = "", a
 
 # sample WBBA I from eBird
 sp1 <- read.delim("ebd_US-WI_amecro_199501_200012_relFeb-2022.txt", quote = "", as.is = TRUE)
+
+# fix column names if any are snake_case
+names(sp) <- toupper(names(sp))
+colnames(sp) <- str_replace_all(colnames(sp), "[:punct:]", ".")
+names(sp1) <- toupper(names(sp1))
+colnames(sp1) <- str_replace_all(colnames(sp1), "[:punct:]", ".")
 
 # point count data
 pt_count <- read_excel("point_count_data_sample_wbbaii.xlsx",
