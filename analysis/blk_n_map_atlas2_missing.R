@@ -87,6 +87,10 @@ colnames(sp) <- str_replace_all(colnames(sp), "[:punct:]", ".")
 names(sp1) <- toupper(names(sp1))
 colnames(sp1) <- str_replace_all(colnames(sp1), "[:punct:]", ".")
 
+# limit to just atlas data
+sp  <- sp[sp$PROJECT.CODE == "EBIRD_ATL_WI", ]
+sp1  <- sp1[sp1$PROJECT.CODE == "EBIRD_ATL_WI", ]
+
 # point count data
 pt_count <- read_excel("point_count_data_sample_wbbaii.xlsx",
                        sheet = "sample_data")
