@@ -84,7 +84,7 @@ sp1 <- read.delim("ebird_data_sample_wbbai.txt", quote = "", as.is = TRUE)
 # fix column names if any are snake_case
 names(sp) <- toupper(names(sp))
 colnames(sp) <- str_replace_all(colnames(sp), "[:punct:]", ".")
-names(sp1) <- toupper(names(sp))
+names(sp1) <- toupper(names(sp1))
 colnames(sp1) <- str_replace_all(colnames(sp1), "[:punct:]", ".")
 
 # limit to just atlas data
