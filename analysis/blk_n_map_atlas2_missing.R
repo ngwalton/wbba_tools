@@ -14,6 +14,7 @@ library(USAboundaries) # only needed for map making
 library(lubridate)
 library(auk)  # needed for eBird taxonomy
 library(readxl)
+library(stringr)
 
 setwd(here::here("data"))
 
