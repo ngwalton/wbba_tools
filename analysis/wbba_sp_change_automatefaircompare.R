@@ -73,6 +73,28 @@ fair <- st_read(dsn = "fair", layer = "faircomparisonblocks") %>%
 # remove not valid (reason = exotic) records
 sp <- map(sp, subset, APPROVED != "0")
 
+# FOR WISCONSIN:
+# remove obsposs species (where Possible codes do not count for change map - will need to run separately)
+sp <- map(sp, subset, COMMON.NAME != "Laughing Gull")
+sp <- map(sp, subset, COMMON.NAME != "Ring-billed Gull")
+sp <- map(sp, subset, COMMON.NAME != "Herring Gull")
+sp <- map(sp, subset, COMMON.NAME != "Great Black-backed Gull")
+sp <- map(sp, subset, COMMON.NAME != "Forster's Tern")
+sp <- map(sp, subset, COMMON.NAME != "Common Tern")
+sp <- map(sp, subset, COMMON.NAME != "Caspian Tern")
+sp <- map(sp, subset, COMMON.NAME != "Double-crested Cormorant")
+sp <- map(sp, subset, COMMON.NAME != "American White Pelican")
+sp <- map(sp, subset, COMMON.NAME != "Turkey Vulture")
+sp <- map(sp, subset, COMMON.NAME != "Osprey")
+sp <- map(sp, subset, COMMON.NAME != "Bald Eagle")
+sp <- map(sp, subset, COMMON.NAME != "Great Blue Heron")
+sp <- map(sp, subset, COMMON.NAME != "Great Egret")
+sp <- map(sp, subset, COMMON.NAME != "Snowy Egret")
+sp <- map(sp, subset, COMMON.NAME != "Cattle Egret")
+sp <- map(sp, subset, COMMON.NAME != "Black-crowned Night-Heron")
+sp <- map(sp, subset, COMMON.NAME != "Yellow-crowned Night-Heron")
+sp <- map(sp, subset, COMMON.NAME != "Whooping Crane")
+
 # flag the pigeon entries so they are not removed with the rest of the domestics
 sp <- map(sp, transform, 
           CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
