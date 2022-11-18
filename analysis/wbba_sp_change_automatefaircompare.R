@@ -94,6 +94,7 @@ sp <- map(sp, subset, COMMON.NAME != "Cattle Egret")
 sp <- map(sp, subset, COMMON.NAME != "Black-crowned Night-Heron")
 sp <- map(sp, subset, COMMON.NAME != "Yellow-crowned Night-Heron")
 sp <- map(sp, subset, COMMON.NAME != "Whooping Crane")
+sp <- map(sp, subset, COMMON.NAME != "Spotted Sandpiper")
 
 # flag the pigeon entries so they are not removed with the rest of the domestics
 sp <- map(sp, transform, 
