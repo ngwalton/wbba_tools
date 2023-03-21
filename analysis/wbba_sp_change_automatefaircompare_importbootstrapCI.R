@@ -50,9 +50,11 @@ alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 boots <- read.csv("Change_Estimates4.csv")
 
 # round to 1 digit after the decimal
-boots$Mean <- round(boots$Mean, digits = 1)
-boots$LowerCI <- round(boots$LowerCI, digits = 1)
-boots$UpperCI <- round(boots$UpperCI, digits = 1)
+# unless it's 99.9 then we are leaving it that way to denote not absolute certainty
+# make conditional ifelse (where values higher than 99.90 become 99.90 and lower than -99.90 becomes  ##-99.90), and round it to 1 digit decimals.
+no100<-function(x){round(ifelse(x>99.90,99.90,ifelse(x<(-99.90),-99.90,x)),1)}
+## apply to each columns - 
+boots[2:4] <- lapply(boots[2:4],no100)
 
 # arguments for st_read are input format dependent;
 # with a shapefile, the first argument is the directory containing the shp,
