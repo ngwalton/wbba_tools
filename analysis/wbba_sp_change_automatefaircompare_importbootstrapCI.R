@@ -15,6 +15,8 @@
 # THIS VERSION DOES NOT COMPUTE THE CHANGE INDEX ITSELF BUT PULLS IN
 # THE BOOTSTRAPPED CHANGE INDEX AND CONFIDENCE INTERVALS
 
+# THIS VERSION ONLY PRINTS THE FAIR COMPARISON CHANGE BLOCKS
+
 library(sf)       # for mapping and handling shp files
 library(dplyr)    # if you want to use tidyverse functions
 library(purrr)    # for working with lists
@@ -36,7 +38,7 @@ print_map <- TRUE
 out_file <- "wbba_change"  # root name for output file (csv and/or shp)
 
 # name of output pdf file if printing maps
-out_pdf <- "wbba_change_map_draft_test31.pdf"
+out_pdf <- "wbba_change_map_draft_test36.pdf"
 
 
 # load data ----
@@ -45,9 +47,12 @@ out_pdf <- "wbba_change_map_draft_test31.pdf"
 # common names are in "COMMONNAME", and 4-letter alpha codes are in "SPEC"
 alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 
+# add Great Tit
+alpha[nrow(alpha) + 1,] <- c(NA, "GTIT", NA, "Great Tit", "Parus major", "GRETIT", NA)
+
 # load in bootstrapped confidence intervals and join to alpha 
 # this file has the columns COMMON.NAME, Mean, LowerCI, UpperCI
-boots <- read.csv("Change_Estimates4.csv")
+boots <- read.csv("Change_Estimates_all_May2023good.csv")
 
 # round to 1 digit after the decimal
 # unless it's 99.9 then we are leaving it that way to denote not absolute certainty
@@ -76,7 +81,7 @@ glimpse(sp) # see an overview of the dataset
 cnty <- us_counties(resolution = "high", states = "WI")
 
 # load the blank block outlines to show which blocks are fair comparison
-fair <- st_read(dsn = "fair", layer = "faircomparisonblocks") %>% 
+fair <- st_read(dsn = "fair", layer = "Fair_comparison_blocks_final") %>% 
   # select the columns you need for mapping
   select(BLOCK_ID,
          BLOCK_NAME,
@@ -313,6 +318,10 @@ if (print_map) {
     
     # filters to match boots species to loop values
     boots_print <- filter(newboots, SPEC == species)
+    
+    boots_print <- boots_print[order("COMMON.NAME"),]
+    
+    print(boots_print)
     
     # optional coloring of CIs, only works if these columns are numeric
     #low_color <- if(is.na(boots_print$LowerCI)) {
