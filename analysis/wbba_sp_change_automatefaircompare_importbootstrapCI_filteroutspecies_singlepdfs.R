@@ -140,6 +140,7 @@ sp <- map(sp, subset, COMMON.NAME != "Golden-winged x Blue-winged Warbler (hybri
 sp <- map(sp, subset, COMMON.NAME != "Brewster's Warbler (hybrid)")
 sp <- map(sp, subset, COMMON.NAME != "Lawrence's Warbler (hybrid)")
 sp <- map(sp, subset, COMMON.NAME != "Bufflehead")
+sp <- map(sp, subset, COMMON.NAME != "Summer Tanager")
 
 # remove species where taxa category causing trouble - need to fix this somehow
 sp <- map(sp, subset, COMMON.NAME != "Rock Pigeon")
