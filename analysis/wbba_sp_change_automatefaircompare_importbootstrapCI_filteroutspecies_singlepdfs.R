@@ -467,7 +467,7 @@ if (print_map) {
                  position = c(0.74, 0.836)) 
 
     print(out_map)
-    
+    dev.off()
     message(paste("Finished map", i, "of", n))
     
     if (i == 1) {
@@ -477,9 +477,6 @@ if (print_map) {
       message(paste("Estmimated time to print:", t_el, "minutes"))
     }
   }
-  
-  # close pdf device
-  graphics.off() 
 }
 
 # save output files ----
