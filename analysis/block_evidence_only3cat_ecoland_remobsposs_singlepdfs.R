@@ -252,9 +252,6 @@ if (print_map) {
       message(paste("Estmimated time to print:", t_el, "minutes"))
     }
   }
-
-  # close pdf device
-  dev.off()
 }
 
 # write output ----
