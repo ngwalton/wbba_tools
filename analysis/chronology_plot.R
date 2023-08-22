@@ -38,14 +38,25 @@ ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
 # data prep ----
 
-# optional, limit to atlas records only
-# ebird  <- ebird[ebird$PROJECT.CODE == "EBIRD_ATL_WI", ]
+# format date column
+ebird$OBSERVATION.DATE <- mdy(ebird$OBSERVATION.DATE)
+class(ebird$OBSERVATION.DATE)
 
+# other possibilities for fixing date column
 # If this came out of excel and the date is screwy, this catches it and fixes it
 # Actually the year will still be wrong because of excel issues, but all years are getting set to 2016 anyway
 # If the program still glitches (possibly because the date format got screwed up in excel)
 # Try resetting the date column format to "General" in excel and this might fix it
 if(is.integer(ebird$OBSERVATION.DATE))  {ebird$OBSERVATION.DATE <- as_date(ebird$OBSERVATION.DATE)}
+if(is.characer(ebird$OBSERVATION.DATE))  {ebird$OBSERVATION.DATE <- as_date(ebird$OBSERVATION.DATE)}
+class(ebird$OBSERVATION.DATE)
+
+# optional, limit to atlas records only
+# ebird  <- ebird[ebird$PROJECT.CODE == "EBIRD_ATL_WI", ]
+
+# optional, remove uncoded and blank breeding code records
+ebird <- ebird %>%
+  dplyr::filter(BREEDING.CATEGORY %in% c('C2', 'C3', 'C4'))
 
 # remove not valid (reason = exotic) records
 ebird <- subset(ebird, APPROVED != "0")
@@ -78,7 +89,6 @@ if (exists("lump")) {
 if (exists("no_plot_codes")) {
   ebird <- ebird[! ebird$BREEDING.CODE %in% no_plot_codes, ]
 }
-
 
 # chron plot function ----
 
@@ -185,7 +195,6 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   boxplot(obsdate ~ code, horizontal = TRUE,  col = "#F5F5F500", yaxt = "n", xaxt = "n",
           data = ebird, add = TRUE)
 }
-
 
 # plot species ----
 
