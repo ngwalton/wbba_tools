@@ -19,7 +19,12 @@ library(here)
 setwd(here::here("analysis"))
 
 # loads EBD data (change this to your filename)
-ebird <- read.delim("../data/chronplot_data/ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
+ebird <- read.delim("../data/chronplot_data/chronplot_data/ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
+
+#OPTIONAL COLUMN NAME FIX: From snake_case to UPPERCASE.SPACE.AS.PERIOD 
+#library(stringr)   
+#names(ebird) <- toupper(names(ebird))
+#colnames(ebird) <- str_replace_all(colnames(ebird), "[:punct:]", ".")
 
 # limits dataset to only WI atlas portal records (change this to your atlas if desired)
 ebird  <- ebird[ebird$PROJECT.CODE == "EBIRD_ATL_WI", ]
