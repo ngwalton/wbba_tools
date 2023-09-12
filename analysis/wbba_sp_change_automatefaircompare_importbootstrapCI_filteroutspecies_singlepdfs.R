@@ -99,89 +99,67 @@ fair <- st_read(dsn = "fair", layer = "Fair_comparison_blocks_final") %>%
 # remove not valid (reason = exotic) records
 sp <- map(sp, subset, APPROVED != "0")
 
-# FOR WISCONSIN:
-sp <- map(sp, subset, COMMON.NAME != "Ring-billed Gull")
-sp <- map(sp, subset, COMMON.NAME != "Herring Gull")
-sp <- map(sp, subset, COMMON.NAME != "Great Black-backed Gull")
-sp <- map(sp, subset, COMMON.NAME != "Forster's Tern")
-sp <- map(sp, subset, COMMON.NAME != "Common Tern")
-sp <- map(sp, subset, COMMON.NAME != "Caspian Tern")
-sp <- map(sp, subset, COMMON.NAME != "Double-crested Cormorant")
-sp <- map(sp, subset, COMMON.NAME != "American White Pelican")
-sp <- map(sp, subset, COMMON.NAME != "Turkey Vulture")
-sp <- map(sp, subset, COMMON.NAME != "Osprey")
-sp <- map(sp, subset, COMMON.NAME != "Bald Eagle")
-sp <- map(sp, subset, COMMON.NAME != "Great Blue Heron")
-sp <- map(sp, subset, COMMON.NAME != "Great Egret")
-sp <- map(sp, subset, COMMON.NAME != "Snowy Egret")
-sp <- map(sp, subset, COMMON.NAME != "Cattle Egret") # no index with this one also
-sp <- map(sp, subset, COMMON.NAME != "Black-crowned Night-Heron")  # watch for coming hyphen change
-sp <- map(sp, subset, COMMON.NAME != "Whooping Crane")
-sp <- map(sp, subset, COMMON.NAME != "Spotted Sandpiper")
+# filter out species that don't meet requirements
+filtered_sp <- read.csv("filtered_out_species_wibba.csv")
+
+# check if any common names don't match names in the dataset
+## this will print a list of species in filtered_sp that don't match species
+## in sp.
+filtered_sp[which(!filtered_sp[, "COMMON.NAME"] %in% 
+                    unlist(map(sp, distinct, COMMON.NAME))), 
+            "COMMON.NAME"]
+
+# print the reasons for each group of species in filtered_sp
+unique(filtered_sp$REASON)
+
+# if you want to filter them one by one:
+## to view which rows are being removed, remove the exclamation mark in front
+## of COMMON.NAME and don't assign it to an object eg
+## map(sp, subset, COMMON.NAME %in% 
+## filtered_sp[which(filtered_sp[, "REASON"] == "for wisconsin"), 
+##             "COMMON.NAME"])
+
+# FOR WISCONSIN
+sp <- map(sp, subset, !COMMON.NAME %in% 
+            filtered_sp[which(filtered_sp[, "REASON"] == "for wisconsin"), 
+                        "COMMON.NAME"])
 
 # remove species with no change map
-sp <- map(sp, subset, COMMON.NAME != "Laughing Gull") # would have been obsposs but few records
-sp <- map(sp, subset, COMMON.NAME != "Yellow-crowned Night-Heron") # would have been obsposs but few records  # watch for coming hyphen change
-sp <- map(sp, subset, COMMON.NAME != "Mallard x American Black Duck (hybrid)")
-sp <- map(sp, subset, COMMON.NAME != "Bufflehead")
-sp <- map(sp, subset, COMMON.NAME != "Eared Grebe")
-sp <- map(sp, subset, COMMON.NAME != "White-winged Dove")
-sp <- map(sp, subset, COMMON.NAME != "Chuck-will's-widow")
-sp <- map(sp, subset, COMMON.NAME != "Sandhill x Whooping Crane (hybrid)")
-sp <- map(sp, subset, COMMON.NAME != "Black-necked Stilt")
-sp <- map(sp, subset, COMMON.NAME != "Snowy Egret") # would be obsposs but few records
-sp <- map(sp, subset, COMMON.NAME != "Glossy Ibis")
-sp <- map(sp, subset, COMMON.NAME != "Mississippi Kite")
-sp <- map(sp, subset, COMMON.NAME != "Barn Owl")
-sp <- map(sp, subset, COMMON.NAME != "American Three-toed Woodpecker")
-sp <- map(sp, subset, COMMON.NAME != "Great Tit")
-sp <- map(sp, subset, COMMON.NAME != "Rusty Blackbird")
-sp <- map(sp, subset, COMMON.NAME != "Golden-winged x Blue-winged Warbler (hybrid)")
-sp <- map(sp, subset, COMMON.NAME != "Brewster's Warbler (hybrid)")
-sp <- map(sp, subset, COMMON.NAME != "Lawrence's Warbler (hybrid)")
-sp <- map(sp, subset, COMMON.NAME != "Bufflehead")
-sp <- map(sp, subset, COMMON.NAME != "Summer Tanager")
+sp <- map(sp, subset, !COMMON.NAME %in% 
+            filtered_sp[which(filtered_sp[, "REASON"] == "no change map"), 
+                        "COMMON.NAME"])
 
 # remove species where taxa category causing trouble - need to fix this somehow
-sp <- map(sp, subset, COMMON.NAME != "Rock Pigeon")
-sp <- map(sp, subset, COMMON.NAME != "American Coot")
-sp <- map(sp, subset, COMMON.NAME != "Rock Pigeon (Feral Pigeon)")
-sp <- map(sp, subset, COMMON.NAME != "American Coot (Red-shielded)")
+sp <- map(sp, subset, !COMMON.NAME %in% 
+            filtered_sp[which(filtered_sp[, "REASON"] == 
+                                "taxa category causing trouble"), 
+                        "COMMON.NAME"])
 
-# remove sensitive species - figure out what to do with these later - either index only or no index I think, describe in text for some
-sp <- map(sp, subset, COMMON.NAME != "King Rail")
-sp <- map(sp, subset, COMMON.NAME != "Whooping Crane") # also obsposs
-sp <- map(sp, subset, COMMON.NAME != "Sharp-tailed Grouse")
-sp <- map(sp, subset, COMMON.NAME != "Piping Plover")
-sp <- map(sp, subset, COMMON.NAME != "Northern Goshawk") # watch for coming name change American Goshawk
-sp <- map(sp, subset, COMMON.NAME != "Great Gray Owl")
-sp <- map(sp, subset, COMMON.NAME != "Long-eared Owl")
-sp <- map(sp, subset, COMMON.NAME != "Loggerhead Shrike")
-sp <- map(sp, subset, COMMON.NAME != "Kirtland's Warbler")
+# remove sensitive species - figure out what to do with these later - either 
+# index only or no index I think, describe in text for some.
+sp <- map(sp, subset, !COMMON.NAME %in% 
+            filtered_sp[which(filtered_sp[, "REASON"] == 
+                                "sensitive species"), 
+                        "COMMON.NAME"])
 
-# remove species with less than ten blocks where we will not calculate index - will need to run separately)
-sp <- map(sp, subset, COMMON.NAME != "American Wigeon")
-sp <- map(sp, subset, COMMON.NAME != "Northern Pintail")
-sp <- map(sp, subset, COMMON.NAME != "Canvasback")
-sp <- map(sp, subset, COMMON.NAME != "Lesser Scaup")
-sp <- map(sp, subset, COMMON.NAME != "Red-breasted Merganser")
-sp <- map(sp, subset, COMMON.NAME != "Greater Prairie-Chicken")
-sp <- map(sp, subset, COMMON.NAME != "Horned Grebe")
-sp <- map(sp, subset, COMMON.NAME != "Red-necked Grebe")
-sp <- map(sp, subset, COMMON.NAME != "Western Grebe")
-sp <- map(sp, subset, COMMON.NAME != "Wilson's Phalarope")
-sp <- map(sp, subset, COMMON.NAME != "Western Kingbird")
-sp <- map(sp, subset, COMMON.NAME != "White-eyed Vireo")
-sp <- map(sp, subset, COMMON.NAME != "Philadelphia Vireo")
-sp <- map(sp, subset, COMMON.NAME != "European Goldfinch")
-sp <- map(sp, subset, COMMON.NAME != "Nelson's Sparrow")
-sp <- map(sp, subset, COMMON.NAME != "Worm-eating Warbler")
-sp <- map(sp, subset, COMMON.NAME != "Short-eared Owl")
-sp <- map(sp, subset, COMMON.NAME != "Bay-breasted Warbler")
-sp <- map(sp, subset, COMMON.NAME != "Yellow-throated Warbler")
-sp <- map(sp, subset, COMMON.NAME != "Prairie Warbler")
-sp <- map(sp, subset, COMMON.NAME != "Wilson's Warbler")
-sp <- map(sp, subset, COMMON.NAME != "Blue Grosbeak")
+# remove species with less than ten blocks where we will not calculate 
+# index - will need to run separately).
+sp <- map(sp, subset, !COMMON.NAME %in% 
+            filtered_sp[which(filtered_sp[, "REASON"] == 
+                                "fewer than ten blocks"), 
+                        "COMMON.NAME"])
+
+# if you want to filter them all at once:
+sp <- map(sp, subset, !COMMON.NAME %in% filtered_sp[, "COMMON.NAME"])
+
+# to filter for a particular set of species (instead of filtering 
+# them out):
+## edit keep_birds to include the species you're interested in
+keep_birds <- c("Spotted Sandpiper",
+                "Whooping Crane")
+## then filter to just those species
+spf <- map(sp, subset, COMMON.NAME %in% keep_birds)
+
 # flag the pigeon entries so they are not removed with the rest of the domestics
 sp <- map(sp, transform, 
           CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
