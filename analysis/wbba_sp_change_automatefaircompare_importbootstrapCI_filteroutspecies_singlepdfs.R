@@ -121,7 +121,7 @@ unique(filtered_sp$REASON)
 
 # FOR WISCONSIN
 sp <- map(sp, subset, !COMMON.NAME %in% 
-            filtered_sp[which(filtered_sp[, "REASON"] == "for wisconsin"), 
+            filtered_sp[which(filtered_sp[, "REASON"] == "obsposs"), 
                         "COMMON.NAME"])
 
 # remove species with no change map
