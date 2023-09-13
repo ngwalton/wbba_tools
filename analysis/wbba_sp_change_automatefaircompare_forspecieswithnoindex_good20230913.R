@@ -9,7 +9,7 @@
 # 3: Recorded during both WBBAs
 
 # THIS VERSION PRINTS BLOCKS BUT NO CHANGE INDEX
-# 2 CATEGORIES - obsposs and no index, fewer than 10 blocks
+# For category: fewer than 10 blocks
 # SEE LINE 97 FOR FILTERING 
 
 # THIS VERSION OF THE CHANGE MAPS ONLY SHOWS RESULTS FOR BLOCKS 
