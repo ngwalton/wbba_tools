@@ -4,7 +4,7 @@
 # access to retrieve the latest eBird taxonomy.
 
 
-library(rgdal)
+library(sf)
 library(foreign)
 library(tmap)
 library(USAboundaries)
@@ -48,7 +48,7 @@ out_pdf <- "date_visualizer"
 # load data ----
 
 # eBird filter
-fltr <- readOGR("ebirdfilters20170817.kml", "ebirdfilters20170817")
+fltr <- st_read("ebirdfilters20170817.kml", "ebirdfilters20170817")
 
 # optional county layer --  only used for map printing
 cnty <- us_counties(resolution = "high", states = "WI")
