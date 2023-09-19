@@ -5,6 +5,7 @@
 
 
 library(sf)
+library(sp)
 library(foreign)
 library(tmap)
 library(USAboundaries)
@@ -160,13 +161,13 @@ sp[, BREEDING.CATEGORY := factor(BREEDING.CATEGORY,
 
 
 # make spatial ----
-
 # coordinate reference system: WGS84
-wgs84 <- CRS("+init=epsg:4326")
+wgs84 <- CRS(SRS_string = "EPSG:4326")
 
-# create a SpatialPointsDataFrame from "sp" -- sp is no longer a data.table
-coordinates(sp) <- ~ LONGITUDE + LATITUDE
-proj4string(sp) <- wgs84
+# create a SpatialPointsDataFrame from "sp"
+coordinates(sp) = ~ LONGITUDE + LATITUDE
+# assign crs
+slot(sp, "proj4string") <- wgs84
 
 
 # print maps ----
