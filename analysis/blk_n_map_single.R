@@ -3,7 +3,7 @@
 
 # IN THIS VERSION: ONE map per species.
 
-library(rgdal)
+library(sp)
 library(sf)
 library(data.table)
 library(foreign)
@@ -69,7 +69,7 @@ out_pdf <- "block_n_map"
 # block shapefile; arguments for readOGR are input format dependent -- with a
 # shapefile, the first argument is the directory containing the shp, and the
 # second argument is the name of the shapefile without the extension
-block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
+block_in <-  st_read("blk", "WbbaBlocks2015_v0_2")
 
 # optional county layer --  only used for map printing
 cnty <- us_counties(resolution = "high", states = "WI")
@@ -116,13 +116,13 @@ prep_sp <- function(sp_df, blk, taxa, mo, priority_only, priority_lvls) {
   sp_df <- sp_df[sp_df$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
   
   # create a SpatialPointsDataFrame from "sp_df"
-  wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
-  coordinates(sp_df) <- ~ LONGITUDE + LATITUDE
-  proj4string(sp_df) <- wgs84
+  wgs84 <- CRS(SRS_string = "EPSG:4326")
+  coordinates(sp_df) = ~ LONGITUDE + LATITUDE
+  slot(sp_df, "proj4string") <- wgs84
   
   # transform projection to match blocks
-  nad83 <- CRS(proj4string(blk))  # use NAD83 from blk
-  sp_df <- spTransform(sp_df, nad83)
+  sp_df = st_as_sf(sp_df)
+  sp_df<- st_transform(sp_df, 4269)
   
   # extract blocks that overlay points; returns a data frame containing the same
   # number rows as sp_df; each row is a record from block that overlays the
