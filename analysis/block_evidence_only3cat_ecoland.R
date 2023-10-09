@@ -6,7 +6,7 @@
 #This version has the blocks draw over the county lines
 #This version adds an optional ecological landscapes layer
 
-library(rgdal)
+library(sf)
 library(reshape2)
 library(foreign)
 library(tmap) # only needed for map making
@@ -23,8 +23,8 @@ print_map <- TRUE
 
 # output files ----
 
-# name of output shapefile without extension
-out_shp <- "evidence_by_block"
+# name of output shapefile with extension
+out_shp <- "evidence_by_block.shp"
 
 # name of output pdf file if printing maps
 out_pdf <- "evidence_maps.pdf"
@@ -37,16 +37,17 @@ out_pdf <- "evidence_maps.pdf"
 # source: http://www.birdpop.org/pages/birdSpeciesCodes.php
 alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 
-# block shapefile; arguments for readOGR are input format dependent -- with a
+# block shapefile; arguments for st_read are input format dependent -- with a
 # shapefile, the first argument is the directory containing the shp, and the
 # second argument is the name of the shapefile without the extension
-block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
+block_in <- st_read("blk", "WbbaBlocks2015_v0_2")
 
 # optional county layer --  only used for map printing
 cnty <- us_counties(resolution = "high", states = "WI")
 
 # optional ecological landscapes layer
-ecoland <- readOGR("Ecological_Landscapes_of_Wisconsin", "Ecological_Landscapes_of_Wisconsin")
+# ecoland <- st_read("Ecological_Landscapes_of_Wisconsin",
+#   "Ecological_Landscapes_of_Wisconsin")
 
 # sample WBBA data from ebird
 sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
@@ -66,10 +67,10 @@ sp_in <- sp_in[sp_in$CATEGORY %in% taxa, ]
 # add alpha codes needed later to name species columns with < 10 chars required
 # for shapefile
 sp_in <- merge(sp_in, alpha[, c("COMMONNAME", "SPEC")], by.x = "COMMON.NAME",
-                 by.y = "COMMONNAME", all.x = TRUE, all.y = FALSE)
+  by.y = "COMMONNAME", all.x = TRUE, all.y = FALSE)
 
 # if any species were unmatched in alpha, this will print their names; this will
-# require aditional attention if any are not matched
+# require additional attention if any are not matched
 if (any(is.na(sp_in$SPEC))) {
   unique(sp_in$COMMON.NAME[is.na(sp_in$SPEC)])
 }
@@ -82,24 +83,17 @@ sp_in <- sp_in[sp_in$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
 # more fixes for WI
 sp_in$SPEC[sp_in$COMMON.NAME == "Common Ground Dove)"] <- "CGDO" #Must have changed since 2018
 
-# create a SpatialPointsDataFrame from "sp_in"
-wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
-sp_wgs <- sp_in
-coordinates(sp_wgs) <- ~ LONGITUDE + LATITUDE
-proj4string(sp_wgs) <- wgs84
+# create a sf data.frame from "sp_in"
+wgs84 <- st_crs(4326)
+sp_wgs <- st_as_sf(sp_in, crs = wgs84, coords = c("LONGITUDE", "LATITUDE"))
 
 # transform projection to match blocks
-nad83 <- CRS(proj4string(block_in))  # use NAD83 from block_in
-sp_nad <- spTransform(sp_wgs, nad83)
+sp_nad <- st_transform(sp_wgs, st_crs(block_in))
 
-# extract blocks that overlay points; returns a data frame containing the same
-# number rows as sp_nad; each row is a record from block that overlays the
-# points in sp_nad
-block_over <- over(sp_nad, block_in)
-names(block_over)[13] <- "CO_eBird"  # COUNTY is in both data frames
-
-# ...and join them to the bird data frame
-sp <- cbind(sp_nad@data, block_over)
+# spatial join points with blocks: returns an sf data.frame containing the
+# same number rows as sp_df; each row is an original point record from sp_df
+# plus the info from the block that overlays that point
+sp <- st_join(sp_nad, block_in)
 
 # some of the BREEDING.CODE codes have a space at the end
 # and some don't - this removes the space
@@ -119,7 +113,7 @@ breeding_codes <- list(
   list(2, "Possible",  c("H", "S")),
   list(3, "Probable",  c("S7", "M", "P", "T", "C", "N", "A", "B")),
   list(4, "Confirmed", c("PE", "CN", "NB", "DD", "UN", "ON", "FL", "CF",
-                         "FY", "FS", "NE", "NY"))
+    "FY", "FS", "NE", "NY"))
 )
 
 # assign numeric breeding code (1 = lowest, 4 = highest)
@@ -138,10 +132,14 @@ code_name <- function(x){
 # create a data frame with BLOCK_ID as the 1st column, followed by
 # columns for each alpha code, with breeding evidence name as the cell values
 sp_cast <- dcast(sp, BLOCK_ID ~ SPEC, fun.aggregate = code_name,
-                 fill = "", value.var = "conf")
+  fill = "", value.var = "conf")
 
 # merge species with original blocks
-block_out <- merge(block_in, sp_cast, by = "BLOCK_ID")
+block_out <- merge(block_in, sp_cast, by = "BLOCK_ID", all.x = TRUE)
+
+# sort on "BLOCK_NAME"
+# this is for consistency with results when using sp
+block_out <- block_out[order(block_out$BLOCK_NAME), ]
 
 
 # print maps ----
@@ -153,29 +151,37 @@ if (print_map) {
   block_map <- block_out
   no_rep <- "No checklists"
   not_rep <- "Not reported"
-  block_map@data[is.na(block_map@data)] <- no_rep
-  block_map@data[block_map@data == ""] <- not_rep
+  block_map[is.na(block_map)] <- no_rep
+  # block_map[block_map == ""] <- not_rep
+
+  # there's gotta be a better way to do this, but the "geometry" column was
+  # causing an issue with block_map[block_map == ""] <- not_rep
+  for (name in names(block_map)) {
+    if (nchar(name) == 4) {
+      block_map[block_map[[name]] == "", name] <- not_rep
+    }
+  }
 
   # make evidence a factor and choose factor order -- used to order map legend
   sp_vec <- names(sp_cast)[-1]
   ord <- c(rev(vapply(breeding_codes, "[[", NA_character_, 2)), not_rep, no_rep)
-  block_map@data[, sp_vec] <- lapply(sp_vec, function(x)
-    factor(block_map@data[[x]], levels = ord))
+  block_map[, sp_vec] <- lapply(sp_vec, function(x)
+    factor(block_map[[x]], levels = ord))
 
-#old color options  
-#line_gray <- "#4e4e4e"
-#line_gold <- "#b5a905"
-#421559
-#5c3278"
-#BF5FFF
-#"#820BBB"
-  
-#  making a transparent color which turns out to be #00000001
-#  mycol <- rgb(0, 0, 0, max = 255, alpha = 1, names = "invis")
-#  mycol
-#  invis
+  #old color options
+  #line_gray <- "#4e4e4e"
+  #line_gold <- "#b5a905"
+  #421559
+  #5c3278"
+  #BF5FFF
+  #"#820BBB"
 
-# in this version the last 3 categories are set to invisible
+  #  making a transparent color which turns out to be #00000001
+  #  mycol <- rgb(0, 0, 0, max = 255, alpha = 1, names = "invis")
+  #  mycol
+  #  invis
+
+  # in this version the last 3 categories are set to invisible
   #          conf      prob       poss      obs        not obs    not sampled
   pal <- c("black", "#7145AC", "#D0B9EF", "#00000001", "#00000001", "#00000001") #muted ebird purple
   #pal <- c("#473B00", "#B49518", "#E5D069", "white", "white", "white") #NY style
@@ -196,19 +202,19 @@ if (print_map) {
     # this is now ordered to have the blocks on top of the lines
     # and the lower categories are now set to transparent
     # and the three lowest category labels are set to blank
-    
-    out <- 
-      tm_shape(ecoland) +
-            tm_borders(col = "#90EE90", lwd = 0.4, lty = "dashed", alpha = 1) +
+
+    out <-
+      # tm_shape(ecoland) +
+      #       tm_borders(col = "#90EE90", lwd = 0.4, lty = "dashed", alpha = 1) +
       tm_shape(cnty) +
-            tm_polygons(border.col = "gray60", lwd = 0.8, alpha = 0, border.alpha = 1,
-                  legend.show = FALSE) +
+      tm_polygons(border.col = "gray60", lwd = 0.8, alpha = 0, border.alpha = 1,
+        legend.show = FALSE) +
       tm_shape(block_map, is.master = TRUE) +
-            tm_polygons(species, title = "Evidence", border.col = NULL, border.alpha = 0, 
-                  lwd = 0, palette = pal, labels = c("Confirmed", "Probable", "Possible", "", "", "")) +
+      tm_polygons(species, title = "Evidence", border.col = NULL, border.alpha = 0,
+        lwd = 0, palette = pal, labels = c("Confirmed", "Probable", "Possible", "", "", "")) +
       tm_legend(title = species, position = c("left", "bottom"), bg.alpha = 0,
-                main.title.fontface = 2, title.fontface = 2)
-    
+        main.title.fontface = 2, title.fontface = 2)
+
     print(out)
 
     message(paste("Finished map", i, "of", n))
@@ -228,7 +234,7 @@ if (print_map) {
 # write output ----
 
 # write shapefile
-writeOGR(block_out, ".", out_shp, driver = "ESRI Shapefile")
+st_write(block_out, out_shp, driver = "ESRI Shapefile")
 
 # Optional: Uncomment to print a file that shows single breeding status
 # (category) for each species for each block. Among other things, this allows
