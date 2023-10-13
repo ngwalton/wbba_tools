@@ -40,9 +40,9 @@ ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
 # data prep ----
 
-# format date column
-ebird$OBSERVATION.DATE <- mdy(ebird$OBSERVATION.DATE)
-class(ebird$OBSERVATION.DATE)
+# format date column - ONE POSSIBILITY
+# ebird$OBSERVATION.DATE <- mdy(ebird$OBSERVATION.DATE)
+# class(ebird$OBSERVATION.DATE)
 
 # other possibilities for fixing date column
 # If this came out of excel and the date is screwy, this catches it and fixes it
@@ -50,7 +50,7 @@ class(ebird$OBSERVATION.DATE)
 # If the program still glitches (possibly because the date format got screwed up in excel)
 # Try resetting the date column format to "General" in excel and this might fix it
 if(is.integer(ebird$OBSERVATION.DATE))  {ebird$OBSERVATION.DATE <- as_date(ebird$OBSERVATION.DATE)}
-if(is.characer(ebird$OBSERVATION.DATE))  {ebird$OBSERVATION.DATE <- as_date(ebird$OBSERVATION.DATE)}
+if(is.character(ebird$OBSERVATION.DATE))  {ebird$OBSERVATION.DATE <- as_date(ebird$OBSERVATION.DATE)}
 class(ebird$OBSERVATION.DATE)
 
 # optional, limit to atlas records only
@@ -195,7 +195,7 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   #mycol
   
   boxplot(obsdate ~ code, horizontal = TRUE,  col = "#F5F5F500", yaxt = "n", xaxt = "n",
-          data = ebird, add = TRUE)
+          data = ebird, add = TRUE, outline=FALSE)
 }
 
 # plot species ----
