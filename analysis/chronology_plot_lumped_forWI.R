@@ -193,7 +193,7 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.8) {
   #mycol
   
   boxplot(obsdate ~ code, horizontal = TRUE,  col = "#F5F5F500", yaxt = "n", xaxt = "n",
-          data = ebird, add = TRUE)
+          data = ebird, add = TRUE, outline=FALSE)
 
   par(old_par)
 }
