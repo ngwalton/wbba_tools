@@ -61,28 +61,31 @@ sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
 
 # remove obsposs species
-sp_in <- subset(sp_in, COMMON.NAME != "Laughing Gull")
-sp_in <- subset(sp_in, COMMON.NAME != "Ring-billed Gull")
-sp_in <- subset(sp_in, COMMON.NAME != "Herring Gull")
-sp_in <- subset(sp_in, COMMON.NAME != "Great Black-backed Gull")
-sp_in <- subset(sp_in, COMMON.NAME != "Forster's Tern")
-sp_in <- subset(sp_in, COMMON.NAME != "Common Tern")
-sp_in <- subset(sp_in, COMMON.NAME != "Caspian Tern")
-sp_in <- subset(sp_in, COMMON.NAME != "Laughing Gull")
-sp_in <- subset(sp_in, COMMON.NAME != "Double-crested Cormorant")
-sp_in <- subset(sp_in, COMMON.NAME != "American White Pelican")
-sp_in <- subset(sp_in, COMMON.NAME != "Turkey Vulture")
-sp_in <- subset(sp_in, COMMON.NAME != "Osprey")
-sp_in <- subset(sp_in, COMMON.NAME != "Bald Eagle")
-sp_in <- subset(sp_in, COMMON.NAME != "Great Blue Heron")
-sp_in <- subset(sp_in, COMMON.NAME != "Great Egret")
-sp_in <- subset(sp_in, COMMON.NAME != "Snowy Egret")
-sp_in <- subset(sp_in, COMMON.NAME != "Cattle Egret")
-sp_in <- subset(sp_in, COMMON.NAME != "Black-crowned Night-Heron")
-sp_in <- subset(sp_in, COMMON.NAME != "Yellow-crowned Night-Heron")
-sp_in <- subset(sp_in, COMMON.NAME != "Whooping Crane")
-sp_in <- subset(sp_in, COMMON.NAME != "Spotted Sandpiper")
+remove_species <- c(
+  "Laughing Gull",
+  "Ring-billed Gull",
+  "Herring Gull",
+  "Great Black-backed Gull",
+  "Forster's Tern",
+  "Common Tern",
+  "Caspian Tern",
+  "Laughing Gull",
+  "Double-crested Cormorant",
+  "American White Pelican",
+  "Turkey Vulture",
+  "Osprey",
+  "Bald Eagle",
+  "Great Blue Heron",
+  "Great Egret",
+  "Snowy Egret",
+  "Cattle Egret",
+  "Black-crowned Night-Heron",
+  "Yellow-crowned Night-Heron",
+  "Whooping Crane",
+  "Spotted Sandpiper"
+)
 
+sp_in <- sp_in[! sp_in$COMMON.NAME %in% remove_species, ]
 
 # remove not valid (reason = exotic) records
 sp_in <- subset(sp_in, APPROVED != "0")
