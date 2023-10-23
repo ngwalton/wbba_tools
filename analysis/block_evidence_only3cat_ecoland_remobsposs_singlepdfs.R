@@ -51,7 +51,7 @@ cnty <- us_counties(resolution = "high", states = "WI")
 ecoland <- readOGR("Ecological_Landscapes_of_Wisconsin", "Ecological_Landscapes_of_Wisconsin")
 
 # sample WBBA data from ebird
-sp_in <- read.delim("EBDATLASWIplussensitivepluszerocountMar2023_nospuhs_onlycodes_GOOD3.txt", quote = "", as.is = TRUE)
+sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
 # data prep ----
 
@@ -192,14 +192,14 @@ if (print_map) {
   block_map@data[, sp_vec] <- lapply(sp_vec, function(x)
     factor(block_map@data[[x]], levels = ord))
 
-#old color options  
+#old color options
 #line_gray <- "#4e4e4e"
 #line_gold <- "#b5a905"
 #421559
 #5c3278"
 #BF5FFF
 #"#820BBB"
-  
+
 #  making a transparent color which turns out to be #00000001
 #  mycol <- rgb(0, 0, 0, max = 255, alpha = 1, names = "invis")
 #  mycol
@@ -213,7 +213,7 @@ if (print_map) {
   n <- length(sp_vec)
 
   # open pdf device
-  
+
 
   for (i in seq_along(sp_vec)) {
     pdf(file=paste0(sp_vec[i],".pdf"),onefile = F)
@@ -227,22 +227,22 @@ if (print_map) {
     # this is now ordered to have the blocks on top of the lines
     # and the lower categories are now set to transparent
     # and the three lowest category labels are set to blank
-    
-    out <- 
-      tm_shape(ecoland) +
-            tm_borders(col = "#90EE90", lwd = 0.4, lty = "dashed", alpha = 1) +
+
+    out <-
+      # tm_shape(ecoland) +
+      #       tm_borders(col = "#90EE90", lwd = 0.4, lty = "dashed", alpha = 1) +
       tm_shape(cnty) +
             tm_polygons(border.col = "gray60", lwd = 0.8, alpha = 0, border.alpha = 1,
                   legend.show = FALSE) +
       tm_shape(block_map, is.master = TRUE) +
-            tm_polygons(species, title = "Evidence", border.col = NULL, border.alpha = 0, 
+            tm_polygons(species, title = "Evidence", border.col = NULL, border.alpha = 0,
                   lwd = 0, palette = pal, labels = c("Confirmed", "Probable", "Possible", "", "", "")) +
       tm_legend(title = species, position = c("left", "bottom"), bg.alpha = 0,
                 main.title.fontface = 2, title.fontface = 2)
-    
+
     print(out)
     dev.off()# close pdf device and save last-printed plot as pdf to set pdf path and filename
-    
+
     message(paste("Finished map", i, "of", n))
 
     if (i == 1) {
