@@ -8,7 +8,7 @@
 #This version removes WI obsposs species
 #This version prints each map out as a separate pdf file
 
-library(rgdal)
+library(sf)
 library(reshape2)
 library(foreign)
 library(tmap) # only needed for map making
@@ -39,16 +39,17 @@ out_pdf <- "evidence_maps5.pdf"
 # source: http://www.birdpop.org/pages/birdSpeciesCodes.php
 alpha <- read.dbf("LIST18.DBF", as.is = TRUE)
 
-# block shapefile; arguments for readOGR are input format dependent -- with a
+# block shapefile; arguments for st_read are input format dependent -- with a
 # shapefile, the first argument is the directory containing the shp, and the
 # second argument is the name of the shapefile without the extension
-block_in <- readOGR("blk", "WbbaBlocks2015_v0_2")
+block_in <- st_read("blk", "WbbaBlocks2015_v0_2")
 
 # optional county layer --  only used for map printing
 cnty <- us_counties(resolution = "high", states = "WI")
 
 # optional ecological landscapes layer
-ecoland <- readOGR("Ecological_Landscapes_of_Wisconsin", "Ecological_Landscapes_of_Wisconsin")
+# ecoland <- st_read("Ecological_Landscapes_of_Wisconsin",
+#   "Ecological_Landscapes_of_Wisconsin")
 
 # sample WBBA data from ebird
 sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
@@ -112,24 +113,17 @@ sp_in <- sp_in[sp_in$COMMON.NAME != "Domestic goose sp. (Domestic type)", ]
 # more fixes for WI
 sp_in$SPEC[sp_in$COMMON.NAME == "Common Ground Dove)"] <- "CGDO" #Must have changed since 2018
 
-# create a SpatialPointsDataFrame from "sp_in"
-wgs84 <- CRS("+init=epsg:4326")  # use WGS84 as input CRS
-sp_wgs <- sp_in
-coordinates(sp_wgs) <- ~ LONGITUDE + LATITUDE
-proj4string(sp_wgs) <- wgs84
+# create a sf data.frame from "sp_in"
+wgs84 <- st_crs(4326)
+sp_wgs <- st_as_sf(sp_in, crs = wgs84, coords = c("LONGITUDE", "LATITUDE"))
 
 # transform projection to match blocks
-nad83 <- CRS(proj4string(block_in))  # use NAD83 from block_in
-sp_nad <- spTransform(sp_wgs, nad83)
+sp_nad <- st_transform(sp_wgs, st_crs(block_in))
 
-# extract blocks that overlay points; returns a data frame containing the same
-# number rows as sp_nad; each row is a record from block that overlays the
-# points in sp_nad
-block_over <- over(sp_nad, block_in)
-names(block_over)[13] <- "CO_eBird"  # COUNTY is in both data frames
-
-# ...and join them to the bird data frame
-sp <- cbind(sp_nad@data, block_over)
+# spatial join points with blocks: returns an sf data.frame containing the
+# same number rows as sp_df; each row is an original point record from sp_df
+# plus the info from the block that overlays that point
+sp <- st_join(sp_nad, block_in)
 
 # some of the BREEDING.CODE codes have a space at the end
 # and some don't - this removes the space
@@ -171,7 +165,11 @@ sp_cast <- dcast(sp, BLOCK_ID ~ SPEC, fun.aggregate = code_name,
                  fill = "", value.var = "conf")
 
 # merge species with original blocks
-block_out <- merge(block_in, sp_cast, by = "BLOCK_ID")
+block_out <- merge(block_in, sp_cast, by = "BLOCK_ID", all.x = TRUE)
+
+# sort on "BLOCK_NAME"
+# this is for consistency with results when using sp
+block_out <- block_out[order(block_out$BLOCK_NAME), ]
 
 
 # print maps ----
@@ -183,14 +181,22 @@ if (print_map) {
   block_map <- block_out
   no_rep <- "No checklists"
   not_rep <- "Not reported"
-  block_map@data[is.na(block_map@data)] <- no_rep
-  block_map@data[block_map@data == ""] <- not_rep
+  block_map[is.na(block_map)] <- no_rep
+  # block_map[block_map == ""] <- not_rep
+
+  # there's gotta be a better way to do this, but the "geometry" column was
+  # causing an issue with block_map[block_map == ""] <- not_rep
+  for (name in names(block_map)) {
+    if (nchar(name) == 4) {
+      block_map[block_map[[name]] == "", name] <- not_rep
+    }
+  }
 
   # make evidence a factor and choose factor order -- used to order map legend
   sp_vec <- names(sp_cast)[-1]
   ord <- c(rev(vapply(breeding_codes, "[[", NA_character_, 2)), not_rep, no_rep)
-  block_map@data[, sp_vec] <- lapply(sp_vec, function(x)
-    factor(block_map@data[[x]], levels = ord))
+  block_map[, sp_vec] <- lapply(sp_vec, function(x)
+    factor(block_map[[x]], levels = ord))
 
 #old color options
 #line_gray <- "#4e4e4e"
@@ -257,7 +263,7 @@ if (print_map) {
 # write output ----
 
 # write shapefile
-writeOGR(block_out, ".", out_shp, driver = "ESRI Shapefile")
+st_write(block_out, out_shp, driver = "ESRI Shapefile")
 
 # Optional: Uncomment to print a file that shows single breeding status
 # (category) for each species for each block. Among other things, this allows
