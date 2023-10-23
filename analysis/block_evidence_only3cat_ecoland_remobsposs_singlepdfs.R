@@ -198,20 +198,20 @@ if (print_map) {
   block_map[, sp_vec] <- lapply(sp_vec, function(x)
     factor(block_map[[x]], levels = ord))
 
-#old color options
-#line_gray <- "#4e4e4e"
-#line_gold <- "#b5a905"
-#421559
-#5c3278"
-#BF5FFF
-#"#820BBB"
+  #old color options
+  #line_gray <- "#4e4e4e"
+  #line_gold <- "#b5a905"
+  #421559
+  #5c3278"
+  #BF5FFF
+  #"#820BBB"
 
-#  making a transparent color which turns out to be #00000001
-#  mycol <- rgb(0, 0, 0, max = 255, alpha = 1, names = "invis")
-#  mycol
-#  invis
+  #  making a transparent color which turns out to be #00000001
+  #  mycol <- rgb(0, 0, 0, max = 255, alpha = 1, names = "invis")
+  #  mycol
+  #  invis
 
-# in this version the last 3 categories are set to invisible
+  # in this version the last 3 categories are set to invisible
   #          conf      prob       poss      obs        not obs    not sampled
   pal <- c("black", "#7145AC", "#D0B9EF", "#00000001", "#00000001", "#00000001") #muted ebird purple
   #pal <- c("#473B00", "#B49518", "#E5D069", "white", "white", "white") #NY style
