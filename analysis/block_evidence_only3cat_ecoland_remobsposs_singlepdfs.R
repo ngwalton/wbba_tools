@@ -59,6 +59,8 @@ sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 # for testing purposes, shorten entire dataset to 2 species
 #sp_in <- sp_in[grepl("Red-eyed Vireo|Canada Jay", sp_in$COMMON.NAME), ]
 
+# limit to atlas portal records
+sp_in <- subset(sp_in, PROJECT.CODE == "EBIRD_ATL_WI")
 
 # remove obsposs species
 remove_species <- c(
