@@ -49,6 +49,9 @@ sp_in <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 # remove not valid (reason = exotic) records
 sp_in <- subset(sp_in, APPROVED != "0")
 
+# limit to atlas portal records
+sp_in <- subset(sp_in, PROJECT.CODE == "EBIRD_ATL_WI")
+
 # flag the pigeon entries so they are not removed with the rest of the domestics
 sp_in <- transform(sp_in, CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
 
