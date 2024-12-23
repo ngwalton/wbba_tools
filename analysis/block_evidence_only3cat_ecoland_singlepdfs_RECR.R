@@ -53,7 +53,12 @@ cnty <- us_counties(resolution = "high", states = "WI")
 #   "Ecological_Landscapes_of_Wisconsin")
 
 # sample WBBA data from ebird
-sp_in <- read.delim("Atlaswi_typesasspecies_ebd_US-WI_redcro_201501_201912_relOct-2023.txt", quote = "", as.is = TRUE)
+sp_in <- read.csv("RECR_final_Mar23_for_type_maps.csv")
+
+# take names to uppercase
+names(sp_in) <- toupper(names(sp_in))
+library(stringr)   
+colnames(sp_in) <- str_replace_all(colnames(sp_in), "[:punct:]", ".")
 
 # data prep ----
 
@@ -219,12 +224,13 @@ if (print_map) {
       # tm_shape(ecoland) +
       #       tm_borders(col = "#90EE90", lwd = 0.4, lty = "dashed", alpha = 1) +
       tm_shape(cnty) +
+      tm_layout(frame = FALSE) +
       tm_polygons(border.col = "gray60", lwd = 0.8, alpha = 0, border.alpha = 1,
                   legend.show = FALSE) +
       tm_shape(block_map, is.master = TRUE) +
-      tm_polygons(species, title = "Evidence", border.col = NULL, border.alpha = 0,
+      tm_polygons(species, title = "", border.col = NULL, border.alpha = 0,
                   lwd = 0, palette = pal, labels = c("Confirmed", "Probable", "Possible", "", "", "")) +
-      tm_legend(title = species, position = c("left", "bottom"), bg.alpha = 0,
+      tm_legend(title = "", position = c("left", "bottom"), bg.alpha = 0,
                 main.title.fontface = 2, title.fontface = 2)
     
     print(out)
@@ -248,6 +254,10 @@ st_write(block_out, out_shp, driver = "ESRI Shapefile")
 
 # Optional: Uncomment to print a file that shows single breeding status
 # (category) for each species for each block. Among other things, this allows
+# you to see which blocks have species reported that are only coded Observed.
+# When running this screen, probably want to upload a main EBD file that
+# includes non-portal records.
+# write.csv(block_out, file = "Species_Categories_By_Block.csv")
 # you to see which blocks have species reported that are only coded Observed.
 # When running this screen, probably want to upload a main EBD file that
 # includes non-portal records.
