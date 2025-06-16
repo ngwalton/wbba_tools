@@ -1,3 +1,14 @@
+
+
+
+
+
+
+DOUBLECHECK THIS IS CORRECT, SOMETHING WAS WRONG WITH YCNH MAP
+
+
+
+
 # this version prints an obsposs block map using the code from 
 # https://github.com/nmanich/small-ebird-scripts/blob/master/obsposs_filtering.R
 # Basically obsposs records are overwritten as H possible records for printing
