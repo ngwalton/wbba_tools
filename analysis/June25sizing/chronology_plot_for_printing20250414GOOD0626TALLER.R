@@ -342,7 +342,7 @@ sp <- unique(ebird$COMMON.NAME)
 ### THIS IS THE BEST PLACE TO ADJUST OVERALL HEIGHT
 #sizing
 pdf_size_w <- 3.75 
-pdf_size_h <- 6
+pdf_size_h <- 5.75
 #par(mar = c(bottom, left, top, right))
 
 gc()
