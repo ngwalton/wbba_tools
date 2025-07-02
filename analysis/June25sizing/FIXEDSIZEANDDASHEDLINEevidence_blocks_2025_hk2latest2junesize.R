@@ -209,12 +209,7 @@ for(j in 1:length(species)){
     geom_sf(data=block_in, fill=NA, color=NA, size=0) +
     coord_sf (datum = sf::st_crs(4269)) +
     geom_sf(data=cnty, fill=NA, color="gray60", size=0.6) +
-    geom_sf(data=ecoland2, fill=NA, color="gray75", linetype ="twodash", linewidth=0.2) +
-    #geom_sf(data=ecoland2, fill=NA, color="gray75", linetype ="dotdash", linewidth=0.2) +
-    #geom_sf(data=ecoland2, fill=NA, color="gray75", linetype ="dashed", linewidth=0.2) +
-    #geom_sf(data=ecoland2, fill=NA, color="gray75", linetype ="dotted", linewidth=0.2) +
-    #geom_sf(data=ecoland2, fill=NA, color="gray75", linetype ="longdash", linewidth=0.2) +
-    #geom_sf(data=ecoland2, fill=NA, color="gray75", linetype ="solid", linewidth=0.2) +
+    geom_sf(data=ecoland2, fill=NA, color="#87d979", linetype ="dashed", linewidth=0.2) +
     geom_sf(data=plot_block_df, aes(fill=value), color=NA) +  
     coord_sf()+
     #ggtitle(paste(species[j],": best _ quant"))+
