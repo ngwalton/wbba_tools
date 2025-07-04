@@ -282,8 +282,8 @@ chronplot <- function(comname, ebird, pal, cex.x.axis = 0.9, cex.y.axis = 0.3) {
   
   # increase tick width of first and last report
   # adjust lwd.ticks as desired
-  axis(1, unique(c(first_obs, last_obs)), labels = FALSE,
-       lwd.ticks = 1, lwd = 0)
+  #axis(1, unique(c(first_obs, last_obs)), labels = FALSE,
+  #     lwd.ticks = 1, lwd = 0)
   
   # y axis ticks and labels
   axis(2, at = seq_along(levels(ebird$code)), labels = levels(ebird$code),
