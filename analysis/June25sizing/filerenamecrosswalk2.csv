@@ -1,0 +1,258 @@
+SpAcctSort,common_name,CommonName2025,4lettercode2023,BlockDetections,BreedingPhenology,BreedingEvidence,ChangeMap,EstimatedDensity
+1,Canada Goose,Canada Goose,CANG,Table_10.1.1,Chart_10.1.1,Map_10.1.1,Map_10.1.2,Map_10.1.3
+2,Mute Swan,Mute Swan,MUSW,Table_10.2.1,Chart_10.2.1,Map_10.2.1,Map_10.2.2,Map_10.2.3
+3,Trumpeter Swan,Trumpeter Swan,TRUS,Table_10.3.1,Chart_10.3.1,Map_10.3.1,Map_10.3.2,Map_10.3.3
+4,Wood Duck,Wood Duck,WODU,Table_10.4.1,Chart_10.4.1,Map_10.4.1,Map_10.4.2,Map_10.4.3
+5,Blue-winged Teal,Blue-winged Teal,BWTE,Table_10.5.1,Chart_10.5.1,Map_10.5.1,Map_10.5.2,Map_10.5.3
+6,Northern Shoveler,Northern Shoveler,NSHO,Table_10.6.1,Chart_10.6.1,Map_10.6.1,Map_10.6.2,Map_10.6.3
+7,Gadwall,Gadwall,GADW,Table_10.7.1,Chart_10.7.1,Map_10.7.1,Map_10.7.2,Map_10.7.3
+8,American Wigeon,American Wigeon,AMWI,Table_10.8.1,Chart_10.8.1,Map_10.8.1,Map_10.8.2,Map_10.8.3
+9,Mallard,Mallard,MALL,Table_10.9.1,Chart_10.9.1,Map_10.9.1,Map_10.9.2,Map_10.9.3
+10,American Black Duck,American Black Duck,ABDU,Table_10.10.1,Chart_10.10.1,Map_10.10.1,Map_10.10.2,Map_10.10.3
+11,Northern Pintail,Northern Pintail,NOPI,Table_10.11.1,Chart_10.11.1,Map_10.11.1,Map_10.11.2,Map_10.11.3
+12,Green-winged Teal,Green-winged Teal,GWTE,Table_10.12.1,Chart_10.12.1,Map_10.12.1,Map_10.12.2,Map_10.12.3
+13,Canvasback,Canvasback,CANV,Table_10.13.1,Chart_10.13.1,Map_10.13.1,Map_10.13.2,Map_10.13.3
+14,Redhead,Redhead,REDH,Table_10.14.1,Chart_10.14.1,Map_10.14.1,Map_10.14.2,Map_10.14.3
+15,Ring-necked Duck,Ring-necked Duck,RNDU,Table_10.15.1,Chart_10.15.1,Map_10.15.1,Map_10.15.2,Map_10.15.3
+16,Lesser Scaup,Lesser Scaup,LESC,Table_10.16.1,Chart_10.16.1,Map_10.16.1,Map_10.16.2,Map_10.16.3
+17,Bufflehead,Bufflehead,BUFF,Table_10.17.1,Chart_10.17.1,Map_10.17.1,Map_10.17.2,Map_10.17.3
+18,Common Goldeneye,Common Goldeneye,COGO,Table_10.18.1,Chart_10.18.1,Map_10.18.1,Map_10.18.2,Map_10.18.3
+19,Hooded Merganser,Hooded Merganser,HOME,Table_10.19.1,Chart_10.19.1,Map_10.19.1,Map_10.19.2,Map_10.19.3
+20,Common Merganser,Common Merganser,COME,Table_10.20.1,Chart_10.20.1,Map_10.20.1,Map_10.20.2,Map_10.20.3
+21,Red-breasted Merganser,Red-breasted Merganser,RBME,Table_10.21.1,Chart_10.21.1,Map_10.21.1,Map_10.21.2,Map_10.21.3
+22,Ruddy Duck,Ruddy Duck,RUDU,Table_10.22.1,Chart_10.22.1,Map_10.22.1,Map_10.22.2,Map_10.22.3
+23,Northern Bobwhite,Northern Bobwhite,NOBO,Table_10.23.1,Chart_10.23.1,Map_10.23.1,Map_10.23.2,Map_10.23.3
+24,Wild Turkey,Wild Turkey,WITU,Table_10.24.1,Chart_10.24.1,Map_10.24.1,Map_10.24.2,Map_10.24.3
+25,Ruffed Grouse,Ruffed Grouse,RUGR,Table_10.25.1,Chart_10.25.1,Map_10.25.1,Map_10.25.2,Map_10.25.3
+26,Sharp-tailed Grouse,Sharp-tailed Grouse,STGR,Table_10.26.1,Chart_10.26.1,Map_10.26.1,Map_10.26.2,Map_10.26.3
+27,Greater Prairie-Chicken,Greater Prairie-Chicken,GRPC,Table_10.27.1,Chart_10.27.1,Map_10.27.1,Map_10.27.2,Map_10.27.3
+28,Spruce Grouse,Spruce Grouse,SPGR,Table_10.28.1,Chart_10.28.1,Map_10.28.1,Map_10.28.2,Map_10.28.3
+29,Gray Partridge,Gray Partridge,GRAP,Table_10.29.1,Chart_10.29.1,Map_10.29.1,Map_10.29.2,Map_10.29.3
+30,Ring-necked Pheasant,Ring-necked Pheasant,RNEP,Table_10.30.1,Chart_10.30.1,Map_10.30.1,Map_10.30.2,Map_10.30.3
+31,Rock Pigeon,Rock Pigeon,ROPI,Table_10.31.1,Chart_10.31.1,Map_10.31.1,Map_10.31.2,Map_10.31.3
+32,Eurasian Collared-Dove,Eurasian Collared-Dove,EUCD,Table_10.32.1,Chart_10.32.1,Map_10.32.1,Map_10.32.2,Map_10.32.3
+33,White-winged Dove,White-winged Dove,WWDO,Table_10.33.1,Chart_10.33.1,Map_10.33.1,Map_10.33.2,Map_10.33.3
+34,Mourning Dove,Mourning Dove,MODO,Table_10.34.1,Chart_10.34.1,Map_10.34.1,Map_10.34.2,Map_10.34.3
+35,Yellow-billed Cuckoo,Yellow-billed Cuckoo,YBCU,Table_10.35.1,Chart_10.35.1,Map_10.35.1,Map_10.35.2,Map_10.35.3
+36,Black-billed Cuckoo,Black-billed Cuckoo,BBCU,Table_10.36.1,Chart_10.36.1,Map_10.36.1,Map_10.36.2,Map_10.36.3
+37,Common Nighthawk,Common Nighthawk,CONI,Table_10.37.1,Chart_10.37.1,Map_10.37.1,Map_10.37.2,Map_10.37.3
+38,Chuck-will's-widow,Chuck-will's-widow,CWWI,Table_10.38.1,Chart_10.38.1,Map_10.38.1,Map_10.38.2,Map_10.38.3
+39,Eastern Whip-poor-will,Eastern Whip-poor-will,EWPW,Table_10.39.1,Chart_10.39.1,Map_10.39.1,Map_10.39.2,Map_10.39.3
+40,Chimney Swift,Chimney Swift,CHSW,Table_10.40.1,Chart_10.40.1,Map_10.40.1,Map_10.40.2,Map_10.40.3
+41,Ruby-throated Hummingbird,Ruby-throated Hummingbird,RTHU,Table_10.41.1,Chart_10.41.1,Map_10.41.1,Map_10.41.2,Map_10.41.3
+42,King Rail,King Rail,KIRA,Table_10.42.1,Chart_10.42.1,Map_10.42.1,Map_10.42.2,Map_10.42.3
+43,Virginia Rail,Virginia Rail,VIRA,Table_10.43.1,Chart_10.43.1,Map_10.43.1,Map_10.43.2,Map_10.43.3
+44,Sora,Sora,SORA,Table_10.44.1,Chart_10.44.1,Map_10.44.1,Map_10.44.2,Map_10.44.3
+45,Common Gallinule,Common Gallinule,COGA,Table_10.45.1,Chart_10.45.1,Map_10.45.1,Map_10.45.2,Map_10.45.3
+46,American Coot,American Coot,AMCO,Table_10.46.1,Chart_10.46.1,Map_10.46.1,Map_10.46.2,Map_10.46.3
+47,Yellow Rail,Yellow Rail,YERA,Table_10.47.1,Chart_10.47.1,Map_10.47.1,Map_10.47.2,Map_10.47.3
+48,Sandhill Crane,Sandhill Crane,SACR,Table_10.48.1,Chart_10.48.1,Map_10.48.1,Map_10.48.2,Map_10.48.3
+49,Whooping Crane,Whooping Crane,WHCR,Table_10.49.1,Chart_10.49.1,Map_10.49.1,Map_10.49.2,Map_10.49.3
+50,Black-necked Stilt,Black-necked Stilt,BNST,Table_10.50.1,Chart_10.50.1,Map_10.50.1,Map_10.50.2,Map_10.50.3
+51,Killdeer,Killdeer,KILL,Table_10.51.1,Chart_10.51.1,Map_10.51.1,Map_10.51.2,Map_10.51.3
+52,Piping Plover,Piping Plover,PIPL,Table_10.52.1,Chart_10.52.1,Map_10.52.1,Map_10.52.2,Map_10.52.3
+53,Upland Sandpiper,Upland Sandpiper,UPSA,Table_10.53.1,Chart_10.53.1,Map_10.53.1,Map_10.53.2,Map_10.53.3
+54,American Woodcock,American Woodcock,AMWO,Table_10.54.1,Chart_10.54.1,Map_10.54.1,Map_10.54.2,Map_10.54.3
+55,Wilson's Snipe,Wilson's Snipe,WISN,Table_10.55.1,Chart_10.55.1,Map_10.55.1,Map_10.55.2,Map_10.55.3
+56,Wilson's Phalarope,Wilson's Phalarope,WIPH,Table_10.56.1,Chart_10.56.1,Map_10.56.1,Map_10.56.2,Map_10.56.3
+57,Spotted Sandpiper,Spotted Sandpiper,SPSA,Table_10.57.1,Chart_10.57.1,Map_10.57.1,Map_10.57.2,Map_10.57.3
+58,Laughing Gull,Laughing Gull,LAGU,Table_10.58.1,Chart_10.58.1,Map_10.58.1,Map_10.58.2,Map_10.58.3
+59,Ring-billed Gull,Ring-billed Gull,RBGU,Table_10.59.1,Chart_10.59.1,Map_10.59.1,Map_10.59.2,Map_10.59.3
+60,Herring Gull,American Herring Gull,HERG,Table_10.60.1,Chart_10.60.1,Map_10.60.1,Map_10.60.2,Map_10.60.3
+61,Caspian Tern,Caspian Tern,CATE,Table_10.61.1,Chart_10.61.1,Map_10.61.1,Map_10.61.2,Map_10.61.3
+62,Black Tern,Black Tern,BLTE,Table_10.62.1,Chart_10.62.1,Map_10.62.1,Map_10.62.2,Map_10.62.3
+63,Forster's Tern,Forster's Tern,FOTE,Table_10.63.1,Chart_10.63.1,Map_10.63.1,Map_10.63.2,Map_10.63.3
+64,Common Tern,Common Tern,COTE,Table_10.64.1,Chart_10.64.1,Map_10.64.1,Map_10.64.2,Map_10.64.3
+65,Pied-billed Grebe,Pied-billed Grebe,PBGR,Table_10.65.1,Chart_10.65.1,Map_10.65.1,Map_10.65.2,Map_10.65.3
+66,Horned Grebe,Horned Grebe,HOGR,Table_10.66.1,Chart_10.66.1,Map_10.66.1,Map_10.66.2,Map_10.66.3
+67,Red-necked Grebe,Red-necked Grebe,RNGR,Table_10.67.1,Chart_10.67.1,Map_10.67.1,Map_10.67.2,Map_10.67.3
+68,Eared Grebe,Eared Grebe,EAGR,Table_10.68.1,Chart_10.68.1,Map_10.68.1,Map_10.68.2,Map_10.68.3
+69,Common Loon,Common Loon,COLO,Table_10.69.1,Chart_10.69.1,Map_10.69.1,Map_10.69.2,Map_10.69.3
+70,Double-crested Cormorant,Double-crested Cormorant,DCCO,Table_10.70.1,Chart_10.70.1,Map_10.70.1,Map_10.70.2,Map_10.70.3
+71,Glossy Ibis,Glossy Ibis,GLIB,Table_10.71.1,Chart_10.71.1,Map_10.71.1,Map_10.71.2,Map_10.71.3
+72,American Bittern,American Bittern,AMBI,Table_10.72.1,Chart_10.72.1,Map_10.72.1,Map_10.72.2,Map_10.72.3
+73,Least Bittern,Least Bittern,LEBI,Table_10.73.1,Chart_10.73.1,Map_10.73.1,Map_10.73.2,Map_10.73.3
+74,Yellow-crowned Night-Heron,Yellow-crowned Night Heron,YCNH,Table_10.74.1,Chart_10.74.1,Map_10.74.1,Map_10.74.2,Map_10.74.3
+75,Black-crowned Night-Heron,Black-crowned Night Heron,BCNH,Table_10.75.1,Chart_10.75.1,Map_10.75.1,Map_10.75.2,Map_10.75.3
+76,Green Heron,Green Heron,GRHE,Table_10.76.1,Chart_10.76.1,Map_10.76.1,Map_10.76.2,Map_10.76.3
+77,Cattle Egret,Western Cattle-Egret,CAEG,Table_10.77.1,Chart_10.77.1,Map_10.77.1,Map_10.77.2,Map_10.77.3
+78,Great Egret,Great Egret,GREG,Table_10.78.1,Chart_10.78.1,Map_10.78.1,Map_10.78.2,Map_10.78.3
+79,Great Blue Heron,Great Blue Heron,GBHE,Table_10.79.1,Chart_10.79.1,Map_10.79.1,Map_10.79.2,Map_10.79.3
+80,American White Pelican,American White Pelican,AWPE,Table_10.80.1,Chart_10.80.1,Map_10.80.1,Map_10.80.2,Map_10.80.3
+81,Turkey Vulture,Turkey Vulture,TUVU,Table_10.81.1,Chart_10.81.1,Map_10.81.1,Map_10.81.2,Map_10.81.3
+82,Osprey,Osprey,OSPR,Table_10.82.1,Chart_10.82.1,Map_10.82.1,Map_10.82.2,Map_10.82.3
+83,Sharp-shinned Hawk,Sharp-shinned Hawk,SSHA,Table_10.83.1,Chart_10.83.1,Map_10.83.1,Map_10.83.2,Map_10.83.3
+84,Cooper's Hawk,Cooper's Hawk,COHA,Table_10.84.1,Chart_10.84.1,Map_10.84.1,Map_10.84.2,Map_10.84.3
+85,Northern Goshawk,American Goshawk,NOGO,Table_10.85.1,Chart_10.85.1,Map_10.85.1,Map_10.85.2,Map_10.85.3
+86,Northern Harrier,Northern Harrier,NOHA,Table_10.86.1,Chart_10.86.1,Map_10.86.1,Map_10.86.2,Map_10.86.3
+87,Bald Eagle,Bald Eagle,BAEA,Table_10.87.1,Chart_10.87.1,Map_10.87.1,Map_10.87.2,Map_10.87.3
+88,Mississippi Kite,Mississippi Kite,MIKI,Table_10.88.1,Chart_10.88.1,Map_10.88.1,Map_10.88.2,Map_10.88.3
+89,Broad-winged Hawk,Broad-winged Hawk,BWHA,Table_10.89.1,Chart_10.89.1,Map_10.89.1,Map_10.89.2,Map_10.89.3
+90,Red-shouldered Hawk,Red-shouldered Hawk,RSHA,Table_10.90.1,Chart_10.90.1,Map_10.90.1,Map_10.90.2,Map_10.90.3
+91,Red-tailed Hawk,Red-tailed Hawk,RTHA,Table_10.91.1,Chart_10.91.1,Map_10.91.1,Map_10.91.2,Map_10.91.3
+92,Barn Owl,American Barn Owl,BNOW,Table_10.92.1,Chart_10.92.1,Map_10.92.1,Map_10.92.2,Map_10.92.3
+93,Eastern Screech-Owl,Eastern Screech-Owl,EASO,Table_10.93.1,Chart_10.93.1,Map_10.93.1,Map_10.93.2,Map_10.93.3
+94,Great Horned Owl,Great Horned Owl,GHOW,Table_10.94.1,Chart_10.94.1,Map_10.94.1,Map_10.94.2,Map_10.94.3
+95,Barred Owl,Barred Owl,BAOW,Table_10.95.1,Chart_10.95.1,Map_10.95.1,Map_10.95.2,Map_10.95.3
+96,Great Gray Owl,Great Gray Owl,GGOW,Table_10.96.1,Chart_10.96.1,Map_10.96.1,Map_10.96.2,Map_10.96.3
+97,Long-eared Owl,Long-eared Owl,LEOW,Table_10.97.1,Chart_10.97.1,Map_10.97.1,Map_10.97.2,Map_10.97.3
+98,Short-eared Owl,Short-eared Owl,SEOW,Table_10.98.1,Chart_10.98.1,Map_10.98.1,Map_10.98.2,Map_10.98.3
+99,Northern Saw-whet Owl,Northern Saw-whet Owl,NSWO,Table_10.99.1,Chart_10.99.1,Map_10.99.1,Map_10.99.2,Map_10.99.3
+100,Belted Kingfisher,Belted Kingfisher,BEKI,Table_10.100.1,Chart_10.100.1,Map_10.100.1,Map_10.100.2,Map_10.100.3
+101,Yellow-bellied Sapsucker,Yellow-bellied Sapsucker,YBSA,Table_10.101.1,Chart_10.101.1,Map_10.101.1,Map_10.101.2,Map_10.101.3
+102,Red-headed Woodpecker,Red-headed Woodpecker,RHWO,Table_10.102.1,Chart_10.102.1,Map_10.102.1,Map_10.102.2,Map_10.102.3
+103,Red-bellied Woodpecker,Red-bellied Woodpecker,RBWO,Table_10.103.1,Chart_10.103.1,Map_10.103.1,Map_10.103.2,Map_10.103.3
+104,American Three-toed Woodpecker,American Three-toed Woodpecker,ATTW,Table_10.104.1,Chart_10.104.1,Map_10.104.1,Map_10.104.2,Map_10.104.3
+105,Black-backed Woodpecker,Black-backed Woodpecker,BBWO,Table_10.105.1,Chart_10.105.1,Map_10.105.1,Map_10.105.2,Map_10.105.3
+106,Downy Woodpecker,Downy Woodpecker,DOWO,Table_10.106.1,Chart_10.106.1,Map_10.106.1,Map_10.106.2,Map_10.106.3
+107,Hairy Woodpecker,Hairy Woodpecker,HAWO,Table_10.107.1,Chart_10.107.1,Map_10.107.1,Map_10.107.2,Map_10.107.3
+108,Pileated Woodpecker,Pileated Woodpecker,PIWO,Table_10.108.1,Chart_10.108.1,Map_10.108.1,Map_10.108.2,Map_10.108.3
+109,Northern Flicker,Northern Flicker,NOFL,Table_10.109.1,Chart_10.109.1,Map_10.109.1,Map_10.109.2,Map_10.109.3
+110,American Kestrel,American Kestrel,AMKE,Table_10.110.1,Chart_10.110.1,Map_10.110.1,Map_10.110.2,Map_10.110.3
+111,Merlin,Merlin,MERL,Table_10.111.1,Chart_10.111.1,Map_10.111.1,Map_10.111.2,Map_10.111.3
+112,Peregrine Falcon,Peregrine Falcon,PEFA,Table_10.112.1,Chart_10.112.1,Map_10.112.1,Map_10.112.2,Map_10.112.3
+113,Olive-sided Flycatcher,Olive-sided Flycatcher,OSFL,Table_10.113.1,Chart_10.113.1,Map_10.113.1,Map_10.113.2,Map_10.113.3
+114,Eastern Wood-Pewee,Eastern Wood-Pewee,EAWP,Table_10.114.1,Chart_10.114.1,Map_10.114.1,Map_10.114.2,Map_10.114.3
+115,Yellow-bellied Flycatcher,Yellow-bellied Flycatcher,YBFL,Table_10.115.1,Chart_10.115.1,Map_10.115.1,Map_10.115.2,Map_10.115.3
+116,Acadian Flycatcher,Acadian Flycatcher,ACFL,Table_10.116.1,Chart_10.116.1,Map_10.116.1,Map_10.116.2,Map_10.116.3
+117,Alder Flycatcher,Alder Flycatcher,ALFL,Table_10.117.1,Chart_10.117.1,Map_10.117.1,Map_10.117.2,Map_10.117.3
+118,Willow Flycatcher,Willow Flycatcher,WIFL,Table_10.118.1,Chart_10.118.1,Map_10.118.1,Map_10.118.2,Map_10.118.3
+119,Least Flycatcher,Least Flycatcher,LEFL,Table_10.119.1,Chart_10.119.1,Map_10.119.1,Map_10.119.2,Map_10.119.3
+120,Eastern Phoebe,Eastern Phoebe,EAPH,Table_10.120.1,Chart_10.120.1,Map_10.120.1,Map_10.120.2,Map_10.120.3
+121,Great Crested Flycatcher,Great Crested Flycatcher,GCFL,Table_10.121.1,Chart_10.121.1,Map_10.121.1,Map_10.121.2,Map_10.121.3
+122,Western Kingbird,Western Kingbird,WEKI,Table_10.122.1,Chart_10.122.1,Map_10.122.1,Map_10.122.2,Map_10.122.3
+123,Eastern Kingbird,Eastern Kingbird,EAKI,Table_10.123.1,Chart_10.123.1,Map_10.123.1,Map_10.123.2,Map_10.123.3
+124,White-eyed Vireo,White-eyed Vireo,WEVI,Table_10.124.1,Chart_10.124.1,Map_10.124.1,Map_10.124.2,Map_10.124.3
+125,Bell's Vireo,Bell's Vireo,BEVI,Table_10.125.1,Chart_10.125.1,Map_10.125.1,Map_10.125.2,Map_10.125.3
+126,Yellow-throated Vireo,Yellow-throated Vireo,YTVI,Table_10.126.1,Chart_10.126.1,Map_10.126.1,Map_10.126.2,Map_10.126.3
+127,Blue-headed Vireo,Blue-headed Vireo,BHVI,Table_10.127.1,Chart_10.127.1,Map_10.127.1,Map_10.127.2,Map_10.127.3
+128,Philadelphia Vireo,Philadelphia Vireo,PHVI,Table_10.128.1,Chart_10.128.1,Map_10.128.1,Map_10.128.2,Map_10.128.3
+129,Warbling Vireo,Eastern Warbling Vireo,WAVI,Table_10.129.1,Chart_10.129.1,Map_10.129.1,Map_10.129.2,Map_10.129.3
+130,Red-eyed Vireo,Red-eyed Vireo,REVI,Table_10.130.1,Chart_10.130.1,Map_10.130.1,Map_10.130.2,Map_10.130.3
+131,Loggerhead Shrike,Loggerhead Shrike,LOSH,Table_10.131.1,Chart_10.131.1,Map_10.131.1,Map_10.131.2,Map_10.131.3
+132,Canada Jay,Canada Jay,CAJA,Table_10.132.1,Chart_10.132.1,Map_10.132.1,Map_10.132.2,Map_10.132.3
+133,Blue Jay,Blue Jay,BLJA,Table_10.133.1,Chart_10.133.1,Map_10.133.1,Map_10.133.2,Map_10.133.3
+134,American Crow,American Crow,AMCR,Table_10.134.1,Chart_10.134.1,Map_10.134.1,Map_10.134.2,Map_10.134.3
+135,Common Raven,Common Raven,CORA,Table_10.135.1,Chart_10.135.1,Map_10.135.1,Map_10.135.2,Map_10.135.3
+136,Black-capped Chickadee,Black-capped Chickadee,BCCH,Table_10.136.1,Chart_10.136.1,Map_10.136.1,Map_10.136.2,Map_10.136.3
+137,Boreal Chickadee,Boreal Chickadee,BOCH,Table_10.137.1,Chart_10.137.1,Map_10.137.1,Map_10.137.2,Map_10.137.3
+138,Tufted Titmouse,Tufted Titmouse,TUTI,Table_10.138.1,Chart_10.138.1,Map_10.138.1,Map_10.138.2,Map_10.138.3
+139,Great Tit,Great Tit,GRTI,Table_10.139.1,Chart_10.139.1,Map_10.139.1,Map_10.139.2,Map_10.139.3
+140,Horned Lark,Horned Lark,HOLA,Table_10.140.1,Chart_10.140.1,Map_10.140.1,Map_10.140.2,Map_10.140.3
+141,Bank Swallow,Bank Swallow,BANS,Table_10.141.1,Chart_10.141.1,Map_10.141.1,Map_10.141.2,Map_10.141.3
+142,Tree Swallow,Tree Swallow,TRES,Table_10.142.1,Chart_10.142.1,Map_10.142.1,Map_10.142.2,Map_10.142.3
+143,Purple Martin,Purple Martin,PUMA,Table_10.143.1,Chart_10.143.1,Map_10.143.1,Map_10.143.2,Map_10.143.3
+144,Northern Rough-winged Swallow,Northern Rough-winged Swallow,NRWS,Table_10.144.1,Chart_10.144.1,Map_10.144.1,Map_10.144.2,Map_10.144.3
+145,Barn Swallow,Barn Swallow,BARS,Table_10.145.1,Chart_10.145.1,Map_10.145.1,Map_10.145.2,Map_10.145.3
+146,Cliff Swallow,Cliff Swallow,CLSW,Table_10.146.1,Chart_10.146.1,Map_10.146.1,Map_10.146.2,Map_10.146.3
+147,Ruby-crowned Kinglet,Ruby-crowned Kinglet,RCKI,Table_10.147.1,Chart_10.147.1,Map_10.147.1,Map_10.147.2,Map_10.147.3
+148,Golden-crowned Kinglet,Golden-crowned Kinglet,GCKI,Table_10.148.1,Chart_10.148.1,Map_10.148.1,Map_10.148.2,Map_10.148.3
+149,White-breasted Nuthatch,White-breasted Nuthatch,WBNU,Table_10.149.1,Chart_10.149.1,Map_10.149.1,Map_10.149.2,Map_10.149.3
+150,Red-breasted Nuthatch,Red-breasted Nuthatch,RBNU,Table_10.150.1,Chart_10.150.1,Map_10.150.1,Map_10.150.2,Map_10.150.3
+151,Brown Creeper,Brown Creeper,BRCR,Table_10.151.1,Chart_10.151.1,Map_10.151.1,Map_10.151.2,Map_10.151.3
+152,Blue-gray Gnatcatcher,Blue-gray Gnatcatcher,BGGN,Table_10.152.1,Chart_10.152.1,Map_10.152.1,Map_10.152.2,Map_10.152.3
+153,House Wren,Northern House Wren,HOWR,Table_10.153.1,Chart_10.153.1,Map_10.153.1,Map_10.153.2,Map_10.153.3
+154,Winter Wren,Winter Wren,WIWR,Table_10.154.1,Chart_10.154.1,Map_10.154.1,Map_10.154.2,Map_10.154.3
+155,Sedge Wren,Sedge Wren,SEWR,Table_10.155.1,Chart_10.155.1,Map_10.155.1,Map_10.155.2,Map_10.155.3
+156,Marsh Wren,Marsh Wren,MAWR,Table_10.156.1,Chart_10.156.1,Map_10.156.1,Map_10.156.2,Map_10.156.3
+157,Carolina Wren,Carolina Wren,CARW,Table_10.157.1,Chart_10.157.1,Map_10.157.1,Map_10.157.2,Map_10.157.3
+158,European Starling,European Starling,EUST,Table_10.158.1,Chart_10.158.1,Map_10.158.1,Map_10.158.2,Map_10.158.3
+159,Gray Catbird,Gray Catbird,GRCA,Table_10.159.1,Chart_10.159.1,Map_10.159.1,Map_10.159.2,Map_10.159.3
+160,Brown Thrasher,Brown Thrasher,BRTH,Table_10.160.1,Chart_10.160.1,Map_10.160.1,Map_10.160.2,Map_10.160.3
+161,Northern Mockingbird,Northern Mockingbird,NOMO,Table_10.161.1,Chart_10.161.1,Map_10.161.1,Map_10.161.2,Map_10.161.3
+162,Eastern Bluebird,Eastern Bluebird,EABL,Table_10.162.1,Chart_10.162.1,Map_10.162.1,Map_10.162.2,Map_10.162.3
+163,Veery,Veery,VEER,Table_10.163.1,Chart_10.163.1,Map_10.163.1,Map_10.163.2,Map_10.163.3
+164,Swainson's Thrush,Swainson's Thrush,SWTH,Table_10.164.1,Chart_10.164.1,Map_10.164.1,Map_10.164.2,Map_10.164.3
+165,Hermit Thrush,Hermit Thrush,HETH,Table_10.165.1,Chart_10.165.1,Map_10.165.1,Map_10.165.2,Map_10.165.3
+166,Wood Thrush,Wood Thrush,WOTH,Table_10.166.1,Chart_10.166.1,Map_10.166.1,Map_10.166.2,Map_10.166.3
+167,American Robin,American Robin,AMRO,Table_10.167.1,Chart_10.167.1,Map_10.167.1,Map_10.167.2,Map_10.167.3
+168,Cedar Waxwing,Cedar Waxwing,CEDW,Table_10.168.1,Chart_10.168.1,Map_10.168.1,Map_10.168.2,Map_10.168.3
+169,House Sparrow,House Sparrow,HOSP,Table_10.169.1,Chart_10.169.1,Map_10.169.1,Map_10.169.2,Map_10.169.3
+170,Evening Grosbeak,Evening Grosbeak,EVGR,Table_10.170.1,Chart_10.170.1,Map_10.170.1,Map_10.170.2,Map_10.170.3
+171,House Finch,House Finch,HOFI,Table_10.171.1,Chart_10.171.1,Map_10.171.1,Map_10.171.2,Map_10.171.3
+172,Purple Finch,Purple Finch,PUFI,Table_10.172.1,Chart_10.172.1,Map_10.172.1,Map_10.172.2,Map_10.172.3
+173,Red Crossbill,Red Crossbill,RECR,Table_10.173.1,Chart_10.173.1,Map_10.173.1,Map_10.173.2,Map_10.173.3
+174,White-winged Crossbill,White-winged Crossbill,WWCR,Table_10.174.1,Chart_10.174.1,Map_10.174.1,Map_10.174.2,Map_10.174.3
+175,European Goldfinch,European Goldfinch,EGOL,Table_10.175.1,Chart_10.175.1,Map_10.175.1,Map_10.175.2,Map_10.175.3
+176,Pine Siskin,Pine Siskin,PISI,Table_10.176.1,Chart_10.176.1,Map_10.176.1,Map_10.176.2,Map_10.176.3
+177,American Goldfinch,American Goldfinch,AGOL,Table_10.177.1,Chart_10.177.1,Map_10.177.1,Map_10.177.2,Map_10.177.3
+178,Grasshopper Sparrow,Grasshopper Sparrow,GRSP,Table_10.178.1,Chart_10.178.1,Map_10.178.1,Map_10.178.2,Map_10.178.3
+179,Chipping Sparrow,Chipping Sparrow,CHSP,Table_10.179.1,Chart_10.179.1,Map_10.179.1,Map_10.179.2,Map_10.179.3
+180,Clay-colored Sparrow,Clay-colored Sparrow,CCSP,Table_10.180.1,Chart_10.180.1,Map_10.180.1,Map_10.180.2,Map_10.180.3
+181,Field Sparrow,Field Sparrow,FISP,Table_10.181.1,Chart_10.181.1,Map_10.181.1,Map_10.181.2,Map_10.181.3
+182,Lark Sparrow,Lark Sparrow,LASP,Table_10.182.1,Chart_10.182.1,Map_10.182.1,Map_10.182.2,Map_10.182.3
+183,Dark-eyed Junco,Dark-eyed Junco,DEJU,Table_10.183.1,Chart_10.183.1,Map_10.183.1,Map_10.183.2,Map_10.183.3
+184,White-throated Sparrow,White-throated Sparrow,WTSP,Table_10.184.1,Chart_10.184.1,Map_10.184.1,Map_10.184.2,Map_10.184.3
+185,Vesper Sparrow,Vesper Sparrow,VESP,Table_10.185.1,Chart_10.185.1,Map_10.185.1,Map_10.185.2,Map_10.185.3
+186,LeConte's Sparrow,LeConte's Sparrow,LCSP,Table_10.186.1,Chart_10.186.1,Map_10.186.1,Map_10.186.2,Map_10.186.3
+187,Nelson's Sparrow,Nelson's Sparrow,NESP,Table_10.187.1,Chart_10.187.1,Map_10.187.1,Map_10.187.2,Map_10.187.3
+188,Savannah Sparrow,Savannah Sparrow,SAVS,Table_10.188.1,Chart_10.188.1,Map_10.188.1,Map_10.188.2,Map_10.188.3
+189,Henslow's Sparrow,Henslow's Sparrow,HESP,Table_10.189.1,Chart_10.189.1,Map_10.189.1,Map_10.189.2,Map_10.189.3
+190,Song Sparrow,Song Sparrow,SOSP,Table_10.190.1,Chart_10.190.1,Map_10.190.1,Map_10.190.2,Map_10.190.3
+191,Lincoln's Sparrow,Lincoln's Sparrow,LISP,Table_10.191.1,Chart_10.191.1,Map_10.191.1,Map_10.191.2,Map_10.191.3
+192,Swamp Sparrow,Swamp Sparrow,SWSP,Table_10.192.1,Chart_10.192.1,Map_10.192.1,Map_10.192.2,Map_10.192.3
+193,Eastern Towhee,Eastern Towhee,EATO,Table_10.193.1,Chart_10.193.1,Map_10.193.1,Map_10.193.2,Map_10.193.3
+194,Yellow-breasted Chat,Yellow-breasted Chat,YBCH,Table_10.194.1,Chart_10.194.1,Map_10.194.1,Map_10.194.2,Map_10.194.3
+195,Yellow-headed Blackbird,Yellow-headed Blackbird,YHBL,Table_10.195.1,Chart_10.195.1,Map_10.195.1,Map_10.195.2,Map_10.195.3
+196,Bobolink,Bobolink,BOBO,Table_10.196.1,Chart_10.196.1,Map_10.196.1,Map_10.196.2,Map_10.196.3
+197,Western Meadowlark,Western Meadowlark,WEME,Table_10.197.1,Chart_10.197.1,Map_10.197.1,Map_10.197.2,Map_10.197.3
+198,Eastern Meadowlark,Eastern Meadowlark,EAME,Table_10.198.1,Chart_10.198.1,Map_10.198.1,Map_10.198.2,Map_10.198.3
+199,Orchard Oriole,Orchard Oriole,OROR,Table_10.199.1,Chart_10.199.1,Map_10.199.1,Map_10.199.2,Map_10.199.3
+200,Baltimore Oriole,Baltimore Oriole,BAOR,Table_10.200.1,Chart_10.200.1,Map_10.200.1,Map_10.200.2,Map_10.200.3
+201,Red-winged Blackbird,Red-winged Blackbird,RWBL,Table_10.201.1,Chart_10.201.1,Map_10.201.1,Map_10.201.2,Map_10.201.3
+202,Brown-headed Cowbird,Brown-headed Cowbird,BHCO,Table_10.202.1,Chart_10.202.1,Map_10.202.1,Map_10.202.2,Map_10.202.3
+203,Brewer's Blackbird,Brewer's Blackbird,BRBL,Table_10.203.1,Chart_10.203.1,Map_10.203.1,Map_10.203.2,Map_10.203.3
+204,Common Grackle,Common Grackle,COGR,Table_10.204.1,Chart_10.204.1,Map_10.204.1,Map_10.204.2,Map_10.204.3
+205,Ovenbird,Ovenbird,OVEN,Table_10.205.1,Chart_10.205.1,Map_10.205.1,Map_10.205.2,Map_10.205.3
+206,Worm-eating Warbler,Worm-eating Warbler,WEWA,Table_10.206.1,Chart_10.206.1,Map_10.206.1,Map_10.206.2,Map_10.206.3
+207,Louisiana Waterthrush,Louisiana Waterthrush,LOWA,Table_10.207.1,Chart_10.207.1,Map_10.207.1,Map_10.207.2,Map_10.207.3
+208,Northern Waterthrush,Northern Waterthrush,NOWA,Table_10.208.1,Chart_10.208.1,Map_10.208.1,Map_10.208.2,Map_10.208.3
+209,Golden-winged Warbler,Golden-winged Warbler,GWWA,Table_10.209.1,Chart_10.209.1,Map_10.209.1,Map_10.209.2,Map_10.209.3
+210,Blue-winged Warbler,Blue-winged Warbler,BWWA,Table_10.210.1,Chart_10.210.1,Map_10.210.1,Map_10.210.2,Map_10.210.3
+211,Black-and-white Warbler,Black-and-white Warbler,BAWW,Table_10.211.1,Chart_10.211.1,Map_10.211.1,Map_10.211.2,Map_10.211.3
+212,Prothonotary Warbler,Prothonotary Warbler,PROW,Table_10.212.1,Chart_10.212.1,Map_10.212.1,Map_10.212.2,Map_10.212.3
+213,Tennessee Warbler,Tennessee Warbler,TEWA,Table_10.213.1,Chart_10.213.1,Map_10.213.1,Map_10.213.2,Map_10.213.3
+214,Nashville Warbler,Nashville Warbler,NAWA,Table_10.214.1,Chart_10.214.1,Map_10.214.1,Map_10.214.2,Map_10.214.3
+215,Connecticut Warbler,Connecticut Warbler,CONW,Table_10.215.1,Chart_10.215.1,Map_10.215.1,Map_10.215.2,Map_10.215.3
+216,Mourning Warbler,Mourning Warbler,MOWA,Table_10.216.1,Chart_10.216.1,Map_10.216.1,Map_10.216.2,Map_10.216.3
+217,Kentucky Warbler,Kentucky Warbler,KEWA,Table_10.217.1,Chart_10.217.1,Map_10.217.1,Map_10.217.2,Map_10.217.3
+218,Common Yellowthroat,Common Yellowthroat,COYE,Table_10.218.1,Chart_10.218.1,Map_10.218.1,Map_10.218.2,Map_10.218.3
+219,Hooded Warbler,Hooded Warbler,HOWA,Table_10.219.1,Chart_10.219.1,Map_10.219.1,Map_10.219.2,Map_10.219.3
+220,American Redstart,American Redstart,AMRE,Table_10.220.1,Chart_10.220.1,Map_10.220.1,Map_10.220.2,Map_10.220.3
+221,Kirtland's Warbler,Kirtland's Warbler,KIWA,Table_10.221.1,Chart_10.221.1,Map_10.221.1,Map_10.221.2,Map_10.221.3
+222,Cape May Warbler,Cape May Warbler,CMWA,Table_10.222.1,Chart_10.222.1,Map_10.222.1,Map_10.222.2,Map_10.222.3
+223,Cerulean Warbler,Cerulean Warbler,CERW,Table_10.223.1,Chart_10.223.1,Map_10.223.1,Map_10.223.2,Map_10.223.3
+224,Northern Parula,Northern Parula,NOPA,Table_10.224.1,Chart_10.224.1,Map_10.224.1,Map_10.224.2,Map_10.224.3
+225,Magnolia Warbler,Magnolia Warbler,MAWA,Table_10.225.1,Chart_10.225.1,Map_10.225.1,Map_10.225.2,Map_10.225.3
+226,Blackburnian Warbler,Blackburnian Warbler,BLBW,Table_10.226.1,Chart_10.226.1,Map_10.226.1,Map_10.226.2,Map_10.226.3
+227,Yellow Warbler,Northern Yellow Warbler,YEWA,Table_10.227.1,Chart_10.227.1,Map_10.227.1,Map_10.227.2,Map_10.227.3
+228,Chestnut-sided Warbler,Chestnut-sided Warbler,CSWA,Table_10.228.1,Chart_10.228.1,Map_10.228.1,Map_10.228.2,Map_10.228.3
+229,Black-throated Blue Warbler,Black-throated Blue Warbler,BTBW,Table_10.229.1,Chart_10.229.1,Map_10.229.1,Map_10.229.2,Map_10.229.3
+230,Palm Warbler,Palm Warbler,PAWA,Table_10.230.1,Chart_10.230.1,Map_10.230.1,Map_10.230.2,Map_10.230.3
+231,Pine Warbler,Pine Warbler,PIWA,Table_10.231.1,Chart_10.231.1,Map_10.231.1,Map_10.231.2,Map_10.231.3
+232,Yellow-rumped Warbler,Yellow-rumped Warbler,YRWA,Table_10.232.1,Chart_10.232.1,Map_10.232.1,Map_10.232.2,Map_10.232.3
+233,Yellow-throated Warbler,Yellow-throated Warbler,YTWA,Table_10.233.1,Chart_10.233.1,Map_10.233.1,Map_10.233.2,Map_10.233.3
+234,Prairie Warbler,Prairie Warbler,PRAW,Table_10.234.1,Chart_10.234.1,Map_10.234.1,Map_10.234.2,Map_10.234.3
+235,Black-throated Green Warbler,Black-throated Green Warbler,BTNW,Table_10.235.1,Chart_10.235.1,Map_10.235.1,Map_10.235.2,Map_10.235.3
+236,Canada Warbler,Canada Warbler,CAWA,Table_10.236.1,Chart_10.236.1,Map_10.236.1,Map_10.236.2,Map_10.236.3
+237,Wilson's Warbler,Wilson's Warbler,WIWA,Table_10.237.1,Chart_10.237.1,Map_10.237.1,Map_10.237.2,Map_10.237.3
+238,Summer Tanager,Summer Tanager,SUTA,Table_10.238.1,Chart_10.238.1,Map_10.238.1,Map_10.238.2,Map_10.238.3
+239,Scarlet Tanager,Scarlet Tanager,SCTA,Table_10.239.1,Chart_10.239.1,Map_10.239.1,Map_10.239.2,Map_10.239.3
+240,Northern Cardinal,Northern Cardinal,NOCA,Table_10.240.1,Chart_10.240.1,Map_10.240.1,Map_10.240.2,Map_10.240.3
+241,Rose-breasted Grosbeak,Rose-breasted Grosbeak,RBGR,Table_10.241.1,Chart_10.241.1,Map_10.241.1,Map_10.241.2,Map_10.241.3
+242,Blue Grosbeak,Blue Grosbeak,BLGR,Table_10.242.1,Chart_10.242.1,Map_10.242.1,Map_10.242.2,Map_10.242.3
+243,Indigo Bunting,Indigo Bunting,INBU,Table_10.243.1,Chart_10.243.1,Map_10.243.1,Map_10.243.2,Map_10.243.3
+244,Dickcissel,Dickcissel,DICK,Table_10.244.1,Chart_10.244.1,Map_10.244.1,Map_10.244.2,Map_10.244.3
+245,Mallard x American Black Duck (hybrid),Mallard x American Black Duck (hybrid),MABD,Table_10.245.1,Chart_10.245.1,Map_10.245.1,Map_10.245.2,Map_10.245.3
+246,Sandhill x Whooping Crane (hybrid),Sandhill x Whooping Crane (hybrid),SCWC,Table_10.246.1,Chart_10.246.1,Map_10.246.1,Map_10.246.2,Map_10.246.3
+247,Golden-winged x Blue-winged Warbler (hybrid),Golden-winged x Blue-winged Warbler (hybrid),GWBW,Table_10.247.1,Chart_10.247.1,Map_10.247.1,Map_10.247.2,Map_10.247.3
+248,Great Black-backed Gull,Great Black-backed Gull,GBBG,Table_10.248.1,Chart_10.248.1,Map_10.248.1,Map_10.248.2,Map_10.248.3
+249,Western Grebe,Western Grebe,WEGR,Table_10.249.1,Chart_10.249.1,Map_10.249.1,Map_10.249.2,Map_10.249.3
+250,Snowy Egret,Snowy Egret,SNEG,Table_10.250.1,Chart_10.250.1,Map_10.250.1,Map_10.250.2,Map_10.250.3
+251,Rusty Blackbird,Rusty Blackbird,RUBL,Table_10.251.1,Chart_10.251.1,Map_10.251.1,Map_10.251.2,Map_10.251.3
+252,Bay-breasted Warbler,Bay-breasted Warbler,BBWA,Table_10.252.1,Chart_10.252.1,Map_10.252.1,Map_10.252.2,Map_10.252.3
+253,Black-bellied Whistling-Duck,Black-bellied Whistling-Duck,BBWD,Table_10.253.1,Chart_10.253.1,Map_10.253.1,Map_10.253.2,Map_10.253.3
+254,Kelp Gull,Kelp Gull,KEGU,Table_10.254.1,Chart_10.254.1,Map_10.254.1,Map_10.254.2,Map_10.254.3
+255,Black-billed Magpie,Black-billed Magpie,BBMA,Table_10.255.1,Chart_10.255.1,Map_10.255.1,Map_10.255.2,Map_10.255.3
+256,Mountain Bluebird,Mountain Bluebird,MOBL,Table_10.256.1,Chart_10.256.1,Map_10.256.1,Map_10.256.2,Map_10.256.3
+257,Eurasian Tree Sparrow,Eurasian Tree Sparrow,ETSP,Table_10.257.1,Chart_10.257.1,Map_10.257.1,Map_10.257.2,Map_10.257.3
