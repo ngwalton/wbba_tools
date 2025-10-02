@@ -175,7 +175,7 @@ SpAcctSort,common_name,CommonName2025,4lettercode2023,BlockDetections,BreedingPh
 174,White-winged Crossbill,White-winged Crossbill,WWCR,Table_10.174.1,Chart_10.174.1,Map_10.174.1,Map_10.174.2,Map_10.174.3
 175,European Goldfinch,European Goldfinch,EGOL,Table_10.175.1,Chart_10.175.1,Map_10.175.1,Map_10.175.2,Map_10.175.3
 176,Pine Siskin,Pine Siskin,PISI,Table_10.176.1,Chart_10.176.1,Map_10.176.1,Map_10.176.2,Map_10.176.3
-177,American Goldfinch,American Goldfinch,AGOL,Table_10.177.1,Chart_10.177.1,Map_10.177.1,Map_10.177.2,Map_10.177.3
+177,American Goldfinch,American Goldfinch,AMGO,Table_10.177.1,Chart_10.177.1,Map_10.177.1,Map_10.177.2,Map_10.177.3
 178,Grasshopper Sparrow,Grasshopper Sparrow,GRSP,Table_10.178.1,Chart_10.178.1,Map_10.178.1,Map_10.178.2,Map_10.178.3
 179,Chipping Sparrow,Chipping Sparrow,CHSP,Table_10.179.1,Chart_10.179.1,Map_10.179.1,Map_10.179.2,Map_10.179.3
 180,Clay-colored Sparrow,Clay-colored Sparrow,CCSP,Table_10.180.1,Chart_10.180.1,Map_10.180.1,Map_10.180.2,Map_10.180.3
@@ -256,3 +256,4 @@ SpAcctSort,common_name,CommonName2025,4lettercode2023,BlockDetections,BreedingPh
 255,Black-billed Magpie,Black-billed Magpie,BBMA,Table_10.255.1,Chart_10.255.1,Map_10.255.1,Map_10.255.2,Map_10.255.3
 256,Mountain Bluebird,Mountain Bluebird,MOBL,Table_10.256.1,Chart_10.256.1,Map_10.256.1,Map_10.256.2,Map_10.256.3
 257,Eurasian Tree Sparrow,Eurasian Tree Sparrow,ETSP,Table_10.257.1,Chart_10.257.1,Map_10.257.1,Map_10.257.2,Map_10.257.3
+
