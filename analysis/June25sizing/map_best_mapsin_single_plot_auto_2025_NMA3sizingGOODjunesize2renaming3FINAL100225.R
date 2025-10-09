@@ -101,7 +101,7 @@ for(j in 1:length(species)){
     bestmapimg[[species[j]]]<-list(plot_each)
 }
 
-speciesindex<-species ## species index
+sp<-species ## species index
 #sp<-species[1:2]
 #overlay_legend<-get_legend(bestmapimg$ALFL[1]) ## extract legend 
 best_composed_img<-list()## make blank list for for-loop
@@ -143,12 +143,14 @@ for(l in 1:nrow(sp)){
   
   # Save the plot with the correct filename
   ggsave(filename = paste0(filename, ".pdf"),
+         colormodel = "cmyk",
          plot = current_plot,
          device = "pdf", 
          scale = 1,  width = 3.75,  height = 3.9469,  units = c("in"),
          dpi = 600, 
          limitsize = TRUE,  bg = "white")
 }
+
 
 
 
