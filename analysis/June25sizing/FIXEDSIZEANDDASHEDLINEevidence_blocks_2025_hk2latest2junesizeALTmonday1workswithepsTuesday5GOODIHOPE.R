@@ -228,10 +228,18 @@ species <- unique(sp$SPEC)
 line_gray <- "#666666"
 class(block_map$BBCU)
 
-pal <- c("#2D1C45", "#9C7DC5", "#D4C7E6", NA, NA, NA)
-# make evidence a factor and choose factor order -- used to order map legend
+
+pal <- c("Confirmed" = "#2D1C45", 
+         "Probable" = "#9C7DC5", 
+         "Possible" = "#D4C7E6", 
+         "Observed" = "NA", 
+         "Not reported" = "NA", 
+         "No checklists" = "NA")
+
+labels <- c("Confirmed", "Probable", "Possible", "Observed", "Not reported", "No checklists")
 
 ord <- c(rev(vapply(breeding_codes, "[[", NA_character_, 2)), not_rep, no_rep)
+
 
 (gc)
 
@@ -315,4 +323,5 @@ species_lookup <- sp_in %>%
          dpi = 600, 
          limitsize = FALSE,  bg = "white")
 }
+
 
