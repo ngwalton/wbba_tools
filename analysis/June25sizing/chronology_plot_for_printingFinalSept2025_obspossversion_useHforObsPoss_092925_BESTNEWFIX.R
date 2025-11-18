@@ -366,7 +366,7 @@ cols <- c( 'BreedingPhenology' , 'common_name')
 namedf$filename <- apply( namedf[ , cols ] , 1 , paste , collapse = "_" )
 
 #back to just 2 columns
-sp <- namedf %>% select(c(common_name, filename))
+sp <- namedf %>%  dplyr::select(c(common_name, filename))
 #sp <- namedf %>% select(filename)
 
 # pdf(out_pdf)
@@ -394,3 +394,4 @@ for (i in sp_birds) {
 }
 
 #dev.off()
+
