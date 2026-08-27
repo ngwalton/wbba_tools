@@ -50,7 +50,7 @@ no_plot_codes <- c("F", "", "O", "NC", "UN", "S")
 # load data ----
 
 # ebird data
-ebird <- read.delim("obsposs_species_withH_asobsposs_110923_good_092625_2.txt", quote = "", as.is = TRUE)
+ebird <- read.delim("obsposs_species_withH_asobsposs_110923_good_092625_2_Aug26_CATEBCNHfix.txt", quote = "", as.is = TRUE)
 #ebird <- read.delim("ebird_data_sample_wbbaii.txt", quote = "", as.is = TRUE)
 
 
@@ -102,7 +102,7 @@ ebird$BREEDINGCATEGORYNUM <- as.numeric(ebird$BREEDINGCATEGORYNUM)
 ebird <- ebird[order(ebird$BREEDINGCATEGORYNUM, decreasing = TRUE, na.last = TRUE), ]
 #remove duplicates
 ebird <- ebird %>%
-  filter(!duplicated(GROUP.IDENTIFIER, incomparables = NA))
+  filter(!duplicated(data.frame(GROUP.IDENTIFIER, COMMON.NAME)) | is.na(GROUP.IDENTIFIER))
 
 # optional, remove uncoded and blank breeding code records
 ebird <- ebird %>%
