@@ -69,9 +69,11 @@ ebird$BREEDING.CODE <- replace(ebird$BREEDING.CODE, ebird$BREEDING.CODE == "H", 
 
 # data prep ----
 
-# format date column - ONE POSSIBILITY
-# ebird$OBSERVATION.DATE <- mdy(ebird$OBSERVATION.DATE)
-# class(ebird$OBSERVATION.DATE)
+# Formatting date column, a stubborn issue
+# Convert xcel numbers to true dates using Excel's origin
+ebird$OBSERVATION.DATE <- as.Date(as.numeric(ebird$OBSERVATION.DATE), origin = "1899-12-30")
+# Use lubridate to change the year to 2016 for the whole column (preserving month and day)
+year(ebird$OBSERVATION.DATE) <- 2016
 
 # other possibilities for fixing date column
 # If this came out of excel and the date is screwy, this catches it and fixes it
