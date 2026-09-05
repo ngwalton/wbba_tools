@@ -1,5 +1,7 @@
 # Function to save chronology plot for each species in an eBird dataset.
 
+# Doublecheck date boundaries - if file came out of excel leap year issues may cause dates to be 1-2 days off, see fixes around line 71
+
 library(here)
 library(lubridate)
 library(grid)
@@ -64,7 +66,15 @@ colnames(ebird) <- str_replace_all(colnames(ebird), "[:punct:]", ".")
 
 # data prep ----
 
-# format date column - ONE POSSIBILITY
+# format date column 
+
+# Formatting date column, a stubborn issue
+# Convert xcel numbers to true dates using Excel's origin
+# ebird$OBSERVATION.DATE <- as.Date(as.numeric(ebird$OBSERVATION.DATE), origin = "1899-12-30")
+# Use lubridate to change the year to 2016 for the whole column (preserving month and day)
+# year(ebird$OBSERVATION.DATE) <- 2016
+
+# ANOTHER POSSIBILITY
 # ebird$OBSERVATION.DATE <- mdy(ebird$OBSERVATION.DATE)
 # class(ebird$OBSERVATION.DATE)
 
