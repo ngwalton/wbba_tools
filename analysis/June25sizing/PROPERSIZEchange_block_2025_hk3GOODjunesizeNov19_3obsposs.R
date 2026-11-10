@@ -382,12 +382,15 @@ for(j in 1:length(species)){
     theme_map()+
     theme(legend.position="none") +
     theme(plot.margin = unit(c(-0.15,-0.15,-0.15,-0.15), "in")) +
+    # recent fix adds drop = FALSE to prevent problems for species without all four colors       
     scale_fill_manual(labels=labels,
                   values=pal,
-                 na.translate = F)+
+                  drop = FALSE,
+                  na.translate = F)+
   scale_color_manual(labels=labels,
-                    values=linecol,
-                    na.translate = F)
+                  values=linecol,
+                  drop = FALSE,
+                  na.translate = F)
     #bestmapimg[[species[j]]]<-list(overlay_map,plot_each)
   bestmapimg[[species[j]]]<-list(plot_each)
 }
