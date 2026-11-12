@@ -125,9 +125,9 @@ unique(filtered_sp$REASON)
 # if you want to filter them one by one:
 ## to view which rows are being removed, remove the exclamation mark in front
 ## of COMMON.NAME and don't assign it to an object eg
-## map(sp, subset, COMMON.NAME %in% 
-## filtered_sp[which(filtered_sp[, "REASON"] == "for wisconsin"), 
-##             "COMMON.NAME"])
+ map(sp, subset, COMMON.NAME %in% 
+filtered_sp[which(filtered_sp[, "REASON"] == "for wisconsin"), 
+            "COMMON.NAME"])
 
 
 
@@ -184,21 +184,21 @@ sp <- map(sp, subset, !COMMON.NAME %in%
 
 # remove species with less than ten blocks where we will not calculate 
 # index - will need to run separately).
-sp <- map(sp, subset, !COMMON.NAME %in% 
-            filtered_sp[which(filtered_sp[, "REASON"] == 
-                                "fewer than ten blocks"), 
-                        "COMMON.NAME"])
+#sp <- map(sp, subset, !COMMON.NAME %in% 
+#           filtered_sp[which(filtered_sp[, "REASON"] == 
+#                                "fewer than ten blocks"), 
+#                        "COMMON.NAME"])
 
 # if you want to filter them all at once:
-sp <- map(sp, subset, !COMMON.NAME %in% filtered_sp[, "COMMON.NAME"])
+#sp <- map(sp, subset, !COMMON.NAME %in% filtered_sp[, "COMMON.NAME"])
 
 # to filter for a particular set of species (instead of filtering 
 # them out):
 ## edit keep_birds to include the species you're interested in
-keep_birds <- c("Spotted Sandpiper",
-                "Whooping Crane")
+#keep_birds <- c("Spotted Sandpiper",
+#                "Whooping Crane")
 ## then filter to just those species
-spf <- map(sp, subset, COMMON.NAME %in% keep_birds)
+#spf <- map(sp, subset, COMMON.NAME %in% keep_birds)
 
 # flag the pigeon entries so they are not removed with the rest of the domestics
 sp <- map(sp, transform, 
