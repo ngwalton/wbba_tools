@@ -67,24 +67,37 @@ block_in <- st_read(dsn = "blk", layer = "WbbaBlocks2015_v0_2")
 
 # read in the atlas data; each atlas project will be a list within a list
 sp <- list(i = read.delim("WBBA1_ATLASWI_plussensitivepluszerocount_onlycodeds_nospuhslash_EBDMar2023_GOOD_082823.txt", quote = ""),
-           ii = read.delim("WBBA2_ATLASWI_plussensitivepluszerocount_onlycodeds_nospuhslash_EBDMar2023_GOOD_082823.txt", quote = "")) %>%
-  ## only keep the pertinent columns
-  map(dplyr::select,
-      category, common_name, breeding_code, breeding_category, 
-      block_id = atlas_block, approved)
+           ii = read.delim("WBBA2_ATLASWI_plussensitivepluszerocount_EBDMar2023_GOOD_092526.txt", quote = ""))
+
+  
+  # fix column names
+  sp <- sp %>% 
+  # capitalize
+  map(~dplyr::rename_with(.x, toupper)) %>% 
+  # underscores become periods
+  map(function(y) {
+    colnames(y) <- gsub("\\_", "\\.", colnames(y))
+    return(y)
+  })
+
+## only keep the pertinent columns
+sp <- sp %>% 
+  map(dplyr::select, 
+      CATEGORY, 
+      COMMON.NAME,         
+      BREEDING.CODE,        
+      BREEDING.CATEGORY,    
+      BLOCK_ID = ATLAS.BLOCK, # this needed a rename
+      APPROVED
+  )
+
+# Drop non-fair block data from sp
+#sp <- sp %>% 
+#  map(~filter(.x, BLOCK_ID %in% fair$BLOCK_ID))
+
+gc() 
 
 glimpse(sp) # see an overview of the dataset
-
-
-
-#this works to add periods to column names
-sp <- lapply(sp, function(y) {colnames(y) <- gsub("\\_", "\\.", colnames(y)); y})
-# this works to capitalize column names
-sp <- lapply(sp, function (x) dplyr::rename_with(x, toupper))
-
-
-# Rename BLOCK.ID to BLOCK_ID in both i and ii data frames to standardize name
-sp <- map(sp, rename, BLOCK_ID = BLOCK.ID)
 
 ### filter out C1 and C2, and blank because these are obsposs species
 sp$ii<-sp$ii%>%filter(!BREEDING.CATEGORY%in%c("C1","C2",""))
