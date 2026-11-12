@@ -65,26 +65,47 @@ boots[2:4] <- lapply(boots[2:4],no100)
 block_in <- st_read(dsn = "blk", layer = "WbbaBlocks2015_v0_2")
 #block_in <- st_read(dsn = "F:\\WBBA_data\\data\\evidence_by_block\\evidence_by_block.shp")
 
+# Read in your 858 fair comparison blocks
+fair <- st_read(dsn = "fair", layer = "Fair_comparison_blocks_final") %>%
+  dplyr::select(BLOCK_ID, BLOCK_NAME, BLOCK_STAT)
+
+
+# MEMORY OPTIMIZATION: Immediately drop all non-fair blocks from the master grid
+#  block_in <- block_in %>%
+#  filter(BLOCK_ID %in% fair$BLOCK_ID)
+
 # read in the atlas data; each atlas project will be a list within a list
 sp <- list(i = read.delim("WBBA1_ATLASWI_plussensitivepluszerocount_onlycodeds_nospuhslash_EBDMar2023_GOOD_082823.txt", quote = ""),
-           ii = read.delim("WBBA2_ATLASWI_plussensitivepluszerocount_onlycodeds_nospuhslash_EBDMar2023_GOOD_082823.txt", quote = "")) %>%
-  ## only keep the pertinent columns
-  map(dplyr::select,
-      category, common_name, breeding_code, breeding_category, 
-      block_id = atlas_block, approved)
+           ii = read.delim("WBBA2_ATLASWI_plussensitivepluszerocount_EBDMar2023_GOOD_092526.txt", quote = ""))
+  
+# fix column names
+  sp <- sp %>% 
+  # capitalize
+  map(~dplyr::rename_with(.x, toupper)) %>% 
+  # underscores become periods
+  map(function(y) {
+    colnames(y) <- gsub("\\_", "\\.", colnames(y))
+    return(y)
+  })
 
+## only keep the pertinent columns
+sp <- sp %>% 
+  map(dplyr::select, 
+      CATEGORY, 
+      COMMON.NAME,         
+      BREEDING.CODE,        
+      BREEDING.CATEGORY,    
+      BLOCK_ID = ATLAS.BLOCK, # this needed a rename
+      APPROVED
+  )
+
+# Drop non-fair block data from sp
+sp <- sp %>% 
+  map(~filter(.x, BLOCK_ID %in% fair$BLOCK_ID))
+
+gc() 
+  
 glimpse(sp) # see an overview of the dataset
-
-
-
-#this works to add periods to column names
-sp <- lapply(sp, function(y) {colnames(y) <- gsub("\\_", "\\.", colnames(y)); y})
-# this works to capitalize column names
-sp <- lapply(sp, function (x) dplyr::rename_with(x, toupper))
-
-
-# Rename BLOCK.ID to BLOCK_ID in both i and ii data frames to standardize name
-sp <- map(sp, rename, BLOCK_ID = BLOCK.ID)
 
 # optional county layer --  only used for map printing
 cnty <- us_counties(resolution = "high", states = "WI")
@@ -93,14 +114,27 @@ cnty <- us_counties(resolution = "high", states = "WI")
 ecoland <- st_read("Ecological_Landscapes_of_Wisconsin_100",
                    "ecoshape_smooth100")
 
-# load the blank block outlines to show which blocks are fair comparison
-fair <- st_read(dsn = "fair", layer = "Fair_comparison_blocks_final") %>% 
-  # select the columns you need for mapping
-  dplyr::select(BLOCK_ID,
-         BLOCK_NAME,
-         BLOCK_STAT)
-
 # data prep ----
+
+#fix problem species
+# Change "American Coot (Red-shielded)" to "American Coot" in sp$i
+sp$i <- sp$i %>%
+  mutate(COMMON.NAME = str_replace(COMMON.NAME, "American Coot \\(Red-shielded\\)", "American Coot"))
+# Change "American Coot (Red-shielded)" to "American Coot" in sp$ii
+sp$ii <- sp$ii %>%
+  mutate(COMMON.NAME = str_replace(COMMON.NAME, "American Coot \\(Red-shielded\\)", "American Coot"))
+# Change "American Coot (Red-shielded)" to "American Coot" in sp$i
+sp$i <- sp$i %>%
+  mutate(COMMON.NAME = str_replace(COMMON.NAME, "Rock Pigeon \\(Feral\\)", "Rock Pigeon"))
+#Change "American Coot (Red-shielded)" to "American Coot" in sp$ii
+sp$ii <- sp$ii %>%
+  mutate(COMMON.NAME = str_replace(COMMON.NAME, "Rock Pigeon \\(Feral\\)", "Rock Pigeon"))
+
+glimpse(sp) # see an overview of the dataset
+
+head(sp$i)
+head(sp$ii)
+
 
 # remove not valid (reason = exotic) records
 sp <- map(sp, subset, APPROVED != "0")
@@ -161,19 +195,6 @@ sp$ii <- inner_join(sp$ii, cw2, by = "COMMON.NAME")
 #                                "taxa category causing trouble"), 
 #                        "COMMON.NAME"])
 
-#fix problem species
-# Change "American Coot (Red-shielded)" to "American Coot" in sp$i
-sp$i <- sp$i %>%
-  mutate(COMMON.NAME = str_replace(COMMON.NAME, "American Coot \\(Red-shielded\\)", "American Coot"))
-# Change "American Coot (Red-shielded)" to "American Coot" in sp$ii
-sp$ii <- sp$ii %>%
-  mutate(COMMON.NAME = str_replace(COMMON.NAME, "American Coot \\(Red-shielded\\)", "American Coot"))
-# Change "American Coot (Red-shielded)" to "American Coot" in sp$i
-sp$i <- sp$i %>%
-  mutate(COMMON.NAME = str_replace(COMMON.NAME, "Rock Pigeon \\(Feral\\)", "Rock Pigeon"))
-#Change "American Coot (Red-shielded)" to "American Coot" in sp$ii
-sp$ii <- sp$ii %>%
-mutate(COMMON.NAME = str_replace(COMMON.NAME, "Rock Pigeon \\(Feral\\)", "Rock Pigeon"))
 
 # remove sensitive species - figure out what to do with these later - either 
 # index only or no index I think, describe in text for some.
@@ -201,13 +222,14 @@ keep_birds <- c("Rock Pigeon",
 sp <- map(sp, subset, COMMON.NAME %in% keep_birds)
 
 # flag the pigeon entries so they are not removed with the rest of the domestics
-#sp <- map(sp, transform, 
-#          CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
+sp <- map(sp, transform, 
+          CATEGORY = ifelse(COMMON.NAME == "Rock Pigeon", "pigeon", CATEGORY))
 
 # update_sp removes non-species taxa (i.e., hybrid, spuh, domestic, and slash 
 # taxonomic categories), removes records with no breeding evidence (i.e., F, 
 # NA, and the empty string), and adds an alpha code (for column naming).
-#taxa <- c("species", "issf", "form", "pigeon")
+taxa <- c("species", "issf", "form", "pigeon")
+
 
 update_sp <- function(x) {
   is_sp <- x$CATEGORY %in% taxa
@@ -334,6 +356,10 @@ if(any(duplicated(sp_cast$BLOCK_ID) | duplicated(sp_cast$BLOCK_NAME))) {
   warning("Duplicate block IDs in dataset")
 }
 
+(gc)
+
+table(sp_cast$AMRO, useNA = "always")
+
 # print maps ----
 
 # print an evidence map for each species to a single pdf; note that this can be
@@ -351,14 +377,21 @@ if(any(duplicated(sp_cast$BLOCK_ID) | duplicated(sp_cast$BLOCK_NAME))) {
 ## load fonts and color palettes
 species<-sp_vec
 # print only a subset for testing
-#species<-c("BADO","HOWR", "BTNW", "BBWO")
+#species<-c("BADO","HOWR", "BTNW", "BBWO", "AMRO", "SOSP", "BCCH")
 
 bestmapimg<-list()
 
 labels <- c("Unreported", "WBBA I only", "WBBA II only", "Both")
 
-sp_cast <- modify_if(sp_cast, names(sp_cast) %in% species,
-                         factor, levels = 0:3, labels = labels)
+#old way
+#sp_cast <- modify_if(sp_cast, names(sp_cast) %in% species,
+#                         factor, levels = 0:3, labels = labels)
+
+for (sp_code in species) {
+  if (sp_code %in% names(sp_cast)) {
+    sp_cast[[sp_code]] <- factor(sp_cast[[sp_code]], levels = 0:3, labels = labels)
+  }
+}
 
 line_gray <- "#666666"
 #         not det  at1    at2      both
@@ -369,11 +402,9 @@ linecol <- c(NA, NA,  NA, NA)
 
 for(j in 1:length(species)){
   ## transform rasters into SpatialPixelsDataFrame
-  plot_blocks <- sp_cast[species[j]]
-  # make evidence a factor and choose factor order -- used to order map legend
-  plot_block_df <- as.data.frame(plot_blocks)
-  names(plot_block_df) <- c("value","geometry")
-  ## set bins for categroizing color scale of block level occurrence
+  plot_block_df <- sp_cast %>%
+    dplyr::select(value = all_of(species[j]))
+  ## set bins for categizing color scale of block level occurrence
   plot_block_df<-plot_block_df%>%st_as_sf()
   ## block level occurrences are binned to <1 (no observation), 1-2 (low observation),
   ## and any above 2 (many repeated observations across time and space within a block)
@@ -392,16 +423,17 @@ for(j in 1:length(species)){
     theme_map()+
     theme(legend.position="none") +
     theme(plot.margin = unit(c(-0.15,-0.15,-0.15,-0.15), "in")) +
-    # recent fix adds drop = FALSE to prevent problems for species without all four colors       
+    # recent fix, adding drop because species missing all 4 categories could get screwy
     scale_fill_manual(labels=labels,
-                  values=pal,
-                  drop = FALSE,
-                  na.translate = F)+
-  scale_color_manual(labels=labels,
-                  values=linecol,
-                  drop = FALSE,
-                  na.translate = F)
-    #bestmapimg[[species[j]]]<-list(overlay_map,plot_each)
+                      values=pal,
+                      drop = FALSE,
+                      na.translate = F)+
+    scale_color_manual( labels= labels,
+                        values= linecol,
+                        drop = FALSE,
+                        na.translate = F)
+  
+  #bestmapimg[[species[j]]]<-list(overlay_map,plot_each)
   bestmapimg[[species[j]]]<-list(plot_each)
 }
 
@@ -430,9 +462,10 @@ species_info <- species_lookup[species_lookup$SPEC == species[l], ]
 filename_new <- paste0(species_info$ChangeMap, "_", species_info$COMMON.NAME, ".eps")
   
   ggsave(filename=filename_new,plot=bestmapimg[[species[l]]][[1]],  
-       colormodel = "cmyk",
+      # colormodel = "cmyk",
        device = "eps",
        scale = 1,  width = 3.75,  height = 3.9469,  units = c("in"),
        dpi = 600, 
        limitsize = TRUE,  bg = "white")
+  (gc)
 }
